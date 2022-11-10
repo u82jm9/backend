@@ -1,0 +1,98 @@
+package com.homeapp.one.demo.models;
+
+import com.homeapp.one.demo.models.Enums.CampagnoloGroupSet;
+import com.homeapp.one.demo.models.Enums.GroupsetBrand;
+import com.homeapp.one.demo.models.Enums.ShimanoGroupSet;
+import com.homeapp.one.demo.models.Enums.SramGroupSet;
+
+import javax.persistence.*;
+
+@Entity
+@Table
+public class RearGears {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rearGearsGen")
+    @SequenceGenerator(name = "rearGearsGen", sequenceName = "REAR_GEARS_SEQ", allocationSize = 1)
+    @Column(name = "RearGearsId")
+    private long rearGearsId;
+
+    @Column
+    private long numberOfGears;
+
+    @Column(nullable = false)
+    private GroupsetBrand groupsetBrand;
+
+    @Column
+    private CampagnoloGroupSet campagnoloGroupSet;
+
+    @Column
+    private SramGroupSet sramGroupSet;
+
+    @Column
+    private ShimanoGroupSet shimanoGroupSet;
+
+    public RearGears() {
+    }
+
+    public RearGears(long numberOfGears, GroupsetBrand groupsetBrand) {
+        this.numberOfGears = numberOfGears;
+        this.groupsetBrand = groupsetBrand;
+    }
+
+    public long getRearGearsId() {
+        return rearGearsId;
+    }
+
+    public long getNumberOfGears() {
+        return numberOfGears;
+    }
+
+    public void setNumberOfGears(long numberOfGears) {
+        this.numberOfGears = numberOfGears;
+    }
+
+    public GroupsetBrand getGroupsetBrand() {
+        return groupsetBrand;
+    }
+
+    public void setGroupsetBrand(GroupsetBrand groupsetBrand) {
+        this.groupsetBrand = groupsetBrand;
+    }
+
+    public CampagnoloGroupSet getCampagnoloGroupSet() {
+        return campagnoloGroupSet;
+    }
+
+    public void setCampagnoloGroupSet(CampagnoloGroupSet campagnoloGroupSet) {
+        this.campagnoloGroupSet = campagnoloGroupSet;
+    }
+
+    public SramGroupSet getSramGroupSet() {
+        return sramGroupSet;
+    }
+
+    public void setSramGroupSet(SramGroupSet sramGroupSet) {
+        this.sramGroupSet = sramGroupSet;
+    }
+
+    public ShimanoGroupSet getShimanoGroupSet() {
+        return shimanoGroupSet;
+    }
+
+    public void setShimanoGroupSet(ShimanoGroupSet shimanoGroupSet) {
+        this.shimanoGroupSet = shimanoGroupSet;
+    }
+
+    @Override
+    public String toString() {
+        return "RearGears{" +
+                "rearGearsId=" + rearGearsId +
+                ", numberOfGears=" + numberOfGears +
+                ", groupsetBrand=" + groupsetBrand +
+                ", campagnoloGroupSet=" + campagnoloGroupSet +
+                ", sramGroupSet=" + sramGroupSet +
+                ", shimanoGroupSet=" + shimanoGroupSet +
+                '}';
+    }
+}
