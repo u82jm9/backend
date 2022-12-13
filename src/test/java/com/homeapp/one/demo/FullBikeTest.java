@@ -35,7 +35,7 @@ public class FullBikeTest {
         Frame frame = new Frame(GRAVEL, true, false, true, STI);
         FrontGears frontGears = new FrontGears(1, SRAM);
         RearGears rearGears = new RearGears(11, SRAM);
-        FullBike bike = new FullBike(frame, HYDRAULIC_DISC, DROPS, frontGears, rearGears);
+        FullBike bike = new FullBike("bike",frame, HYDRAULIC_DISC, DROPS, frontGears, rearGears);
         fullBikeService.create(bike);
     }
 
@@ -50,7 +50,7 @@ public class FullBikeTest {
         Frame frame = new Frame(ROAD, false, true, true, STI);
         FrontGears frontGears = new FrontGears(2, SHIMANO);
         RearGears rearGears = new RearGears(10, SHIMANO);
-        FullBike testBike = new FullBike(frame, RIM, DROPS, frontGears, rearGears);
+        FullBike testBike = new FullBike("test Bike", frame, RIM, DROPS, frontGears, rearGears);
         fullBikeService.create(testBike);
         Integer numberOfBikesAfter = fullBikeService.getAllFullBikes().size();
         assertTrue(numberOfBikesAfter > numberOfBikesBefore);

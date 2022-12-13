@@ -36,6 +36,7 @@ public class ControllerTest {
     private StickyNoteController stickyNoteController;
     private MockMvc mockMvc;
     private MockHttpSession session;
+    final static String TEST_API_URL = "/Test/";
     final static String STICKY_NOTE_URL = "/StickyNotes/";
     final static String FULL_BIKE_URL = "/FullBike/";
 
@@ -52,10 +53,22 @@ public class ControllerTest {
     }
 
     @Test
+    public void test_That_the_front_can_check_back_end_is_on() throws Exception {
+        this.mockMvc.perform(get(TEST_API_URL + "IsThisThingOn"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void test_That_a_note_can_be_created() throws Exception {
         StickyNote note = new StickyNote("Controller test", "Noty note");
         this.mockMvc.perform(post(STICKY_NOTE_URL + "AddNote").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(note))).andExpect(status().isCreated());
+    }
+
+    @Test
+    public void test_That_a_list_of_Notes_can_be_returned() throws Exception {
+        this.mockMvc.perform(get(STICKY_NOTE_URL + "GetAll"))
+                .andExpect(status().isAccepted());
     }
 
     @Test
@@ -65,8 +78,8 @@ public class ControllerTest {
     }
 
     @Test
-    public void test_That_a_list_of_Notes_can_be_returned() throws Exception {
-        this.mockMvc.perform(get(STICKY_NOTE_URL + "GetAll"))
+    public void test_That_a_list_of_Frames_can_be_returned() throws Exception {
+        this.mockMvc.perform(get(FULL_BIKE_URL + "GetFrames"))
                 .andExpect(status().isAccepted());
     }
 
@@ -82,7 +95,7 @@ public class ControllerTest {
         Frame frame = new Frame(GRAVEL, false, true, true, STI);
         FrontGears frontGears = new FrontGears(1, SHIMANO);
         RearGears rearGears = new RearGears(11, SHIMANO);
-        FullBike testBike = new FullBike(frame, MECHANICAL_DISC, DROPS, frontGears, rearGears);
+        FullBike testBike = new FullBike("testBike",frame, MECHANICAL_DISC, DROPS, frontGears, rearGears);
         this.mockMvc.perform(post(FULL_BIKE_URL + "AddFullBike").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(testBike))).andExpect(status().isCreated());
     }

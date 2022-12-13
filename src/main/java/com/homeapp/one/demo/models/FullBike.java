@@ -19,6 +19,9 @@ public class FullBike {
     @JoinColumn(name = "FrameId")
     private Frame frame;
 
+    @Column(name = "BikeName")
+    private String bikeName;
+
     @Column(name = "Brakes")
     private BrakeType brakeType;
 
@@ -36,7 +39,8 @@ public class FullBike {
     public FullBike() {
     }
 
-    public FullBike(Frame frame, BrakeType brakeType, HandleBarType handleBarType, FrontGears frontGears, RearGears rearGears) {
+    public FullBike(String bikeName, Frame frame, BrakeType brakeType, HandleBarType handleBarType, FrontGears frontGears, RearGears rearGears) {
+        this.bikeName =bikeName;
         this.frame = frame;
         this.brakeType = brakeType;
         this.handleBarType = handleBarType;
@@ -54,6 +58,14 @@ public class FullBike {
 
     public void setFrame(Frame frame) {
         this.frame = frame;
+    }
+
+    public String getBikeName() {
+        return bikeName;
+    }
+
+    public void setBikeName(String bikeName) {
+        this.bikeName = bikeName;
     }
 
     public BrakeType getBrakeType() {

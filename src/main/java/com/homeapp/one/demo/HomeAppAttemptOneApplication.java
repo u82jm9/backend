@@ -42,12 +42,12 @@ public class HomeAppAttemptOneApplication implements CommandLineRunner {
 		FrontGears frontGears1 = new FrontGears(1, SRAM);
 		RearGears rearGears1 = new RearGears(11, SRAM);
 		rearGears1.setSramGroupSet(RIVAL);
-		fullBikeService.create(new FullBike(frame1, HYDRAULIC_DISC, DROPS, frontGears1, rearGears1));
+		fullBikeService.create(new FullBike("Sram One By", frame1, HYDRAULIC_DISC, DROPS, frontGears1, rearGears1));
 
 		Frame frame2 = new Frame(ROAD, false, false, true, STI);
 		FrontGears frontGears2 = new FrontGears(3, SHIMANO);
 		RearGears rearGears2 = new RearGears(9, SHIMANO);
 		rearGears1.setShimanoGroupSet(SORA);
-		fullBikeService.create(new FullBike(frame2, RIM, DROPS, frontGears2, rearGears2));
+		fullBikeService.create(new FullBike("Shimano Workhorse", frame2, RIM, DROPS, frontGears2, rearGears2));
 	}
 }
