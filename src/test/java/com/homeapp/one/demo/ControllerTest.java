@@ -15,13 +15,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
-import static com.homeapp.one.demo.models.Enums.BrakeType.*;
-import static com.homeapp.one.demo.models.Enums.FrameStyle.*;
-import static com.homeapp.one.demo.models.Enums.GroupsetBrand.*;
-import static com.homeapp.one.demo.models.Enums.HandleBarType.*;
-import static com.homeapp.one.demo.models.Enums.ShifterStyle.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static com.homeapp.one.demo.models.Enums.BrakeType.MECHANICAL_DISC;
+import static com.homeapp.one.demo.models.Enums.FrameStyle.GRAVEL;
+import static com.homeapp.one.demo.models.Enums.GroupsetBrand.SHIMANO;
+import static com.homeapp.one.demo.models.Enums.HandleBarType.DROPS;
+import static com.homeapp.one.demo.models.Enums.ShifterStyle.STI;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -72,8 +71,34 @@ public class ControllerTest {
     }
 
     @Test
+    public void test_That_a_single_Note_can_be_deleted() throws Exception {
+        this.mockMvc.perform(delete(STICKY_NOTE_URL + "DeleteNote/2"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_That_all_Notes_can_be_deleted() throws Exception {
+        this.mockMvc.perform(delete(STICKY_NOTE_URL + "DeleteAllNotes"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_That_a_Note_can_be_edited() throws Exception {
+        StickyNote note = new StickyNote("Go for a run!", "Edited Message");
+        this.mockMvc.perform(post(STICKY_NOTE_URL + "EditNote").session(session).contentType("application/json")
+                        .content(objectMapper.writeValueAsString(note)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void test_That_a_list_of_Full_Bikes_can_be_returned() throws Exception {
         this.mockMvc.perform(get(FULL_BIKE_URL + "GetAll"))
+                .andExpect(status().isAccepted());
+    }
+
+    @Test
+    public void test_That_an_empty_Bikes_can_be_created() throws Exception {
+        this.mockMvc.perform(get(FULL_BIKE_URL + "StartNewBike"))
                 .andExpect(status().isAccepted());
     }
 
@@ -91,11 +116,19 @@ public class ControllerTest {
     }
 
     @Test
+    public void test_That_an_in_flight_bike_can_be_updated() throws Exception {
+        FullBike bike = new FullBike();
+        bike.setBikeName("Bike Update");
+        this.mockMvc.perform(post(FULL_BIKE_URL + "UpdateBike").session(session).contentType("application/json")
+                .content(objectMapper.writeValueAsString(bike))).andExpect(status().isCreated());
+    }
+
+    @Test
     public void test_That_a_fully_defined_bike_can_be_created() throws Exception {
         Frame frame = new Frame(GRAVEL, false, true, true, STI);
-        FrontGears frontGears = new FrontGears(1, SHIMANO);
-        RearGears rearGears = new RearGears(11, SHIMANO);
-        FullBike testBike = new FullBike("testBike",frame, MECHANICAL_DISC, DROPS, frontGears, rearGears);
+        FrontGears frontGears = new FrontGears(1);
+        RearGears rearGears = new RearGears(11);
+        FullBike testBike = new FullBike("testBike", frame, MECHANICAL_DISC, SHIMANO, DROPS, frontGears, rearGears);
         this.mockMvc.perform(post(FULL_BIKE_URL + "AddFullBike").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(testBike))).andExpect(status().isCreated());
     }

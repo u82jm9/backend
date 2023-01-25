@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,17 +24,25 @@ public class FullBikeService {
     public List<FullBike> getAllFullBikes() {
         List<FullBike> bikeList = fullBikeDao.findAll();
         LOGGER.info("Getting list of all bikes, number returned: " + bikeList.size());
+        for (FullBike b : bikeList) {
+            System.out.println(b);
+        }
         return bikeList;
     }
 
     public void create(FullBike bike) {
         LOGGER.info(("Adding new bike to DB!"));
+        System.out.println(bike);
         fullBikeDao.save(bike);
     }
 
-    public List<FrameStyle> getAllFrameStyles() {
+    public List<String> getAllFrameStyleNames() {
         List<FrameStyle> frameStyles = Arrays.stream(FrameStyle.values()).collect(Collectors.toList());
+        List<String> names = new ArrayList<>();
+        for (FrameStyle fs : frameStyles) {
+            names.add(fs.getName());
+        }
         LOGGER.info("Getting all frames available, number returned: " + frameStyles.size());
-        return frameStyles;
+        return names;
     }
 }

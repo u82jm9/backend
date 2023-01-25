@@ -2,7 +2,7 @@ package com.homeapp.one.demo.models.Enums;
 
 public enum HandleBarType {
 
-    DROPS("Drops"), FLAT("Flat"), BULLHORNS("Bullhorns");
+    DROPS("Drops"), FLAT("Flat"), BULLHORNS("Bullhorns"), FLARE("Flare");
 
     private String name;
 
@@ -15,10 +15,12 @@ public enum HandleBarType {
     }
 
     public static HandleBarType fromName(String name) {
-        if (name == "Drops") {
+        if (name.equalsIgnoreCase("Drops")) {
             return DROPS;
-        } else if (name=="Bullhorns") {
+        } else if (name.equalsIgnoreCase("Bullhorns")) {
             return BULLHORNS;
+        } else if (name.equalsIgnoreCase("Flare")) {
+            return FLARE;
         }
         return FLAT;
     }

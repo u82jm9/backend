@@ -2,7 +2,7 @@ package com.homeapp.one.demo.models.Enums;
 
 public enum GroupsetBrand {
 
-    CAMPAGNOLO("Campagnolo"), SRAM("SRAM"), SHIMANO("Shimano");
+    CAMPAGNOLO("Campagnolo"), SRAM("SRAM"), SHIMANO("Shimano"), OTHER("Other");
 
     private String name;
 
@@ -15,11 +15,13 @@ public enum GroupsetBrand {
     }
 
     public static GroupsetBrand fromName(String name) {
-        if (name == "SRAM") {
+        if (name.equalsIgnoreCase("SRAM")) {
             return SRAM;
-        } else if (name == "Campagnolo") {
+        } else if (name.equalsIgnoreCase("Campagnolo")) {
             return CAMPAGNOLO;
-        } else return SHIMANO;
+        } else if (name.equalsIgnoreCase("Shimano")) {
+            return SHIMANO;
+        } else return OTHER;
     }
 
 }

@@ -17,9 +17,6 @@ public class FrontGears {
     @Column
     private long numberOfGears;
 
-    @Column(nullable = false)
-    private GroupsetBrand groupsetBrand;
-
     @Column
     private CampagnoloGroupSet campagnoloGroupSet;
 
@@ -32,9 +29,8 @@ public class FrontGears {
     public FrontGears() {
     }
 
-    public FrontGears(long numberOfGears, GroupsetBrand groupsetBrand) {
+    public FrontGears(long numberOfGears) {
         this.numberOfGears = numberOfGears;
-        this.groupsetBrand = groupsetBrand;
     }
 
     public long getFrontGearsId() {
@@ -47,14 +43,6 @@ public class FrontGears {
 
     public void setNumberOfGears(long numberOfGears) {
         this.numberOfGears = numberOfGears;
-    }
-
-    public GroupsetBrand getGroupsetBrand() {
-        return groupsetBrand;
-    }
-
-    public void setGroupsetBrand(GroupsetBrand groupsetBrand) {
-        this.groupsetBrand = groupsetBrand;
     }
 
     public CampagnoloGroupSet getCampagnoloGroupSet() {
@@ -86,7 +74,6 @@ public class FrontGears {
         return "FrontGears{" +
                 "frontGearsId=" + frontGearsId +
                 ", numberOfGears=" + numberOfGears +
-                ", groupsetBrand=" + groupsetBrand +
                 ", campagnoloGroupSet=" + campagnoloGroupSet +
                 ", sramGroupSet=" + sramGroupSet +
                 ", shimanoGroupSet=" + shimanoGroupSet +

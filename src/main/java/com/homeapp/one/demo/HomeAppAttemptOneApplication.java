@@ -1,7 +1,6 @@
 package com.homeapp.one.demo;
 
 import com.homeapp.one.demo.models.*;
-import com.homeapp.one.demo.models.Enums.ShimanoGroupSet;
 import com.homeapp.one.demo.services.FullBikeService;
 import com.homeapp.one.demo.services.StickyNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +37,26 @@ public class HomeAppAttemptOneApplication implements CommandLineRunner {
 		stickyNoteService.create(new StickyNote("Nothing Useful", "This is just to make an extra Sticky Note as I thought 4 would look better than 3!"));
 		stickyNoteService.create(new StickyNote("Go for a run!", "Seriously get up early and go for a run!!\nYou're just being lazy!"));
 
-		Frame frame1 = new Frame(ROAD, true, false, true, STI);
-		FrontGears frontGears1 = new FrontGears(1, SRAM);
-		RearGears rearGears1 = new RearGears(11, SRAM);
+		Frame frame1 = new Frame(GRAVEL, true, false, true, STI);
+		FrontGears frontGears1 = new FrontGears(1);
+		RearGears rearGears1 = new RearGears(11);
 		rearGears1.setSramGroupSet(RIVAL);
-		fullBikeService.create(new FullBike("Sram One By", frame1, HYDRAULIC_DISC, DROPS, frontGears1, rearGears1));
+		fullBikeService.create(new FullBike("Gravel", frame1, HYDRAULIC_DISC, SRAM, FLARE, frontGears1, rearGears1));
 
 		Frame frame2 = new Frame(ROAD, false, false, true, STI);
-		FrontGears frontGears2 = new FrontGears(3, SHIMANO);
-		RearGears rearGears2 = new RearGears(9, SHIMANO);
-		rearGears1.setShimanoGroupSet(SORA);
-		fullBikeService.create(new FullBike("Shimano Workhorse", frame2, RIM, DROPS, frontGears2, rearGears2));
+		FrontGears frontGears2 = new FrontGears(3);
+		RearGears rearGears2 = new RearGears(9);
+		rearGears2.setShimanoGroupSet(SORA);
+		fullBikeService.create(new FullBike("Workhorse", frame2, RIM, SHIMANO, DROPS, frontGears2, rearGears2));
+
+		Frame frame3 = new Frame(SINGLE_SPEED, false, false, false, NONE);
+		FrontGears frontGears3 = new FrontGears(1);
+		RearGears rearGears3 = new RearGears(1);
+		fullBikeService.create(new FullBike("Fixie", frame3, RIM, OTHER, BULLHORNS, frontGears3, rearGears3));
+
+		Frame frame4 = new Frame(SINGLE_SPEED, true, false, false, NONE);
+		FrontGears frontGears4 = new FrontGears(1);
+		RearGears rearGears4 = new RearGears(1);
+		fullBikeService.create(new FullBike("City Cruiser", frame4, MECHANICAL_DISC, OTHER, FLAT, frontGears4, rearGears4));
 	}
 }

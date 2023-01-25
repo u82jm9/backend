@@ -20,9 +20,6 @@ public class RearGears {
     @Column
     private long numberOfGears;
 
-    @Column(nullable = false)
-    private GroupsetBrand groupsetBrand;
-
     @Column
     private CampagnoloGroupSet campagnoloGroupSet;
 
@@ -35,9 +32,9 @@ public class RearGears {
     public RearGears() {
     }
 
-    public RearGears(long numberOfGears, GroupsetBrand groupsetBrand) {
+    public RearGears(long numberOfGears) {
         this.numberOfGears = numberOfGears;
-        this.groupsetBrand = groupsetBrand;
+
     }
 
     public long getRearGearsId() {
@@ -50,14 +47,6 @@ public class RearGears {
 
     public void setNumberOfGears(long numberOfGears) {
         this.numberOfGears = numberOfGears;
-    }
-
-    public GroupsetBrand getGroupsetBrand() {
-        return groupsetBrand;
-    }
-
-    public void setGroupsetBrand(GroupsetBrand groupsetBrand) {
-        this.groupsetBrand = groupsetBrand;
     }
 
     public CampagnoloGroupSet getCampagnoloGroupSet() {
@@ -89,7 +78,6 @@ public class RearGears {
         return "RearGears{" +
                 "rearGearsId=" + rearGearsId +
                 ", numberOfGears=" + numberOfGears +
-                ", groupsetBrand=" + groupsetBrand +
                 ", campagnoloGroupSet=" + campagnoloGroupSet +
                 ", sramGroupSet=" + sramGroupSet +
                 ", shimanoGroupSet=" + shimanoGroupSet +

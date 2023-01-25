@@ -15,9 +15,9 @@ public enum BrakeType {
     }
 
     public static BrakeType fromName(String name) {
-        if (name == "Hydraulic Disc") {
+        if (name.equalsIgnoreCase("Hydraulic Disc")) {
             return HYDRAULIC_DISC;
-        } else if (name == "Mechanical Disc") {
+        } else if (name.equalsIgnoreCase("Mechanical Disc")) {
             return MECHANICAL_DISC;
         } else return RIM;
     }

@@ -15,9 +15,9 @@ public enum ShifterStyle {
     }
 
     public static ShifterStyle fromName(String name) {
-        if (name == "Trigger") {
+        if (name.equalsIgnoreCase("Trigger")) {
             return TRIGGER;
-        } else if (name == "STI") {
+        } else if (name.equalsIgnoreCase("STI")) {
             return STI;
         } else return NONE;
     }

@@ -2,8 +2,7 @@ package com.homeapp.one.demo.models.Enums;
 
 public enum FrameStyle {
 
-    CITY("City"), ROAD("Road"), GRAVEL("Gravel"), TOUR("Tour"),
-    HARD_TAIL("Hard Tail"), FULL_SUSPENSION("Full Suspension");
+    SINGLE_SPEED("Single Speed"), ROAD("Road"), GRAVEL("Gravel"), TOUR("Tour"), NONE_SELECTED("None Selected");
 
     private String name;
 
@@ -17,12 +16,11 @@ public enum FrameStyle {
 
     public static FrameStyle fromName(String name) {
         return switch (name) {
-            case "City" -> CITY;
+            case "Single Speed" -> SINGLE_SPEED;
             case "Road" -> ROAD;
             case "Gravel" -> GRAVEL;
-            case "Hard Tail" -> HARD_TAIL;
-            case "Full Suspension" -> FULL_SUSPENSION;
-            default -> TOUR;
+            case "Tour" -> TOUR;
+            default -> NONE_SELECTED;
         };
     }
 

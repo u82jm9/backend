@@ -1,6 +1,7 @@
 package com.homeapp.one.demo.models;
 
 import com.homeapp.one.demo.models.Enums.BrakeType;
+import com.homeapp.one.demo.models.Enums.GroupsetBrand;
 import com.homeapp.one.demo.models.Enums.HandleBarType;
 
 import javax.persistence.*;
@@ -25,6 +26,9 @@ public class FullBike {
     @Column(name = "Brakes")
     private BrakeType brakeType;
 
+    @Column(nullable = false)
+    private GroupsetBrand groupsetBrand;
+
     @Column(name = "Bars")
     private HandleBarType handleBarType;
 
@@ -39,13 +43,22 @@ public class FullBike {
     public FullBike() {
     }
 
-    public FullBike(String bikeName, Frame frame, BrakeType brakeType, HandleBarType handleBarType, FrontGears frontGears, RearGears rearGears) {
-        this.bikeName =bikeName;
+    public FullBike(String bikeName, Frame frame, BrakeType brakeType, GroupsetBrand groupsetBrand, HandleBarType handleBarType, FrontGears frontGears, RearGears rearGears) {
         this.frame = frame;
+        this.bikeName = bikeName;
         this.brakeType = brakeType;
+        this.groupsetBrand = groupsetBrand;
         this.handleBarType = handleBarType;
         this.frontGears = frontGears;
         this.rearGears = rearGears;
+    }
+
+    public GroupsetBrand getGroupsetBrand() {
+        return groupsetBrand;
+    }
+
+    public void setGroupsetBrand(GroupsetBrand groupsetBrand) {
+        this.groupsetBrand = groupsetBrand;
     }
 
     public long getFullBikeId() {
@@ -105,12 +118,12 @@ public class FullBike {
         if (this == o) return true;
         if (!(o instanceof FullBike)) return false;
         FullBike fullBike = (FullBike) o;
-        return getFullBikeId() == fullBike.getFullBikeId() && Objects.equals(getFrame(), fullBike.getFrame()) && getBrakeType() == fullBike.getBrakeType() && getHandleBarType() == fullBike.getHandleBarType() && Objects.equals(getFrontGears(), fullBike.getFrontGears()) && Objects.equals(getRearGears(), fullBike.getRearGears());
+        return getFullBikeId() == fullBike.getFullBikeId() && Objects.equals(getFrame(), fullBike.getFrame()) && Objects.equals(getBikeName(), fullBike.getBikeName()) && getBrakeType() == fullBike.getBrakeType() && getGroupsetBrand() == fullBike.getGroupsetBrand() && getHandleBarType() == fullBike.getHandleBarType() && Objects.equals(getFrontGears(), fullBike.getFrontGears()) && Objects.equals(getRearGears(), fullBike.getRearGears());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFullBikeId(), getFrame(), getBrakeType(), getHandleBarType(), getFrontGears(), getRearGears());
+        return Objects.hash(getFullBikeId(), getFrame(), getBikeName(), getBrakeType(), getGroupsetBrand(), getHandleBarType(), getFrontGears(), getRearGears());
     }
 
     @Override
@@ -118,7 +131,9 @@ public class FullBike {
         return "FullBike{" +
                 "fullBikeId=" + fullBikeId +
                 ", frame=" + frame +
+                ", bikeName='" + bikeName + '\'' +
                 ", brakeType=" + brakeType +
+                ", groupsetBrand=" + groupsetBrand +
                 ", handleBarType=" + handleBarType +
                 ", frontGears=" + frontGears +
                 ", rearGears=" + rearGears +
