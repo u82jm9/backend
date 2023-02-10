@@ -1,6 +1,8 @@
-package com.homeapp.one.demo.models;
+package com.homeapp.one.demo.models.note;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = ("stickynote"))
@@ -14,15 +16,20 @@ public class StickyNote {
     @Column(nullable = false)
     private String title;
 
+    @ElementCollection
     @Column
-    private String message;
+    private Map<String, Boolean> messageMap = new HashMap<String, Boolean>();
+
+    @Column
+    private boolean complete;
 
     public StickyNote() {
     }
 
-    public StickyNote(String title, String message) {
+    public StickyNote(String title, Map<String, Boolean> messageMap, boolean complete) {
         this.title = title;
-        this.message = message;
+        this.messageMap = messageMap;
+        this.complete = complete;
     }
 
     public long getStickyNoteId() {
@@ -37,12 +44,20 @@ public class StickyNote {
         this.title = title;
     }
 
-    public String getMessage() {
-        return message;
+    public Map<String, Boolean> getMessageMap() {
+        return messageMap;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessageMap(Map<String, Boolean> messageMap) {
+        this.messageMap = messageMap;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
     }
 
     @Override
@@ -50,7 +65,8 @@ public class StickyNote {
         return "StickyNote{" +
                 "stickyNoteId=" + stickyNoteId +
                 ", title='" + title + '\'' +
-                ", message='" + message + '\'' +
+                ", message=" + messageMap +
+                ", complete=" + complete +
                 '}';
     }
 }

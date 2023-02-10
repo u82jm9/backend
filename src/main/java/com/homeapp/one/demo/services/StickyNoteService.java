@@ -1,13 +1,15 @@
 package com.homeapp.one.demo.services;
 
-import com.homeapp.one.demo.models.StickyNote;
+import com.homeapp.one.demo.models.note.StickyNote;
 import com.homeapp.one.demo.repository.StickyNoteDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -18,12 +20,30 @@ public class StickyNoteService {
     @Autowired
     private StickyNoteDao stickyNoteDao;
 
+    public void create(String title, String message, Boolean complete) {
+        if (retrieveByTitle(title) != null) {
+            LOGGER.warn("Sticky note with this title already exists, not creating a new one!");
+        } else {
+            String newMessage = message.replace(".\s", "\n");
+            LOGGER.info("Adding Sticky Note with title: " + title);
+            Map<String, Boolean> map = new HashMap<>();
+            String[] array = newMessage.split("\n");
+            for (String s : array) {
+                map.put(s, complete);
+            }
+            StickyNote n = new StickyNote();
+            n.setTitle(title);
+            n.setMessageMap(map);
+            n.setComplete(complete);
+            stickyNoteDao.save(n);
+        }
+    }
+
     public void create(StickyNote note) {
-        if (retrieveByTitle(note) != null) {
+        if (retrieveByTitle(note.getTitle()) != null) {
             LOGGER.warn("Sticky note with this title already exists, not creating a new one!");
         } else {
             LOGGER.info("Adding Sticky Note with title: " + note.getTitle());
-            note.setMessage(note.getMessage().replace("\n", ". "));
             stickyNoteDao.save(note);
         }
     }
@@ -34,13 +54,13 @@ public class StickyNoteService {
         return list;
     }
 
-    public StickyNote retrieveByTitle(StickyNote note) {
-        StickyNote noteFromDB = stickyNoteDao.findStickyNoteByTitle(note.getTitle());
+    public StickyNote retrieveByTitle(String title) {
+        StickyNote noteFromDB = stickyNoteDao.findStickyNoteByTitle(title);
         if (noteFromDB != null) {
-            LOGGER.info("Retrieving by Title, Sticky Note with Title: " + note.getTitle());
+            LOGGER.info("Retrieving by Title, Sticky Note with Title: " + title);
             return noteFromDB;
         } else {
-            LOGGER.warn("Could not retrieve Sticky Note by title for: " + note.getTitle());
+            LOGGER.warn("Could not retrieve Sticky Note by title for: " + title);
             return null;
         }
     }
@@ -67,5 +87,15 @@ public class StickyNoteService {
 
     public void deleteAll() {
         stickyNoteDao.deleteAll();
+    }
+
+    public void updateNoteComplete(StickyNote note) {
+        if(note.getMessageMap().values().contains(false)){
+            note.setComplete(false);
+            System.out.println("False");
+        } else {
+            note.setComplete(true);
+            System.out.println("True");
+        }
     }
 }

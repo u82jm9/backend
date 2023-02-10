@@ -1,14 +1,16 @@
 package com.homeapp.one.demo.controller;
 
-import java.util.List;
-
-import com.homeapp.one.demo.models.StickyNote;
+import com.homeapp.one.demo.models.note.DTOnote;
+import com.homeapp.one.demo.models.note.StickyNote;
 import com.homeapp.one.demo.services.StickyNoteService;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("StickyNotes/")
@@ -28,9 +30,9 @@ public class StickyNoteController {
     }
 
     @PostMapping("AddNote")
-    public ResponseEntity<List> addStickyNote(@RequestBody StickyNote note) {
+    public ResponseEntity<List> addStickyNote(@RequestBody DTOnote note) {
         LOGGER.info("Adding new Sticky Note, AddNote API");
-        stickyNoteService.create(note);
+        stickyNoteService.create(note.getNoteTitle(), note.getNoteMessage(), note.getNoteComplete());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -52,6 +54,7 @@ public class StickyNoteController {
     @PostMapping("EditNote")
     public ResponseEntity<List> editStickyNote(@RequestBody StickyNote note) {
         LOGGER.info("Editing Sticky Note, Edit Note API");
+        stickyNoteService.updateNoteComplete(note);
         stickyNoteService.editStickyNote(note);
         return new ResponseEntity<>(HttpStatus.OK);
     }
