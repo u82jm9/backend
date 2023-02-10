@@ -1,7 +1,7 @@
-package com.homeapp.one.demo.models;
+package com.homeapp.one.demo.models.bike;
 
-import com.homeapp.one.demo.models.Enums.FrameStyle;
-import com.homeapp.one.demo.models.Enums.ShifterStyle;
+import com.homeapp.one.demo.models.bike.Enums.FrameStyle;
+import com.homeapp.one.demo.models.bike.Enums.ShifterStyle;
 
 import javax.persistence.*;
 import java.util.Objects;

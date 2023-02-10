@@ -1,7 +1,7 @@
 package com.homeapp.one.demo.services;
 
-import com.homeapp.one.demo.models.Enums.FrameStyle;
-import com.homeapp.one.demo.models.FullBike;
+import com.homeapp.one.demo.models.bike.Enums.FrameStyle;
+import com.homeapp.one.demo.models.bike.FullBike;
 import com.homeapp.one.demo.repository.FullBikeDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

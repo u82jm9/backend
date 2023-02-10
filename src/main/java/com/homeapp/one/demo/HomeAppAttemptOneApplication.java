@@ -1,6 +1,9 @@
 package com.homeapp.one.demo;
 
-import com.homeapp.one.demo.models.*;
+import com.homeapp.one.demo.models.bike.Frame;
+import com.homeapp.one.demo.models.bike.FrontGears;
+import com.homeapp.one.demo.models.bike.FullBike;
+import com.homeapp.one.demo.models.bike.RearGears;
 import com.homeapp.one.demo.services.FullBikeService;
 import com.homeapp.one.demo.services.StickyNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +11,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import static com.homeapp.one.demo.models.Enums.BrakeType.*;
-import static com.homeapp.one.demo.models.Enums.FrameStyle.*;
-import static com.homeapp.one.demo.models.Enums.GroupsetBrand.*;
-import static com.homeapp.one.demo.models.Enums.HandleBarType.*;
-import static com.homeapp.one.demo.models.Enums.ShifterStyle.*;
-import static com.homeapp.one.demo.models.Enums.SramGroupSet.*;
-import static com.homeapp.one.demo.models.Enums.ShimanoGroupSet.*;
+import static com.homeapp.one.demo.models.bike.Enums.BrakeType.*;
+import static com.homeapp.one.demo.models.bike.Enums.FrameStyle.*;
+import static com.homeapp.one.demo.models.bike.Enums.GroupsetBrand.*;
+import static com.homeapp.one.demo.models.bike.Enums.HandleBarType.*;
+import static com.homeapp.one.demo.models.bike.Enums.ShifterStyle.*;
+import static com.homeapp.one.demo.models.bike.Enums.SramGroupSet.*;
+import static com.homeapp.one.demo.models.bike.Enums.ShimanoGroupSet.*;
 
 @SpringBootApplication
 public class HomeAppAttemptOneApplication implements CommandLineRunner {
@@ -30,12 +33,12 @@ public class HomeAppAttemptOneApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		stickyNoteService.create(new StickyNote("Morning Routine", "Get up with Tristan. Make Coffee. Wake up Lily and Izzy. Make Breakfast. Brush Teeth. Go to work"));
-		stickyNoteService.create(new StickyNote("Still to do...", "Create weather scrape, using jSoup. Create photo scrape. Create bike design and price."));
-		stickyNoteService.create(new StickyNote("Doctor Call", "Monday 22nd at around 8-30am"));
-		stickyNoteService.create(new StickyNote("Gardening Work Left", "Dig more soil from Zebo. Flatten front and back lawns. Seed new grass. Fix nasty bit behind shed"));
-		stickyNoteService.create(new StickyNote("Nothing Useful", "This is just to make an extra Sticky Note as I thought 4 would look better than 3!"));
-		stickyNoteService.create(new StickyNote("Go for a run!", "Seriously get up early and go for a run!!\nYou're just being lazy!"));
+		stickyNoteService.create("Morning Routine", "Get up with Tristan. Make Coffee. Wake up Lily and Izzy. Make Breakfast. Brush Teeth. Go to work", false);
+		stickyNoteService.create("Still to do...", "Create weather scrape, using jSoup. Create photo scrape. Create bike design and price.", false);
+		stickyNoteService.create("Doctor Call", "Monday 22nd at around 8-30am", true);
+		stickyNoteService.create("Gardening Work Left", "Dig more soil from Zebo. Flatten front and back lawns. Seed new grass. Fix nasty bit behind shed", true);
+		stickyNoteService.create("Nothing Useful", "This is just to make an extra Sticky Note as I thought 4 would look better than 3!", true);
+		stickyNoteService.create("Go for a run!", "Seriously get up early and go for a run!!\nYou're just being lazy!", false);
 
 		Frame frame1 = new Frame(GRAVEL, true, false, true, STI);
 		FrontGears frontGears1 = new FrontGears(1);

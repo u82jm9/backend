@@ -1,4 +1,4 @@
-package com.homeapp.one.demo.models.Enums;
+package com.homeapp.one.demo.models.bike.Enums;
 
 public enum GroupsetBrand {
 

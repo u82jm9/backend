@@ -1,8 +1,8 @@
 package com.homeapp.one.demo.controller;
 
-import com.homeapp.one.demo.models.Enums.FrameStyle;
-import com.homeapp.one.demo.models.Frame;
-import com.homeapp.one.demo.models.FullBike;
+import com.homeapp.one.demo.models.bike.Enums.FrameStyle;
+import com.homeapp.one.demo.models.bike.Frame;
+import com.homeapp.one.demo.models.bike.FullBike;
 import com.homeapp.one.demo.services.FullBikeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

@@ -1,9 +1,9 @@
 package com.homeapp.one.demo;
 
-import com.homeapp.one.demo.models.Frame;
-import com.homeapp.one.demo.models.FrontGears;
-import com.homeapp.one.demo.models.FullBike;
-import com.homeapp.one.demo.models.RearGears;
+import com.homeapp.one.demo.models.bike.Frame;
+import com.homeapp.one.demo.models.bike.FrontGears;
+import com.homeapp.one.demo.models.bike.FullBike;
+import com.homeapp.one.demo.models.bike.RearGears;
 import com.homeapp.one.demo.services.FullBikeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,14 +14,14 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
-import static com.homeapp.one.demo.models.Enums.BrakeType.HYDRAULIC_DISC;
-import static com.homeapp.one.demo.models.Enums.BrakeType.RIM;
-import static com.homeapp.one.demo.models.Enums.FrameStyle.GRAVEL;
-import static com.homeapp.one.demo.models.Enums.FrameStyle.ROAD;
-import static com.homeapp.one.demo.models.Enums.GroupsetBrand.SHIMANO;
-import static com.homeapp.one.demo.models.Enums.GroupsetBrand.SRAM;
-import static com.homeapp.one.demo.models.Enums.HandleBarType.DROPS;
-import static com.homeapp.one.demo.models.Enums.ShifterStyle.STI;
+import static com.homeapp.one.demo.models.bike.Enums.BrakeType.HYDRAULIC_DISC;
+import static com.homeapp.one.demo.models.bike.Enums.BrakeType.RIM;
+import static com.homeapp.one.demo.models.bike.Enums.FrameStyle.GRAVEL;
+import static com.homeapp.one.demo.models.bike.Enums.FrameStyle.ROAD;
+import static com.homeapp.one.demo.models.bike.Enums.GroupsetBrand.SHIMANO;
+import static com.homeapp.one.demo.models.bike.Enums.GroupsetBrand.SRAM;
+import static com.homeapp.one.demo.models.bike.Enums.HandleBarType.DROPS;
+import static com.homeapp.one.demo.models.bike.Enums.ShifterStyle.STI;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest

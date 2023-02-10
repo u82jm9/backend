@@ -1,8 +1,8 @@
-package com.homeapp.one.demo.models;
+package com.homeapp.one.demo.models.bike;
 
-import com.homeapp.one.demo.models.Enums.BrakeType;
-import com.homeapp.one.demo.models.Enums.GroupsetBrand;
-import com.homeapp.one.demo.models.Enums.HandleBarType;
+import com.homeapp.one.demo.models.bike.Enums.BrakeType;
+import com.homeapp.one.demo.models.bike.Enums.GroupsetBrand;
+import com.homeapp.one.demo.models.bike.Enums.HandleBarType;
 
 import javax.persistence.*;
 import java.util.Objects;

@@ -1,21 +1,18 @@
-package com.homeapp.one.demo.models;
+package com.homeapp.one.demo.models.bike;
 
-import com.homeapp.one.demo.models.Enums.CampagnoloGroupSet;
-import com.homeapp.one.demo.models.Enums.GroupsetBrand;
-import com.homeapp.one.demo.models.Enums.ShimanoGroupSet;
-import com.homeapp.one.demo.models.Enums.SramGroupSet;
+import com.homeapp.one.demo.models.bike.Enums.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table
-public class RearGears {
+public class FrontGears {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rearGearsGen")
-    @SequenceGenerator(name = "rearGearsGen", sequenceName = "REAR_GEARS_SEQ", allocationSize = 1)
-    @Column(name = "RearGearsId")
-    private long rearGearsId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "frontGearsGen")
+    @SequenceGenerator(name = "frontGearsGen", sequenceName = "FRONT_GEARS_SEQ", allocationSize = 1)
+    @Column(name = "FrontGearsId")
+    private long frontGearsId;
 
     @Column
     private long numberOfGears;
@@ -29,16 +26,15 @@ public class RearGears {
     @Column
     private ShimanoGroupSet shimanoGroupSet;
 
-    public RearGears() {
+    public FrontGears() {
     }
 
-    public RearGears(long numberOfGears) {
+    public FrontGears(long numberOfGears) {
         this.numberOfGears = numberOfGears;
-
     }
 
-    public long getRearGearsId() {
-        return rearGearsId;
+    public long getFrontGearsId() {
+        return frontGearsId;
     }
 
     public long getNumberOfGears() {
@@ -75,8 +71,8 @@ public class RearGears {
 
     @Override
     public String toString() {
-        return "RearGears{" +
-                "rearGearsId=" + rearGearsId +
+        return "FrontGears{" +
+                "frontGearsId=" + frontGearsId +
                 ", numberOfGears=" + numberOfGears +
                 ", campagnoloGroupSet=" + campagnoloGroupSet +
                 ", sramGroupSet=" + sramGroupSet +

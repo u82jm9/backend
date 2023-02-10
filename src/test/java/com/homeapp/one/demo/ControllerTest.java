@@ -2,7 +2,11 @@ package com.homeapp.one.demo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.one.demo.controller.StickyNoteController;
-import com.homeapp.one.demo.models.*;
+import com.homeapp.one.demo.models.bike.Frame;
+import com.homeapp.one.demo.models.bike.FrontGears;
+import com.homeapp.one.demo.models.bike.FullBike;
+import com.homeapp.one.demo.models.bike.RearGears;
+import com.homeapp.one.demo.models.note.StickyNote;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +19,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
-import static com.homeapp.one.demo.models.Enums.BrakeType.MECHANICAL_DISC;
-import static com.homeapp.one.demo.models.Enums.FrameStyle.GRAVEL;
-import static com.homeapp.one.demo.models.Enums.GroupsetBrand.SHIMANO;
-import static com.homeapp.one.demo.models.Enums.HandleBarType.DROPS;
-import static com.homeapp.one.demo.models.Enums.ShifterStyle.STI;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.homeapp.one.demo.models.bike.Enums.BrakeType.MECHANICAL_DISC;
+import static com.homeapp.one.demo.models.bike.Enums.FrameStyle.GRAVEL;
+import static com.homeapp.one.demo.models.bike.Enums.GroupsetBrand.SHIMANO;
+import static com.homeapp.one.demo.models.bike.Enums.HandleBarType.DROPS;
+import static com.homeapp.one.demo.models.bike.Enums.ShifterStyle.STI;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,7 +66,9 @@ public class ControllerTest {
 
     @Test
     public void test_That_a_note_can_be_created() throws Exception {
-        StickyNote note = new StickyNote("Controller test", "Noty note");
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("Test Message", false);
+        StickyNote note = new StickyNote("Controller test", map, false);
         this.mockMvc.perform(post(STICKY_NOTE_URL + "AddNote").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(note))).andExpect(status().isCreated());
     }
@@ -84,7 +93,9 @@ public class ControllerTest {
 
     @Test
     public void test_That_a_Note_can_be_edited() throws Exception {
-        StickyNote note = new StickyNote("Go for a run!", "Edited Message");
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("Do it NOW!", false);
+        StickyNote note = new StickyNote("Go for a run!", map, false);
         this.mockMvc.perform(post(STICKY_NOTE_URL + "EditNote").session(session).contentType("application/json")
                         .content(objectMapper.writeValueAsString(note)))
                 .andExpect(status().isOk());
