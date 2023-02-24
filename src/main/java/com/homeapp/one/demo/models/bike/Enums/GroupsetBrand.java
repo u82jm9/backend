@@ -15,13 +15,11 @@ public enum GroupsetBrand {
     }
 
     public static GroupsetBrand fromName(String name) {
-        if (name.equalsIgnoreCase("SRAM")) {
-            return SRAM;
-        } else if (name.equalsIgnoreCase("Campagnolo")) {
-            return CAMPAGNOLO;
-        } else if (name.equalsIgnoreCase("Shimano")) {
-            return SHIMANO;
-        } else return OTHER;
+        return switch (name) {
+            case "SRAM" -> SRAM;
+            case "Campagnolo" -> CAMPAGNOLO;
+            case "Shimano" -> SHIMANO;
+            default -> OTHER;
+        };
     }
-
 }

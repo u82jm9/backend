@@ -15,10 +15,10 @@ public enum ShifterStyle {
     }
 
     public static ShifterStyle fromName(String name) {
-        if (name.equalsIgnoreCase("Trigger")) {
-            return TRIGGER;
-        } else if (name.equalsIgnoreCase("STI")) {
-            return STI;
-        } else return NONE;
+        return switch (name) {
+            case "Trigger" -> TRIGGER;
+            case "STI" -> STI;
+            default -> NONE;
+        };
     }
 }

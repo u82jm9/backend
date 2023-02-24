@@ -3,6 +3,7 @@ package com.homeapp.one.demo.models.bike;
 import com.homeapp.one.demo.models.bike.Enums.BrakeType;
 import com.homeapp.one.demo.models.bike.Enums.GroupsetBrand;
 import com.homeapp.one.demo.models.bike.Enums.HandleBarType;
+import com.homeapp.one.demo.models.bike.Enums.ShifterStyle;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -23,12 +24,13 @@ public class FullBike {
     @Column(name = "BikeName")
     private String bikeName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "Brakes")
     private BrakeType brakeType;
 
-    @Column(nullable = false)
+    @Column
     private GroupsetBrand groupsetBrand;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "Bars")
     private HandleBarType handleBarType;
 
@@ -40,10 +42,14 @@ public class FullBike {
     @JoinColumn(name = "RearGearsId")
     private RearGears rearGears;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    private ShifterStyle shifterStyle;
+
     public FullBike() {
     }
 
-    public FullBike(String bikeName, Frame frame, BrakeType brakeType, GroupsetBrand groupsetBrand, HandleBarType handleBarType, FrontGears frontGears, RearGears rearGears) {
+    public FullBike(String bikeName, Frame frame, BrakeType brakeType, GroupsetBrand groupsetBrand, HandleBarType handleBarType, FrontGears frontGears, RearGears rearGears, ShifterStyle shifterStyle) {
         this.frame = frame;
         this.bikeName = bikeName;
         this.brakeType = brakeType;
@@ -51,6 +57,7 @@ public class FullBike {
         this.handleBarType = handleBarType;
         this.frontGears = frontGears;
         this.rearGears = rearGears;
+        this.shifterStyle = shifterStyle;
     }
 
     public GroupsetBrand getGroupsetBrand() {
@@ -85,7 +92,7 @@ public class FullBike {
         return brakeType;
     }
 
-    public void setBrakeType(BrakeType handlebarType) {
+    public void setBrakeType(BrakeType brakeType) {
         this.brakeType = brakeType;
     }
 
@@ -113,17 +120,12 @@ public class FullBike {
         this.rearGears = rearGears;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FullBike)) return false;
-        FullBike fullBike = (FullBike) o;
-        return getFullBikeId() == fullBike.getFullBikeId() && Objects.equals(getFrame(), fullBike.getFrame()) && Objects.equals(getBikeName(), fullBike.getBikeName()) && getBrakeType() == fullBike.getBrakeType() && getGroupsetBrand() == fullBike.getGroupsetBrand() && getHandleBarType() == fullBike.getHandleBarType() && Objects.equals(getFrontGears(), fullBike.getFrontGears()) && Objects.equals(getRearGears(), fullBike.getRearGears());
+    public ShifterStyle getShifterStyle() {
+        return shifterStyle;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getFullBikeId(), getFrame(), getBikeName(), getBrakeType(), getGroupsetBrand(), getHandleBarType(), getFrontGears(), getRearGears());
+    public void setShifterStyle(ShifterStyle shifterStyle) {
+        this.shifterStyle = shifterStyle;
     }
 
     @Override
@@ -137,6 +139,7 @@ public class FullBike {
                 ", handleBarType=" + handleBarType +
                 ", frontGears=" + frontGears +
                 ", rearGears=" + rearGears +
+                ", shifterStyle=" + shifterStyle +
                 '}';
     }
 }

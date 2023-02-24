@@ -21,30 +21,27 @@ public class Frame {
     @Column
     private long tireClearance;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private FrameStyle frameStyle;
 
-    @Column(nullable = false)
+    @Column
     private boolean discBrakeCompatible;
 
-    @Column(nullable = false)
+    @Column
     private boolean requiresFrontGearCable;
 
-    @Column(nullable = false)
+    @Column
     private boolean requiresRearGearCable;
-
-    @Column(nullable = false)
-    private ShifterStyle shifterStyle;
 
     public Frame() {
     }
 
-    public Frame(FrameStyle frameStyle, boolean discBrakeCompatible, boolean requiresFrontGearCable, boolean requiresRearGearCable, ShifterStyle shifterStyle) {
+    public Frame(FrameStyle frameStyle, boolean discBrakeCompatible, boolean requiresFrontGearCable, boolean requiresRearGearCable) {
         this.frameStyle = frameStyle;
         this.discBrakeCompatible = discBrakeCompatible;
         this.requiresFrontGearCable = requiresFrontGearCable;
         this.requiresRearGearCable = requiresRearGearCable;
-        this.shifterStyle = shifterStyle;
     }
 
     public long getFrameId() {
@@ -99,25 +96,17 @@ public class Frame {
         this.requiresRearGearCable = requiresRearGearCable;
     }
 
-    public ShifterStyle getShifterStyle() {
-        return shifterStyle;
-    }
-
-    public void setShifterStyle(ShifterStyle shifterStyle) {
-        this.shifterStyle = shifterStyle;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Frame)) return false;
         Frame frame = (Frame) o;
-        return getFrameId() == frame.getFrameId() && getSize() == frame.getSize() && getTireClearance() == frame.getTireClearance() && isDiscBrakeCompatible() == frame.isDiscBrakeCompatible() && isRequiresFrontGearCable() == frame.isRequiresFrontGearCable() && isRequiresRearGearCable() == frame.isRequiresRearGearCable() && getFrameStyle() == frame.getFrameStyle() && getShifterStyle() == frame.getShifterStyle();
+        return getFrameId() == frame.getFrameId() && getSize() == frame.getSize() && getTireClearance() == frame.getTireClearance() && isDiscBrakeCompatible() == frame.isDiscBrakeCompatible() && isRequiresFrontGearCable() == frame.isRequiresFrontGearCable() && isRequiresRearGearCable() == frame.isRequiresRearGearCable() && getFrameStyle() == frame.getFrameStyle();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFrameId(), getSize(), getTireClearance(), getFrameStyle(), isDiscBrakeCompatible(), isRequiresFrontGearCable(), isRequiresRearGearCable(), getShifterStyle());
+        return Objects.hash(getFrameId(), getSize(), getTireClearance(), getFrameStyle(), isDiscBrakeCompatible(), isRequiresFrontGearCable(), isRequiresRearGearCable());
     }
 
     @Override
@@ -130,7 +119,6 @@ public class Frame {
                 ", discBrakeCompatible=" + discBrakeCompatible +
                 ", requiresFrontGearCable=" + requiresFrontGearCable +
                 ", requiresRearGearCable=" + requiresRearGearCable +
-                ", shifterStyle=" + shifterStyle +
                 '}';
     }
 }

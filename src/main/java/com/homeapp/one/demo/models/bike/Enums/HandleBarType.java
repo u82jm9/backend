@@ -2,7 +2,7 @@ package com.homeapp.one.demo.models.bike.Enums;
 
 public enum HandleBarType {
 
-    DROPS("Drops"), FLAT("Flat"), BULLHORNS("Bullhorns"), FLARE("Flare");
+    DROPS("Drops"), FLAT("Flat"), BULLHORNS("Bullhorns"), FLARE("Flare"), NOT_SELECTED("Not Selected");
 
     private String name;
 
@@ -15,14 +15,12 @@ public enum HandleBarType {
     }
 
     public static HandleBarType fromName(String name) {
-        if (name.equalsIgnoreCase("Drops")) {
-            return DROPS;
-        } else if (name.equalsIgnoreCase("Bullhorns")) {
-            return BULLHORNS;
-        } else if (name.equalsIgnoreCase("Flare")) {
-            return FLARE;
-        }
-        return FLAT;
+        return switch (name) {
+            case "Drops" -> DROPS;
+            case "Bullhorns" -> BULLHORNS;
+            case "Flare" -> FLARE;
+            case "Flat" -> FLAT;
+            default -> NOT_SELECTED;
+        };
     }
-
 }
