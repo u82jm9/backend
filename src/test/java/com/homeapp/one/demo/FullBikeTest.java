@@ -34,10 +34,10 @@ public class FullBikeTest {
 
     @BeforeEach
     private void setup() {
-        Frame frame = new Frame(GRAVEL, true, false, true, STI);
+        Frame frame = new Frame(GRAVEL, true, false, true);
         FrontGears frontGears = new FrontGears(1);
         RearGears rearGears = new RearGears(11);
-        FullBike bike = new FullBike("bike", frame, HYDRAULIC_DISC, SRAM, DROPS, frontGears, rearGears);
+        FullBike bike = new FullBike("bike", frame, HYDRAULIC_DISC, SRAM, DROPS, frontGears, rearGears, STI);
         fullBikeService.create(bike);
     }
 
@@ -55,10 +55,10 @@ public class FullBikeTest {
     @Test
     public void test_That_a_Full_Bike_can_be_created() {
         Integer numberOfBikesBefore = fullBikeService.getAllFullBikes().size();
-        Frame frame = new Frame(ROAD, false, true, true, STI);
+        Frame frame = new Frame(ROAD, false, true, true);
         FrontGears frontGears = new FrontGears(2);
         RearGears rearGears = new RearGears(10);
-        FullBike testBike = new FullBike("test Bike", frame, RIM, SHIMANO, DROPS, frontGears, rearGears);
+        FullBike testBike = new FullBike("test Bike", frame, RIM, SHIMANO, DROPS, frontGears, rearGears, STI);
         fullBikeService.create(testBike);
         Integer numberOfBikesAfter = fullBikeService.getAllFullBikes().size();
         assertTrue(numberOfBikesAfter > numberOfBikesBefore);

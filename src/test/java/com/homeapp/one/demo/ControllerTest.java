@@ -136,10 +136,10 @@ public class ControllerTest {
 
     @Test
     public void test_That_a_fully_defined_bike_can_be_created() throws Exception {
-        Frame frame = new Frame(GRAVEL, false, true, true, STI);
+        Frame frame = new Frame(GRAVEL, false, true, true);
         FrontGears frontGears = new FrontGears(1);
         RearGears rearGears = new RearGears(11);
-        FullBike testBike = new FullBike("testBike", frame, MECHANICAL_DISC, SHIMANO, DROPS, frontGears, rearGears);
+        FullBike testBike = new FullBike("testBike", frame, MECHANICAL_DISC, SHIMANO, DROPS, frontGears, rearGears, STI);
         this.mockMvc.perform(post(FULL_BIKE_URL + "AddFullBike").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(testBike))).andExpect(status().isCreated());
     }
