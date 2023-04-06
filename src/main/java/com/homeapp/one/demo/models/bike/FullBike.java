@@ -28,8 +28,10 @@ public class FullBike {
     @Column(name = "Brakes")
     private BrakeType brakeType;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private GroupsetBrand groupsetBrand;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "Bars")
     private HandleBarType handleBarType;

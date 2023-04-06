@@ -2,7 +2,9 @@ package com.homeapp.one.demo.services;
 
 import com.homeapp.one.demo.models.bike.Enums.*;
 import com.homeapp.one.demo.models.bike.Frame;
+import com.homeapp.one.demo.models.bike.FrontGears;
 import com.homeapp.one.demo.models.bike.FullBike;
+import com.homeapp.one.demo.models.bike.RearGears;
 import com.homeapp.one.demo.repository.FullBikeDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,11 +81,42 @@ public class FullBikeService {
         return brakes;
     }
 
+    public List<String> getShimanoGroupset() {
+        List<ShimanoGroupSet> sg = Arrays.stream(ShimanoGroupSet.values()).collect(Collectors.toList());
+        List<String> groupsets = new ArrayList<>();
+        for (ShimanoGroupSet b : sg) {
+            groupsets.add(b.getName());
+        }
+        LOGGER.info("Getting all Shimano Groupsets, number returned: " + groupsets.size());
+        return groupsets;
+    }
+
+    public List<String> getSramGroupset() {
+        List<SramGroupSet> sg = Arrays.stream(SramGroupSet.values()).collect(Collectors.toList());
+        List<String> groupsets = new ArrayList<>();
+        for (SramGroupSet b : sg) {
+            groupsets.add(b.getName());
+        }
+        LOGGER.info("Getting all Sram Groupsets, number returned: " + groupsets.size());
+        return groupsets;
+    }
+
+    public List<String> getCampagGroupset() {
+        List<CampagnoloGroupSet> cg = Arrays.stream(CampagnoloGroupSet.values()).collect(Collectors.toList());
+        List<String> groupsets = new ArrayList<>();
+        for (CampagnoloGroupSet b : cg) {
+            groupsets.add(b.getName());
+        }
+        LOGGER.info("Getting all Campagnolo Groupsets, number returned: " + groupsets.size());
+        return groupsets;
+    }
+
     public FullBike updateBike(FullBike bike) {
         LOGGER.info("Updating bike in DB!");
         checkBikeShifters(bike);
         checkFrameStyle(bike);
         checkBrakeCompatibility(bike);
+        System.out.println(bike);
         fullBikeDao.save(bike);
         return bike;
     }
@@ -139,6 +172,8 @@ public class FullBikeService {
             bike.setShifterStyle(ShifterStyle.NONE);
             bike.setGroupsetBrand(GroupsetBrand.OTHER);
             bike.setHandleBarType(NOT_SELECTED);
+            bike.setFrontGears(new FrontGears(1));
+            bike.setRearGears(new RearGears(1));
             create(bike);
         }
         return bike;

@@ -7,10 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class StickyNoteService {
@@ -51,6 +48,12 @@ public class StickyNoteService {
     public List<StickyNote> retrieveAllNotes() {
         List<StickyNote> list = stickyNoteDao.findAll();
         LOGGER.info("Number of notes found: " + list.size());
+        Collections.sort(list, new Comparator<StickyNote>() {
+            @Override
+            public int compare(StickyNote o1, StickyNote o2) {
+                return Boolean.compare(o1.isComplete(), o2.isComplete());
+            }
+        });
         return list;
     }
 
@@ -90,7 +93,7 @@ public class StickyNoteService {
     }
 
     public void updateNoteComplete(StickyNote note) {
-        if(note.getMessageMap().values().contains(false)){
+        if (note.getMessageMap().containsValue(false)) {
             note.setComplete(false);
             System.out.println("False");
         } else {

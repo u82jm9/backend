@@ -63,6 +63,27 @@ public class FullBikeController {
         return new ResponseEntity<List<String>>(brakeNames, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("GetShimano")
+    public ResponseEntity<List<String>> getShimano() {
+        LOGGER.info("Get all Shimano Groupsets, API");
+        List<String> shimanoNames = fullBikeService.getShimanoGroupset();
+        return new ResponseEntity<List<String>>(shimanoNames, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("GetSram")
+    public ResponseEntity<List<String>> getSram() {
+        LOGGER.info("Get all Sram Groupsets, API");
+        List<String> sramNames = fullBikeService.getSramGroupset();
+        return new ResponseEntity<List<String>>(sramNames, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("GetCampag")
+    public ResponseEntity<List<String>> getCampag() {
+        LOGGER.info("Get all Campagnolo Groupsets, API");
+        List<String> campagNames = fullBikeService.getCampagGroupset();
+        return new ResponseEntity<List<String>>(campagNames, HttpStatus.ACCEPTED);
+    }
+
     @PostMapping("AddFullBike")
     public ResponseEntity<List> addFullBike(@RequestBody FullBike bike) {
         LOGGER.info("Adding new full bike, API");
