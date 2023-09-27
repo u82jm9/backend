@@ -3,7 +3,7 @@ package com.homeapp.one.demo.models.bike.Enums;
 public enum ShimanoGroupSet {
 
     CLARIS("Claris"), SORA("Sora"), TIAGRA("Tiagra"), DURA_ACE("Dura Ace"),
-    ONE_O_FIVE("105"), ULTEGRA("Ultegra");
+    ONE_O_FIVE("105"), ULTEGRA("Ultegra"), OTHER("Other");
 
     private String name;
 
@@ -22,7 +22,8 @@ public enum ShimanoGroupSet {
             case "Tiagra" -> TIAGRA;
             case "105" -> ONE_O_FIVE;
             case "Ultegra" -> ULTEGRA;
-            default -> DURA_ACE;
+            case "Dura Ace" -> DURA_ACE;
+            default -> OTHER;
         };
     }
 

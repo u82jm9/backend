@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import static com.homeapp.one.demo.models.bike.Enums.BrakeType.NOT_REQUIRED;
 import static com.homeapp.one.demo.models.bike.Enums.BrakeType.RIM;
-import static com.homeapp.one.demo.models.bike.Enums.FrameStyle.SINGLE_SPEED;
+import static com.homeapp.one.demo.models.bike.Enums.FrameStyle.*;
 import static com.homeapp.one.demo.models.bike.Enums.HandleBarType.*;
 import static com.homeapp.one.demo.models.bike.Enums.ShifterStyle.*;
 
@@ -116,7 +116,6 @@ public class FullBikeService {
         checkBikeShifters(bike);
         checkFrameStyle(bike);
         checkBrakeCompatibility(bike);
-        System.out.println(bike);
         fullBikeDao.save(bike);
         return bike;
     }
@@ -133,13 +132,23 @@ public class FullBikeService {
         if (bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
             bike.getFrame().setRequiresFrontGearCable(false);
             bike.getFrame().setRequiresRearGearCable(false);
-        } else if (bike.getFrontGears().getNumberOfGears() > 1) {
-            bike.getFrame().setRequiresFrontGearCable(true);
-        } else if (bike.getRearGears().getNumberOfGears() > 1) {
+            bike.getRearGears().setNumberOfGears(1);
+            bike.getFrontGears().setNumberOfGears(1);
+        } else if (bike.getFrame().getFrameStyle().equals(GRAVEL)) {
+            bike.getFrame().setDiscBrakeCompatible(true);
+            bike.getFrame().setRequiresFrontGearCable(false);
+        } else if (bike.getFrame().getFrameStyle().equals(TOUR)) {
+            bike.getFrame().setDiscBrakeCompatible(true);
+        }
+        if (bike.getFrontGears().getNumberOfGears() > 1) {
             bike.getFrame().setRequiresFrontGearCable(true);
         } else {
-            bike.getFrame().setRequiresFrontGearCable(true);
+            bike.getFrame().setRequiresFrontGearCable(false);
+        }
+        if (bike.getRearGears().getNumberOfGears() > 1) {
             bike.getFrame().setRequiresRearGearCable(true);
+        } else {
+            bike.getFrame().setRequiresRearGearCable(false);
         }
     }
 
@@ -158,7 +167,7 @@ public class FullBikeService {
     public FullBike startNewBike() {
         LOGGER.info("Starting new bike, service method.");
         FullBike bike;
-        List<FullBike> bikesOnDB = getBikeByName("Your Custom Bike");
+        List<FullBike> bikesOnDB = getBikesByName("Your Custom Bike");
         if (bikesOnDB.size() > 0) {
             LOGGER.info("Bike with that name already exists on DB.");
             bike = bikesOnDB.get(0);
@@ -179,8 +188,15 @@ public class FullBikeService {
         return bike;
     }
 
-    private List<FullBike> getBikeByName(String bikeName) {
-        List<FullBike> bikeList = fullBikeDao.findAll().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList());
+    private List<FullBike> getBikesByName(String bikeName) {
+        LOGGER.info("Getting List of Bikes with bike name: " + bikeName);
+        List<FullBike> bikeList = getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList());
         return bikeList;
+    }
+
+    public FullBike getBikeUsingName(String bikeName) {
+        LOGGER.info("Getting single bike with bike name: " + bikeName);
+        FullBike bike = getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList()).get(0);
+        return bike;
     }
 }
