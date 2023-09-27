@@ -45,6 +45,7 @@ public class ControllerTest {
     final static String TEST_API_URL = "/Test/";
     final static String STICKY_NOTE_URL = "/StickyNotes/";
     final static String FULL_BIKE_URL = "/FullBike/";
+    final static String OPTIONS_URL = "/Options/";
 
     @BeforeEach
     public void setup() {
@@ -56,6 +57,12 @@ public class ControllerTest {
     public void close() {
         this.session = null;
         this.mockMvc = null;
+    }
+
+    @Test
+    public void test_That_Options_is_returned_with_Brands() throws Exception {
+        this.mockMvc.perform(get(OPTIONS_URL + "startingNewBike"))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -139,7 +146,7 @@ public class ControllerTest {
         Frame frame = new Frame(GRAVEL, false, true, true);
         FrontGears frontGears = new FrontGears(1);
         RearGears rearGears = new RearGears(11);
-        FullBike testBike = new FullBike("testBike", frame, MECHANICAL_DISC, SHIMANO, DROPS, frontGears, rearGears, STI);
+        FullBike testBike = new FullBike("testBike", null, frame, MECHANICAL_DISC, SHIMANO, DROPS, frontGears, rearGears, STI);
         this.mockMvc.perform(post(FULL_BIKE_URL + "AddFullBike").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(testBike))).andExpect(status().isCreated());
     }
