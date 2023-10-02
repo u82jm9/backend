@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,21 +24,25 @@ public class ShimanoGroupsetService {
     private static String chainReactionURL = "https://www.chainreactioncycles.com/p/";
     private static String wiggleURL = "https://www.wiggle.com/p/";
     private static String link;
+    private static FullBike bike;
+    
+    @Autowired FullBikeService fullBikeService;
 
-    public void getShimanoGroupset(FullBike bike) throws IOException {
-        getChainring(bike);
-        getCassette(bike);
-        getChain(bike);
-        getRearDerailleur(bike);
-        getFrontDerailleur(bike);
+    public void getShimanoGroupset() throws IOException {
+        getChainring();
+        getCassette();
+        getChain();
+        getRearDerailleur();
+        getFrontDerailleur();
         if (bike.getShifterStyle().equals(STI)) {
-            getSTIShifters(bike);
+            getSTIShifters();
         } else {
-            getLeverShifters(bike);
+            getLeverShifters();
         }
     }
 
-    private void getChainring(FullBike bike) throws IOException {
+    private void getChainring() throws IOException {
+        bike = fullBikeService.getBike();
         switch ((int) bike.getFrontGears().getNumberOfGears()) {
             case 1:
                 if (bike.getRearGears().getNumberOfGears() == 10 || bike.getRearGears().getNumberOfGears() == 11) {
@@ -111,10 +116,11 @@ public class ShimanoGroupsetService {
                 }
                 break;
         }
-        setBikePartsFromLink(bike, link, "chainring");
+        setBikePartsFromLink(link, "chainring");
     }
 
-    private void getCassette(FullBike bike) throws IOException {
+    private void getCassette() throws IOException {
+        bike = fullBikeService.getBike();
         switch ((int) bike.getRearGears().getNumberOfGears()) {
             case 8:
                 link = wiggleURL + "shimano-hg50-8-speed-cassette";
@@ -173,10 +179,11 @@ public class ShimanoGroupsetService {
                 }
                 break;
         }
-        setBikePartsFromLink(bike, link, "cassette");
+        setBikePartsFromLink(link, "cassette");
     }
 
-    private void getChain(FullBike bike) throws IOException {
+    private void getChain() throws IOException {
+        bike = fullBikeService.getBike();
         switch ((int) bike.getRearGears().getNumberOfGears()) {
             case 8 -> link = wiggleURL + "shimano-hg-40-6-8-speed-chain";
             case 9 -> link = wiggleURL + "shimano-xt-hg93-9-speed-chain";
@@ -184,10 +191,11 @@ public class ShimanoGroupsetService {
             case 11 -> link = wiggleURL + "shimano-hg601q-105-5800-11-speed-chain";
             case 12 -> link = wiggleURL + "shimano-slx-m7100-12-speed-chain";
         }
-        setBikePartsFromLink(bike, link, "chain");
+        setBikePartsFromLink(link, "chain");
     }
 
-    private void getRearDerailleur(FullBike bike) throws IOException {
+    private void getRearDerailleur() throws IOException {
+        bike = fullBikeService.getBike();
         switch ((int) bike.getRearGears().getNumberOfGears()) {
             case 8:
                 if (bike.getRearGears().getShimanoGroupSet().equals(CLARIS)) {
@@ -242,10 +250,11 @@ public class ShimanoGroupsetService {
                 }
                 break;
         }
-        setBikePartsFromLink(bike, link, "rear-derailleur");
+        setBikePartsFromLink(link, "rear-derailleur");
     }
 
-    private void getFrontDerailleur(FullBike bike) throws IOException {
+    private void getFrontDerailleur() throws IOException {
+        bike = fullBikeService.getBike();
         switch ((int) bike.getFrontGears().getNumberOfGears()) {
             case 1:
                 link = wiggleURL + "deda-dog-fang-chain-catcher";
@@ -294,10 +303,11 @@ public class ShimanoGroupsetService {
                 }
                 break;
         }
-        setBikePartsFromLink(bike, link, "front-derailleur");
+        setBikePartsFromLink(link, "front-derailleur");
     }
 
-    private void getSTIShifters(FullBike bike) throws IOException {
+    private void getSTIShifters() throws IOException {
+        bike = fullBikeService.getBike();
         switch ((int) bike.getFrontGears().getNumberOfGears()) {
             case 1:
                 if (bike.getRearGears().getNumberOfGears() == 8) {
@@ -360,19 +370,21 @@ public class ShimanoGroupsetService {
                 }
                 break;
         }
-        setBikePartsFromLink(bike, link, "shifters");
+        setBikePartsFromLink(link, "shifters");
     }
 
-    private void getLeverShifters(FullBike bike) throws IOException {
+    private void getLeverShifters() throws IOException {
+        bike = fullBikeService.getBike();
         if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
             link = wiggleURL + "shimano-mt410-deore-disc-brake-mt401-lever";
         } else {
             link = wiggleURL + "shimano-alivio-t4000-brake-levers";
         }
-        setBikePartsFromLink(bike, link, "brake-levers");
+        setBikePartsFromLink(link, "brake-levers");
     }
 
-    public void setBikePartsFromLink(FullBike bike, String link, String part) throws IOException {
+    public void setBikePartsFromLink(String link, String part) throws IOException {
+        bike = fullBikeService.getBike();
         Document doc = Jsoup.connect(link).get();
         Element e = doc.select("div.ProductDetail_container__Z7Hge").get(0);
         String name = e.select("h1").first().text();

@@ -44,7 +44,7 @@ public class BikePartsService {
     private void getGearSet(FullBike bike) throws IOException {
         switch (bike.getGroupsetBrand()) {
             case SHIMANO:
-                shimanoGroupsetService.getShimanoGroupset(bike);
+                shimanoGroupsetService.getShimanoGroupset();
                 break;
 //            case SRAM:
 //                getSramGroupset(bike);

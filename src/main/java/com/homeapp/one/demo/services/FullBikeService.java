@@ -26,9 +26,30 @@ import static com.homeapp.one.demo.models.bike.Enums.ShifterStyle.*;
 public class FullBikeService {
 
     private static Logger LOGGER = LogManager.getLogger(FullBikeService.class);
+    private static FullBikeService instance;
+    private FullBike bike;
 
     @Autowired
     private FullBikeDao fullBikeDao;
+
+    private FullBikeService() {
+        this.bike = new FullBike();
+    }
+
+    public static FullBikeService getInstance() {
+        if (instance == null) {
+            instance = new FullBikeService();
+        }
+        return instance;
+    }
+
+    public FullBike getBike() {
+        return bike;
+    }
+
+    public void setBike(FullBike bike) {
+        this.bike = bike;
+    }
 
     public List<FullBike> getAllFullBikes() {
         List<FullBike> bikeList = fullBikeDao.findAll();
@@ -113,11 +134,12 @@ public class FullBikeService {
 
     public FullBike updateBike(FullBike bike) {
         LOGGER.info("Updating bike in DB!");
+        setBike(bike);
         checkBikeShifters(bike);
         checkFrameStyle(bike);
         checkBrakeCompatibility(bike);
         fullBikeDao.save(bike);
-        return bike;
+        return getBike();
     }
 
     private void checkBrakeCompatibility(FullBike bike) {
