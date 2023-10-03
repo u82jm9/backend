@@ -47,7 +47,7 @@ public class ShimanoGroupsetService {
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getFrontGears().getNumberOfGears()) {
-                case 1:
+                case 1 -> {
                     if (bike.getRearGears().getNumberOfGears() == 10 || bike.getRearGears().getNumberOfGears() == 11) {
                         link = chainReactionURL + "shimano-m5100-deore-10-11-speed-single-chainset";
                         LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: " + OTHER);
@@ -61,8 +61,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: null");
                         bike.getFrontGears().setShimanoGroupSet(null);
                     }
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     if (bike.getRearGears().getNumberOfGears() == 8) {
                         link = chainReactionURL + "shimano-fc-r2000-claris-compact-8-speed-chainset";
                         LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: " + CLARIS);
@@ -100,8 +100,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: null");
                         bike.getFrontGears().setShimanoGroupSet(null);
                     }
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     if (bike.getRearGears().getNumberOfGears() == 8) {
                         link = chainReactionURL + "shimano-claris-r2000-3x8-speed-chainset";
                         LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: " + CLARIS);
@@ -117,7 +117,7 @@ public class ShimanoGroupsetService {
                         bike.getFrontGears().setShimanoGroupSet(TIAGRA);
                         bike.getRearGears().setNumberOfGears(10);
                     }
-                    break;
+                }
             }
             setBikePartsFromLink(link, "chainring");
         } catch (IOException e) {
@@ -129,12 +129,12 @@ public class ShimanoGroupsetService {
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getRearGears().getNumberOfGears()) {
-                case 8:
+                case 8 -> {
                     link = wiggleURL + "shimano-hg50-8-speed-cassette";
                     LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + CLARIS);
                     bike.getRearGears().setShimanoGroupSet(CLARIS);
-                    break;
-                case 9:
+                }
+                case 9 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(CLARIS)) {
                         link = wiggleURL + "shimano-hg50-9-speed-road-cassette";
                     } else if (bike.getRearGears().getShimanoGroupSet().equals(SORA)) {
@@ -144,8 +144,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + SORA);
                         bike.getRearGears().setShimanoGroupSet(SORA);
                     }
-                    break;
-                case 10:
+                }
+                case 10 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(TIAGRA)) {
                         link = chainReactionURL + "shimano-tiagra-hg500-10-speed-road-cassette-5360107149";
                     } else if (bike.getRearGears().getShimanoGroupSet().equals(ONE_O_FIVE)) {
@@ -157,8 +157,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + ULTEGRA);
                         bike.getRearGears().setShimanoGroupSet(ULTEGRA);
                     }
-                    break;
-                case 11:
+                }
+                case 11 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(ONE_O_FIVE)) {
                         link = chainReactionURL + "shimano-105-r7000-11-speed-cassette";
 
@@ -171,8 +171,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + DURA_ACE);
                         bike.getRearGears().setShimanoGroupSet(DURA_ACE);
                     }
-                    break;
-                case 12:
+                }
+                case 12 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(ONE_O_FIVE)) {
                         link = chainReactionURL + "shimano-105-r7100-12-speed-cassette";
                     } else if (bike.getRearGears().getShimanoGroupSet().equals(ULTEGRA)) {
@@ -184,7 +184,7 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + DURA_ACE);
                         bike.getRearGears().setShimanoGroupSet(DURA_ACE);
                     }
-                    break;
+                }
             }
             setBikePartsFromLink(link, "cassette");
         } catch (IOException e) {
@@ -212,7 +212,7 @@ public class ShimanoGroupsetService {
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getRearGears().getNumberOfGears()) {
-                case 8:
+                case 8 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(CLARIS)) {
                         link = wiggleURL + "shimano-claris-r2000-8-speed-rear-derailleur";
                     } else {
@@ -220,8 +220,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + CLARIS);
                         bike.getRearGears().setShimanoGroupSet(CLARIS);
                     }
-                    break;
-                case 9:
+                }
+                case 9 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(SORA)) {
                         link = wiggleURL + "shimano-sora-r3000-9-speed-rear-derailleur";
                     } else {
@@ -229,8 +229,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + SORA);
                         bike.getRearGears().setShimanoGroupSet(SORA);
                     }
-                    break;
-                case 10:
+                }
+                case 10 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(TIAGRA)) {
                         link = wiggleURL + "shimano-tiagra-4700-10-speed-rear-derailleur-gs";
                     } else if (bike.getRearGears().getShimanoGroupSet().equals(ONE_O_FIVE)) {
@@ -240,8 +240,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + ONE_O_FIVE);
                         bike.getRearGears().setShimanoGroupSet(ONE_O_FIVE);
                     }
-                    break;
-                case 11:
+                }
+                case 11 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(ONE_O_FIVE)) {
                         link = chainReactionURL + "shimano-105-r7000-11-speed-rear-derailleur";
 
@@ -252,8 +252,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + ULTEGRA);
                         bike.getRearGears().setShimanoGroupSet(ULTEGRA);
                     }
-                    break;
-                case 12:
+                }
+                case 12 -> {
                     if (bike.getRearGears().getShimanoGroupSet().equals(ULTEGRA)) {
                         link = chainReactionURL + "shimano-ultegra-r8150-di2-12-speed-rear-derailleur";
                     } else if (bike.getRearGears().getShimanoGroupSet().equals(DURA_ACE)) {
@@ -263,7 +263,7 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getRearGears().getShimanoGroupSet() + ", to: " + DURA_ACE);
                         bike.getRearGears().setShimanoGroupSet(DURA_ACE);
                     }
-                    break;
+                }
             }
             setBikePartsFromLink(link, "rear-derailleur");
         } catch (IOException e) {
@@ -275,11 +275,11 @@ public class ShimanoGroupsetService {
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getFrontGears().getNumberOfGears()) {
-                case 1:
+                case 1 -> {
                     link = wiggleURL + "deda-dog-fang-chain-catcher";
                     LOGGER.info("Front Derailleur not required, providing chain catcher");
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     if (bike.getRearGears().getNumberOfGears() == 8) {
                         link = chainReactionURL + "microshift-r8-r252-double-front-derailleur";
                     } else if (bike.getRearGears().getNumberOfGears() == 9) {
@@ -311,8 +311,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: " + OTHER);
                         bike.getFrontGears().setShimanoGroupSet(OTHER);
                     }
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     if (bike.getRearGears().getNumberOfGears() == 8) {
                         link = wiggleURL + "microshift-r539-triple-9-speed-front-road-derailleur";
                     } else if (bike.getRearGears().getNumberOfGears() == 9) {
@@ -320,7 +320,7 @@ public class ShimanoGroupsetService {
                     } else {
                         link = wiggleURL + "shimano-tiagra-4703-3x10sp-braze-on-front-mech";
                     }
-                    break;
+                }
             }
             setBikePartsFromLink(link, "front-derailleur");
         } catch (IOException e) {
@@ -332,7 +332,7 @@ public class ShimanoGroupsetService {
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getFrontGears().getNumberOfGears()) {
-                case 1:
+                case 1 -> {
                     if (bike.getRearGears().getNumberOfGears() == 8) {
                         link = wiggleURL + "microshift-r480-1x8-speed-dual-control-lever-set";
                         if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
@@ -348,9 +348,8 @@ public class ShimanoGroupsetService {
                                     + "! Switched to " + bike.getBrakeType());
                         }
                     }
-
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     if (bike.getRearGears().getNumberOfGears() == 8) {
                         link = chainReactionURL + "microshift-r8-r252-double-front-derailleur";
                     } else if (bike.getRearGears().getNumberOfGears() == 9) {
@@ -382,8 +381,8 @@ public class ShimanoGroupsetService {
                         LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: " + OTHER);
                         bike.getFrontGears().setShimanoGroupSet(OTHER);
                     }
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     if (bike.getRearGears().getNumberOfGears() == 8) {
                         link = wiggleURL + "microshift-r539-triple-9-speed-front-road-derailleur";
                     } else if (bike.getRearGears().getNumberOfGears() == 9) {
@@ -391,7 +390,7 @@ public class ShimanoGroupsetService {
                     } else {
                         link = wiggleURL + "shimano-tiagra-4703-3x10sp-braze-on-front-mech";
                     }
-                    break;
+                }
             }
             setBikePartsFromLink(link, "shifters");
         } catch (IOException e) {
