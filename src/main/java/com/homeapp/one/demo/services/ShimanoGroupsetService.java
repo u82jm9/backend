@@ -31,15 +31,129 @@ public class ShimanoGroupsetService {
     FullBikeService fullBikeService;
 
     public void getShimanoGroupset() {
+        if (bike.getShifterStyle().equals(STI)) {
+            if (bike.getBrakeType().equals(MECHANICAL_DISC)) {
+                getMechanicalSTIShifters();
+            } else {
+                getHydraulicSTIShifters();
+            }
+        } else {
+            getLeverShifters();
+        }
         getChainring();
         getCassette();
         getChain();
         getRearDerailleur();
         getFrontDerailleur();
-        if (bike.getShifterStyle().equals(STI)) {
-            getSTIShifters();
-        } else {
-            getLeverShifters();
+    }
+
+    private void getMechanicalSTIShifters() {
+        try {
+            bike = fullBikeService.getBike();
+            switch ((int) bike.getFrontGears().getNumberOfGears()) {
+                case 1 -> {
+                    if (bike.getRearGears().getNumberOfGears() == 8) {
+                        link = wiggleURL + "microshift-r480-1x8-speed-dual-control-lever-set";
+                    } else if (bike.getRearGears().getNumberOfGears() == 9) {
+                        link = chainReactionURL + "microshift-r490-1x9-speed-dual-control-lever-set";
+                    } else if (bike.getRearGears().getNumberOfGears() == 10) {
+                        link = chainReactionURL + "shimano-tiagra-4700-sti-shifter-set-2x10";
+                    } else if (bike.getRearGears().getNumberOfGears() == 11) {
+                        link = wiggleURL + "shimano-105-r7000-11-speed-levers";
+                    } else {
+                        link = wiggleURL + "shimano-ultegra-r8150-di2-12-speed-shifter-set";
+                    }
+                }
+                case 2 -> {
+                    if (bike.getRearGears().getNumberOfGears() == 8) {
+                        link = chainReactionURL + "shimano-claris-r2000-2x8-speed-shifter-set";
+                    } else if (bike.getRearGears().getNumberOfGears() == 9) {
+                        link = chainReactionURL + "shimano-sora-r3000-2x9-speed-gear-brake-levers";
+                    } else if (bike.getRearGears().getNumberOfGears() == 10) {
+                        link = chainReactionURL + "shimano-tiagra-4700-sti-shifter-set-2x10";
+                    } else if (bike.getRearGears().getNumberOfGears() == 11) {
+                        link = wiggleURL + "shimano-105-r7000-11-speed-levers";
+                    } else {
+                        link = wiggleURL + "shimano-ultegra-r8150-di2-12-speed-shifter-set";
+                    }
+                }
+                case 3 -> {
+                    if (bike.getRearGears().getNumberOfGears() == 8) {
+                        link = chainReactionURL + "microshift-r8-3x8-speed-dual-control-lever-set";
+                    } else {
+                        link = chainReactionURL + "microshift-r9-3x9-speed-dual-control-levers";
+                        bike.getRearGears().setNumberOfGears(9);
+                        LOGGER.warn("3 by Shimano Gears are restricted to a maximum of 9 at the back");
+                    }
+                }
+            }
+            setBikePartsFromLink(link, "shifters");
+        } catch (IOException e) {
+            handleIOException("Get STI Shifters", e);
+        }
+    }
+
+    private void getHydraulicSTIShifters() {
+        try {
+            bike = fullBikeService.getBike();
+            switch ((int) bike.getFrontGears().getNumberOfGears()) {
+                case 1 -> {
+                    if (bike.getRearGears().getNumberOfGears() == 8) {
+                        link = wiggleURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 9) {
+                        link = chainReactionURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 10) {
+                        link = chainReactionURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 11) {
+                        link = wiggleURL + "XXX";
+                    } else {
+                        link = wiggleURL + "XXX";
+                    }
+                }
+                case 2 -> {
+                    if (bike.getRearGears().getNumberOfGears() == 8) {
+                        link = wiggleURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 9) {
+                        link = chainReactionURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 10) {
+                        link = chainReactionURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 11) {
+                        link = wiggleURL + "XXX";
+                    } else {
+                        link = wiggleURL + "XXX";
+                    }
+                }
+                case 3 -> {
+                    if (bike.getRearGears().getNumberOfGears() == 8) {
+                        link = wiggleURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 9) {
+                        link = chainReactionURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 10) {
+                        link = chainReactionURL + "XXX";
+                    } else if (bike.getRearGears().getNumberOfGears() == 11) {
+                        link = wiggleURL + "XXX";
+                    } else {
+                        link = wiggleURL + "XXX";
+                    }
+                }
+            }
+            setBikePartsFromLink(link, "shifters");
+        } catch (IOException e) {
+            handleIOException("Get STI Shifters", e);
+        }
+    }
+
+    private void getLeverShifters() {
+        try {
+            bike = fullBikeService.getBike();
+            if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
+                link = wiggleURL + "shimano-mt410-deore-disc-brake-mt401-lever";
+            } else {
+                link = wiggleURL + "shimano-alivio-t4000-brake-levers";
+            }
+            setBikePartsFromLink(link, "brake-levers");
+        } catch (IOException e) {
+            handleIOException("Get Lever Shifters", e);
         }
     }
 
@@ -325,90 +439,6 @@ public class ShimanoGroupsetService {
             setBikePartsFromLink(link, "front-derailleur");
         } catch (IOException e) {
             handleIOException("Get Front Derailleur", e);
-        }
-    }
-
-    private void getSTIShifters() {
-        try {
-            bike = fullBikeService.getBike();
-            switch ((int) bike.getFrontGears().getNumberOfGears()) {
-                case 1 -> {
-                    if (bike.getRearGears().getNumberOfGears() == 8) {
-                        link = wiggleURL + "microshift-r480-1x8-speed-dual-control-lever-set";
-                        if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
-                            bike.setBrakeType(MECHANICAL_DISC);
-                            LOGGER.info("Hydraulic STI not available for " + bike.getFrontGears().getNumberOfGears() + " x " + bike.getRearGears().getNumberOfGears()
-                                    + "! Switched to " + bike.getBrakeType());
-                        }
-                    } else if (bike.getRearGears().getNumberOfGears() == 9) {
-                        link = wiggleURL + "microshift-r490-1x9-speed-dual-control-lever-set";
-                        if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
-                            bike.setBrakeType(MECHANICAL_DISC);
-                            LOGGER.info("Hydraulic STI not available for " + bike.getFrontGears().getNumberOfGears() + " x " + bike.getRearGears().getNumberOfGears()
-                                    + "! Switched to " + bike.getBrakeType());
-                        }
-                    }
-                }
-                case 2 -> {
-                    if (bike.getRearGears().getNumberOfGears() == 8) {
-                        link = chainReactionURL + "microshift-r8-r252-double-front-derailleur";
-                    } else if (bike.getRearGears().getNumberOfGears() == 9) {
-                        link = wiggleURL + "shimano-sora-r3000-9-speed-double-front-derailleur";
-                    } else if (bike.getRearGears().getNumberOfGears() == 10) {
-                        link = wiggleURL + "shimano-tiagra-fd4700-10-speed-front-derailleur";
-                    } else if (bike.getRearGears().getNumberOfGears() == 11) {
-                        if (bike.getFrontGears().getShimanoGroupSet().equals(ONE_O_FIVE)) {
-                            link = wiggleURL + "shimano-105-r7000-11-speed-front-derailleur";
-                        } else if (bike.getFrontGears().getShimanoGroupSet().equals(ULTEGRA)) {
-                            link = wiggleURL + "shimano-ultegra-r8000-11-speed-band-on-front-derailleur";
-                        } else {
-                            link = wiggleURL + "shimano-dura-ace-r9100-band-on-front-derailleur";
-                            LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: " + DURA_ACE);
-                            bike.getFrontGears().setShimanoGroupSet(DURA_ACE);
-                        }
-                    } else if (bike.getRearGears().getNumberOfGears() == 12) {
-                        if (bike.getFrontGears().getShimanoGroupSet().equals(ONE_O_FIVE)) {
-                            link = wiggleURL + "shimano-105-r7150-di2-e-tube-front-derailleur";
-                        } else if (bike.getFrontGears().getShimanoGroupSet().equals(ULTEGRA)) {
-                            link = wiggleURL + "shimano-ultegra-r8150-di2-12-speed-front-derailleur";
-                        } else {
-                            link = wiggleURL + "shimano-dura-ace-r9250-di2-12-speed-front-derailleur";
-                            LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: " + DURA_ACE);
-                            bike.getFrontGears().setShimanoGroupSet(DURA_ACE);
-                        }
-                    } else {
-                        link = wiggleURL + "microshift-centos-r58-double-front-derailleur";
-                        LOGGER.info("Setting Groupset from: " + bike.getFrontGears().getShimanoGroupSet() + ", to: " + OTHER);
-                        bike.getFrontGears().setShimanoGroupSet(OTHER);
-                    }
-                }
-                case 3 -> {
-                    if (bike.getRearGears().getNumberOfGears() == 8) {
-                        link = wiggleURL + "microshift-r539-triple-9-speed-front-road-derailleur";
-                    } else if (bike.getRearGears().getNumberOfGears() == 9) {
-                        link = wiggleURL + "shimano-sora-r3030-9-speed-triple-front-derailleur";
-                    } else {
-                        link = wiggleURL + "shimano-tiagra-4703-3x10sp-braze-on-front-mech";
-                    }
-                }
-            }
-            setBikePartsFromLink(link, "shifters");
-        } catch (IOException e) {
-            handleIOException("Get STI Shifters", e);
-        }
-    }
-
-    private void getLeverShifters() {
-        try {
-            bike = fullBikeService.getBike();
-            if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
-                link = wiggleURL + "shimano-mt410-deore-disc-brake-mt401-lever";
-            } else {
-                link = wiggleURL + "shimano-alivio-t4000-brake-levers";
-            }
-            setBikePartsFromLink(link, "brake-levers");
-        } catch (IOException e) {
-            handleIOException("Get Lever Shifters", e);
         }
     }
 
