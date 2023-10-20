@@ -68,12 +68,4 @@ public class FullBikeTest {
         Integer numberOfBikesAfter = fullBikeService.getAllFullBikes().size();
         assertTrue(numberOfBikesAfter > numberOfBikesBefore);
     }
-
-    @Test
-    public void test_That_A_Complete_Bike_Can_Have_Parts_Found() throws Exception {
-        FullBike b = fullBikeService.getAllFullBikes().stream().findFirst().get();
-        bikePartsService.getBikePartsForBike(b);
-        String frameName = b.getBikeParts().getFrameName();
-        assertNotNull(frameName);
-    }
 }

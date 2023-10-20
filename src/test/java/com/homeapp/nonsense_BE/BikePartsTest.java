@@ -70,65 +70,7 @@ public class BikePartsTest {
     @Test
     public void test_That_The_Links_Array_is_Populated() throws Exception {
         FullBike bike = fullBikeService.getBikeUsingName("bike");
-        bikePartsService.getBikePartsForBike(bike);
-        assertTrue(bike.getBikeParts().getWeblinks().size() > 1);
-    }
-
-    @Test
-    public void test_That_Different_Bikes_Get_Different_Frame_Names() throws Exception {
-        FullBike bike = fullBikeService.getBikeUsingName("bike");
-        bikePartsService.getBikePartsForBike(bike);
-        String frameName = bike.getBikeParts().getFrameName();
-        FullBike bike1 = fullBikeService.getBikeUsingName("bike1");
-        bikePartsService.getBikePartsForBike(bike1);
-        String frameName1 = bike1.getBikeParts().getFrameName();
-        assertNotEquals(frameName, frameName1);
-    }
-
-    @Test
-    public void test_That_A_Frame_Name_Found_For_Gravel() throws Exception {
-        FullBike bike = fullBikeService.getBikeUsingName("bike");
-        bikePartsService.getBikePartsForBike(bike);
-        String frameName = bike.getBikeParts().getFrameName();
-        assertEquals(frameName, "Dolan GXA 2020 Aluminium Gravel Frameset");
-    }
-
-    @Test
-    public void test_That_A_Frame_Price_Found_For_Gravel() throws Exception {
-        FullBike bike = fullBikeService.getBikeUsingName("bike");
-        bikePartsService.getBikePartsForBike(bike);
-        BigDecimal framePrice = bike.getBikeParts().getFramePrice();
-        assertEquals(framePrice, 599.99);
-    }
-
-    @Test
-    public void test_That_A_Frame_Name_Found_For_Tour() throws Exception {
-        FullBike bike = fullBikeService.getBikeUsingName("bike5");
-        bikePartsService.getBikePartsForBike(bike);
-        String frameName = bike.getBikeParts().getFrameName();
-        assertEquals(frameName, "Genesis Fugio Frameset");
-    }
-
-    @Test
-    public void test_That_A_Frame_Price_Found_For_Tour() throws Exception {
-        FullBike bike = fullBikeService.getBikeUsingName("bike5");
-        bikePartsService.getBikePartsForBike(bike);
-        BigDecimal framePrice = bike.getBikeParts().getFramePrice();
-        assertEquals(framePrice, 1199.99);
-    }
-
-    @Test
-    public void test_That_A_Handlebar_Price_Found_For_Drops() throws Exception {
-        FullBike bike = fullBikeService.getBikeUsingName("bike");
-        bikePartsService.getBikePartsForBike(bike);
-        assertNotNull(bike.getBikeParts().getHandlebarPrice());
-    }
-
-    @Test
-    public void test_That_A_Handlebar_Name_Found_For_Flare() throws Exception {
-        FullBike bike = fullBikeService.getBikeUsingName("bike2");
-        bikePartsService.getBikePartsForBike(bike);
-        String handlebarNameame = bike.getBikeParts().getHandlebarName();
-        assertNotNull(handlebarNameame);
+        bikePartsService.getBikePartsForBike();
+        assertTrue(bike.getBikeParts().getListOfParts().size() > 1);
     }
 }

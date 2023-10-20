@@ -1,6 +1,8 @@
 package com.homeapp.nonsense_BE.services;
 
+import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
+import com.homeapp.nonsense_BE.models.bike.Part;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -69,7 +71,8 @@ public class ShimanoGroupsetService {
                     }
                 }
             }
-            setBikePartsFromLink(link, "Brake-Caliper");
+            setBikePartsFromLink(link, "Front Brake Caliper");
+            setBikePartsFromLink(link, "Rear Brake Caliper");
         } catch (IOException e) {
             handleIOException("Get Brake calipers", e);
         }
@@ -131,7 +134,11 @@ public class ShimanoGroupsetService {
             } else {
                 link = wiggleURL + "shimano-105-r7170-di2-hydraulic-disc-brake";
             }
-            setBikePartsFromLink(link, "shifters");
+            setBikePartsFromLink(link, "Right Shifter");
+            if (bike.getFrontGears().getNumberOfGears() == 1) {
+                link = chainReactionURL + "shimano-grx-820-hydraulic-drop-bar-brake-lever";
+            }
+            setBikePartsFromLink(link, "Left Shifter");
         } catch (
                 IOException e) {
             handleIOException("Get STI Shifters", e);
@@ -271,57 +278,17 @@ public class ShimanoGroupsetService {
         }
     }
 
-    public void setBikePartsFromLink(String link, String part) throws IOException {
+    public void setBikePartsFromLink(String link, String component) throws IOException {
         bike = fullBikeService.getBike();
         Document doc = Jsoup.connect(link).get();
         Element e = doc.select("div.ProductDetail_container__Z7Hge").get(0);
         String name = Objects.requireNonNull(e.select("h1").first()).text();
-        String price = Objects.requireNonNull(e.select("div.ProductPrice_productPrice__cWyiO").select("p").first()).text().replace("£", "").split(" ")[0];
+        String price = Objects.requireNonNull(e.select("div.ProductPrice_productPrice__cWyiO")
+                .select("p").first()).text().replace("£", "").split(" ")[0];
         LOGGER.info("Found Product: " + name);
         LOGGER.info("For Price: " + price);
         LOGGER.info("Link: " + link);
-        switch (part) {
-            case "chain" -> {
-                bike.getBikeParts().setChainName(name);
-                bike.getBikeParts().setChainPrice(new BigDecimal(price));
-                bike.getBikeParts().getWeblinks().add(link);
-            }
-            case "bar" -> {
-                bike.getBikeParts().setHandlebarName(name);
-                bike.getBikeParts().setHandlebarPrice(new BigDecimal(price));
-                bike.getBikeParts().getWeblinks().add(link);
-            }
-            case "cassette" -> {
-                bike.getBikeParts().setCassetteName(name);
-                bike.getBikeParts().setCassettePrice(new BigDecimal(price));
-                bike.getBikeParts().getWeblinks().add(link);
-            }
-            case "chainring" -> {
-                bike.getBikeParts().setChainringName(name);
-                bike.getBikeParts().setChainringPrice(new BigDecimal(price));
-                bike.getBikeParts().getWeblinks().add(link);
-            }
-            case "rear-derailleur" -> {
-                bike.getBikeParts().setRearDeraileurName(name);
-                bike.getBikeParts().setRearDeraileurPrice(new BigDecimal(price));
-                bike.getBikeParts().getWeblinks().add(link);
-            }
-            case "front-derailleur" -> {
-                bike.getBikeParts().setFrontDeraileurName(name);
-                bike.getBikeParts().setFrontDeraileurPrice(new BigDecimal(price));
-                bike.getBikeParts().getWeblinks().add(link);
-            }
-            case "brake-lever" -> {
-                bike.getBikeParts().setBrakeLeverName(name);
-                bike.getBikeParts().setBrakeLeverPrice(new BigDecimal(price));
-                bike.getBikeParts().getWeblinks().add(link);
-            }
-            case "shifters" -> {
-                bike.getBikeParts().setShifterName(name);
-                bike.getBikeParts().setShifterPrice(new BigDecimal(price));
-                bike.getBikeParts().getWeblinks().add(link);
-            }
-        }
+        bike.getBikeParts().getListOfParts().add(new Part(component, name, new BigDecimal(price), link));
     }
 
     private void handleIOException(String message, IOException e) {
