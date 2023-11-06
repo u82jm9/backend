@@ -6,25 +6,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "BikeParts")
 public class BikeParts {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "PartsId")
-    private long partsId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bikePartsGen")
+    @SequenceGenerator(name = "bikePartsGen", sequenceName = "BIKE_PARTS_SEQ", allocationSize = 1)
+    private long bikePartsId;
 
-    @Column(name = "ListofParts")
+    @OneToMany
     private List<Part> listOfParts;
 
-    @Column(name = "TotalBikePrice")
     private BigDecimal totalBikePrice;
 
     public BikeParts() {
+        this.listOfParts = new ArrayList<>();
     }
 
-    public long getPartsId() {
-        return partsId;
+    public long getBikePartsId() {
+        return bikePartsId;
     }
 
     public List<Part> getListOfParts() {
@@ -46,7 +45,7 @@ public class BikeParts {
     @Override
     public String toString() {
         return "BikeParts{" +
-                "partsId=" + partsId +
+                "bikePartsId=" + bikePartsId +
                 "listOfParts=" + listOfParts +
                 ", totalBikePrice=" + totalBikePrice +
                 '}';

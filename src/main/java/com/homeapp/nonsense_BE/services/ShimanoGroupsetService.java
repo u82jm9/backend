@@ -1,6 +1,5 @@
 package com.homeapp.nonsense_BE.services;
 
-import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
+import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.MECHANICAL_DISC;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
 
 @Service
@@ -31,14 +30,14 @@ public class ShimanoGroupsetService {
     FullBikeService fullBikeService;
 
     public void getShimanoGroupset() {
-        if (bike.getShifterStyle().equals(STI)) {
-            if (bike.getBrakeType().equals(MECHANICAL_DISC)) {
-                getMechanicalSTIShifters();
-            } else {
-                getHydraulicSTIShifters();
-            }
-        } else {
+        bike = fullBikeService.getBike();
+        if (!bike.getShifterStyle().equals(STI)) {
             getLeverShifters();
+        }
+        if (bike.getBrakeType().equals(MECHANICAL_DISC)) {
+            getMechanicalSTIShifters();
+        } else {
+            getHydraulicSTIShifters();
         }
         getBrakeCalipers();
         getChainring();
@@ -148,6 +147,7 @@ public class ShimanoGroupsetService {
 
     private void getLeverShifters() {
         LOGGER.info("No Shimano trigger shifters found ONLINE yet");
+        bike.setShifterStyle(STI);
     }
 
     private void getChainring() {
@@ -281,9 +281,9 @@ public class ShimanoGroupsetService {
     public void setBikePartsFromLink(String link, String component) throws IOException {
         bike = fullBikeService.getBike();
         Document doc = Jsoup.connect(link).get();
-        Element e = doc.select("div.ProductDetail_container__Z7Hge").get(0);
+        Element e = doc.select("div.ProductDetail_container__FX6xF").get(0);
         String name = Objects.requireNonNull(e.select("h1").first()).text();
-        String price = Objects.requireNonNull(e.select("div.ProductPrice_productPrice__cWyiO")
+        String price = Objects.requireNonNull(e.select("div.ProductPrice_productPrice__Fg1nA")
                 .select("p").first()).text().replace("£", "").split(" ")[0];
         LOGGER.info("Found Product: " + name);
         LOGGER.info("For Price: " + price);

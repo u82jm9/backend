@@ -2,23 +2,32 @@ package com.homeapp.nonsense_BE.models.bike;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 @Entity
 public class Part {
-private String component;
 
-private String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "partGen")
+    @SequenceGenerator(name = "partGen", sequenceName = "PART_SEQ", allocationSize = 1)
+    private long partId;
 
-private BigDecimal price;
+    private String component;
 
-private String link;
+    private String name;
+
+    private BigDecimal price;
+
+    private String link;
 
     public Part(String component, String name, BigDecimal price, String link) {
         this.component = component;
         this.name = name;
         this.price = price;
         this.link = link;
+    }
+
+    public long getPartId() {
+        return partId;
     }
 
     public String getComponent() {
@@ -56,6 +65,7 @@ private String link;
     @Override
     public String toString() {
         return "Part{" +
+                "partId='" + partId + '\'' +
                 "component='" + component + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +

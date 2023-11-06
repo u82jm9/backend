@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,7 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 @Service
 public class FullBikeService {
 
-    private static Logger LOGGER = LogManager.getLogger(FullBikeService.class);
+    private static final Logger LOGGER = LogManager.getLogger(FullBikeService.class);
     private static FullBikeService instance;
     private FullBike bike;
 
@@ -62,7 +63,7 @@ public class FullBikeService {
     }
 
     public List<String> getAllGroupsetBrandNames() {
-        List<GroupsetBrand> groupsets = Arrays.stream(GroupsetBrand.values()).collect(Collectors.toList());
+        List<GroupsetBrand> groupsets = Arrays.stream(GroupsetBrand.values()).toList();
         List<String> names = new ArrayList<>();
         for (GroupsetBrand gs : groupsets) {
             names.add(gs.getName());
@@ -72,7 +73,7 @@ public class FullBikeService {
     }
 
     public List<String> getAllFrameStyleNames() {
-        List<FrameStyle> frameStyles = Arrays.stream(FrameStyle.values()).collect(Collectors.toList());
+        List<FrameStyle> frameStyles = Arrays.stream(FrameStyle.values()).toList();
         List<String> names = new ArrayList<>();
         for (FrameStyle fs : frameStyles) {
             names.add(fs.getName());
@@ -82,7 +83,7 @@ public class FullBikeService {
     }
 
     public List<String> getAllBars() {
-        List<HandleBarType> barTypes = Arrays.stream(HandleBarType.values()).collect(Collectors.toList());
+        List<HandleBarType> barTypes = Arrays.stream(HandleBarType.values()).toList();
         List<String> bars = new ArrayList<>();
         for (HandleBarType b : barTypes) {
             bars.add(b.getName());
@@ -92,7 +93,7 @@ public class FullBikeService {
     }
 
     public List<String> getAllBrakes() {
-        List<BrakeType> brakeTypes = Arrays.stream(BrakeType.values()).collect(Collectors.toList());
+        List<BrakeType> brakeTypes = Arrays.stream(BrakeType.values()).toList();
         List<String> brakes = new ArrayList<>();
         for (BrakeType b : brakeTypes) {
             brakes.add(b.getName());
@@ -181,13 +182,15 @@ public class FullBikeService {
 
     private List<FullBike> getBikesByName(String bikeName) {
         LOGGER.info("Getting List of Bikes with bike name: " + bikeName);
-        List<FullBike> bikeList = getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList());
-        return bikeList;
+        return getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList());
     }
 
     public FullBike getBikeUsingName(String bikeName) {
         LOGGER.info("Getting single bike with bike name: " + bikeName);
-        FullBike bike = getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList()).get(0);
-        return bike;
+        return getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList()).get(0);
+    }
+
+    private void handleIOException(String message, IOException e) {
+        LOGGER.error("An IOException occurred from: " + message + "! " + e.getMessage());
     }
 }

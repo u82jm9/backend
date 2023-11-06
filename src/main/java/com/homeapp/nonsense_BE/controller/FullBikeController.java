@@ -1,6 +1,7 @@
 package com.homeapp.nonsense_BE.controller;
 
 import com.homeapp.nonsense_BE.models.bike.FullBike;
+import com.homeapp.nonsense_BE.repository.FullBikeDao;
 import com.homeapp.nonsense_BE.services.FullBikeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,10 +17,12 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class FullBikeController {
 
-    private static Logger LOGGER = LogManager.getLogger(FullBikeController.class);
+    private static final Logger LOGGER = LogManager.getLogger(FullBikeController.class);
 
     @Autowired
     private FullBikeService fullBikeService;
+    @Autowired
+    private FullBikeDao fullBikeDao;
 
     @GetMapping("GetAll")
     public ResponseEntity<List<FullBike>> getallBikes() {
@@ -33,6 +36,20 @@ public class FullBikeController {
         LOGGER.info("Starting new Bike, API");
         FullBike bike = fullBikeService.startNewBike();
         return new ResponseEntity<FullBike>(bike, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("AddFullBike")
+    public ResponseEntity<List> addFullBike(@RequestBody FullBike bike) {
+        LOGGER.info("Adding new full bike, API");
+        fullBikeService.create(bike);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("UpdateBike")
+    public ResponseEntity<FullBike> updateBike(@RequestBody FullBike bike) {
+        FullBike updatedBike = fullBikeService.updateBike(bike);
+        LOGGER.info("Updating Design Bike, API");
+        return new ResponseEntity<FullBike>(updatedBike, HttpStatus.ACCEPTED);
     }
 
     @GetMapping("GetGroupSets")
@@ -61,19 +78,5 @@ public class FullBikeController {
         LOGGER.info("Get all Bikes Frames, API");
         List<String> brakeNames = fullBikeService.getAllBrakes();
         return new ResponseEntity<List<String>>(brakeNames, HttpStatus.ACCEPTED);
-    }
-
-    @PostMapping("AddFullBike")
-    public ResponseEntity<List> addFullBike(@RequestBody FullBike bike) {
-        LOGGER.info("Adding new full bike, API");
-        fullBikeService.create(bike);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PostMapping("UpdateBike")
-    public ResponseEntity<FullBike> updateBike(@RequestBody FullBike bike) {
-        FullBike updatedBike = fullBikeService.updateBike(bike);
-        LOGGER.info("Updating Design Bike, API");
-        return new ResponseEntity<FullBike>(updatedBike, HttpStatus.ACCEPTED);
     }
 }
