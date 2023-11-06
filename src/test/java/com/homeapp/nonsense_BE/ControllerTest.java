@@ -6,6 +6,7 @@ import com.homeapp.nonsense_BE.models.bike.Frame;
 import com.homeapp.nonsense_BE.models.bike.FrontGears;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.RearGears;
+import com.homeapp.nonsense_BE.models.note.DTOnote;
 import com.homeapp.nonsense_BE.models.note.StickyNote;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,9 +23,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.HYDRAULIC_DISC;
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.MECHANICAL_DISC;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.GRAVEL;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
+import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SRAM;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.DROPS;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -73,11 +76,9 @@ public class ControllerTest {
 
     @Test
     public void test_That_a_note_can_be_created() throws Exception {
-        Map<String, Boolean> map = new HashMap<>();
-        map.put("Test Message", false);
-        StickyNote note = new StickyNote("Controller test", map, false);
+        DTOnote DTOnote = new DTOnote("Controller test", "Test Message", false);
         this.mockMvc.perform(post(STICKY_NOTE_URL + "AddNote").session(session).contentType("application/json")
-                .content(objectMapper.writeValueAsString(note))).andExpect(status().isCreated());
+                .content(objectMapper.writeValueAsString(DTOnote))).andExpect(status().isCreated());
     }
 
     @Test
@@ -135,10 +136,13 @@ public class ControllerTest {
 
     @Test
     public void test_That_an_in_flight_bike_can_be_updated() throws Exception {
-        FullBike bike = new FullBike();
+        Frame frame = new Frame(GRAVEL, true, false, true);
+        FrontGears frontGears = new FrontGears(1);
+        RearGears rearGears = new RearGears(11);
+        FullBike bike = new FullBike("bike", null, frame, HYDRAULIC_DISC, SRAM, DROPS, frontGears, rearGears, STI);
         bike.setBikeName("Bike Update");
         this.mockMvc.perform(post(FULL_BIKE_URL + "UpdateBike").session(session).contentType("application/json")
-                .content(objectMapper.writeValueAsString(bike))).andExpect(status().isCreated());
+                .content(objectMapper.writeValueAsString(bike))).andExpect(status().isAccepted());
     }
 
     @Test
