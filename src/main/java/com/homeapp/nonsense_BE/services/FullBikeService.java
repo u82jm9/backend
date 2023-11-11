@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
+import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 
@@ -171,7 +172,7 @@ public class FullBikeService {
             bike.setFrame(frame);
             bike.setBrakeType(BrakeType.NOT_REQUIRED);
             bike.setShifterStyle(ShifterStyle.NONE);
-            bike.setGroupsetBrand(GroupsetBrand.OTHER);
+            bike.setGroupsetBrand(SHIMANO);
             bike.setHandleBarType(NOT_SELECTED);
             bike.setFrontGears(new FrontGears(1));
             bike.setRearGears(new RearGears(1));
