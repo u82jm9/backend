@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 
@@ -42,9 +43,10 @@ public class BikePartsService {
         bikeParts = new BikeParts();
         try {
             bike = fullBikeService.getBike();
-            getHandlebarParts();
-            getFrameParts();
-            getGearSet();
+            CompletableFuture<Void> handleBarFuture = CompletableFuture.runAsync(this::getHandlebarParts);
+            CompletableFuture<Void> frameFuture = CompletableFuture.runAsync(this::getFrameParts);
+            CompletableFuture<Void> gearFuture = CompletableFuture.runAsync(this::getGearSet);
+            CompletableFuture.allOf(handleBarFuture,frameFuture,gearFuture).join();
             calculateTotalPrice();
         } catch (Exception e) {
             handleException("Get Bike Parts", e);

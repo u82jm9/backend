@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.MECHANICAL_DISC;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
@@ -42,12 +43,13 @@ public class ShimanoGroupsetService {
         } else {
             getHydraulicSTIShifters();
         }
-        getBrakeCalipers();
-        getChainring();
-        getCassette();
-        getChain();
-        getRearDerailleur();
-        getFrontDerailleur();
+        CompletableFuture<Void> brakeFuture = CompletableFuture.runAsync(this::getBrakeCalipers);
+        CompletableFuture<Void> chainringFuture = CompletableFuture.runAsync(this::getChainring);
+        CompletableFuture<Void> cassetteFuture = CompletableFuture.runAsync(this::getCassette);
+        CompletableFuture<Void> chainFuture = CompletableFuture.runAsync(this::getChain);
+        CompletableFuture<Void> rearDerailleurFuture = CompletableFuture.runAsync(this::getRearDerailleur);
+        CompletableFuture<Void> frontDerailleurFuture = CompletableFuture.runAsync(this::getFrontDerailleur);
+        CompletableFuture.allOf(brakeFuture, chainringFuture, cassetteFuture, chainFuture, rearDerailleurFuture, frontDerailleurFuture).join();
     }
 
     private void getBrakeCalipers() {
