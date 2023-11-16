@@ -1,5 +1,6 @@
 package com.homeapp.nonsense_BE.controller;
 
+import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.services.BikePartsService;
 import com.homeapp.nonsense_BE.services.FullBikeService;
@@ -25,11 +26,10 @@ public class BikePartsController {
     private FullBikeService fullBikeService;
 
     @PostMapping("GetAllParts")
-    public ResponseEntity<FullBike> getAllParts(FullBike bike) {
+    public ResponseEntity<BikeParts> getAllParts(FullBike bike) {
         LOGGER.info("Get Bike Parts, API");
         fullBikeService.setBike(bike);
-        bikePartsService.getBikePartsForBike();
-        FullBike bikeWithParts = fullBikeService.getBike();
-        return new ResponseEntity<FullBike>(bikeWithParts, HttpStatus.ACCEPTED);
+        BikeParts bikeParts = bikePartsService.getBikePartsForBike();
+        return new ResponseEntity<BikeParts>(bikeParts, HttpStatus.ACCEPTED);
     }
 }

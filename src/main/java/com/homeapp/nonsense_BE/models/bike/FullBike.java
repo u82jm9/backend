@@ -15,11 +15,6 @@ public class FullBike {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "FullBikeId")
     private long fullBikeId;
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "PartsId")
-    private BikeParts bikeParts;
-
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "FrameId")
     private Frame frame;
@@ -55,7 +50,6 @@ public class FullBike {
     }
 
     public FullBike(String bikeName, BikeParts bikeParts, Frame frame, BrakeType brakeType, GroupsetBrand groupsetBrand, HandleBarType handleBarType, FrontGears frontGears, RearGears rearGears, ShifterStyle shifterStyle) {
-        this.bikeParts = bikeParts;
         this.frame = frame;
         this.bikeName = bikeName;
         this.brakeType = brakeType;
@@ -76,14 +70,6 @@ public class FullBike {
 
     public long getFullBikeId() {
         return fullBikeId;
-    }
-
-    public BikeParts getBikeParts() {
-        return bikeParts;
-    }
-
-    public void setBikeParts(BikeParts bikeParts) {
-        this.bikeParts = bikeParts;
     }
 
     public Frame getFrame() {
@@ -146,7 +132,6 @@ public class FullBike {
     public String toString() {
         return "FullBike{" +
                 "fullBikeId=" + fullBikeId +
-                ", bikeParts=" + bikeParts +
                 ", frame=" + frame +
                 ", bikeName='" + bikeName +
                 ", brakeType=" + brakeType +

@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,7 +17,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
+import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
+
 @Service
+@Scope("singleton")
 public class BikePartsService {
 
     private static final Logger LOGGER = LogManager.getLogger(BikePartsService.class);
@@ -26,6 +30,7 @@ public class BikePartsService {
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
     private static String link;
     private static FullBike bike;
+    private BikeParts bikeParts;
 
     @Autowired
     FullBikeService fullBikeService;
@@ -33,11 +38,10 @@ public class BikePartsService {
     @Autowired
     private ShimanoGroupsetService shimanoGroupsetService;
 
-    public void getBikePartsForBike() {
+    public BikeParts getBikePartsForBike() {
+        bikeParts = new BikeParts();
         try {
             bike = fullBikeService.getBike();
-            BikeParts bikeParts = new BikeParts();
-            bike.setBikeParts(bikeParts);
             getHandlebarParts();
             getFrameParts();
             getGearSet();
@@ -45,21 +49,13 @@ public class BikePartsService {
         } catch (Exception e) {
             handleException("Get Bike Parts", e);
         }
+        return bikeParts;
     }
 
     private void getGearSet() {
         bike = fullBikeService.getBike();
-        switch (bike.getGroupsetBrand()) {
-            case SHIMANO -> {
-                shimanoGroupsetService.getShimanoGroupset();
-            }
-            //            case -> SRAM{
-//                getSramGroupset(bike);
-//                }
-//            case -> CAMPAGNOLO{
-//                getCampagnoloGroupset(bike);
-            //}
-        }
+        bike.setGroupsetBrand(SHIMANO);
+        shimanoGroupsetService.getShimanoGroupset(bikeParts);
     }
 
     private void getHandlebarParts() {
@@ -109,9 +105,8 @@ public class BikePartsService {
             doc = Jsoup.connect(link).get();
 
             if (link.contains("dolan-bikes")) {
-                Element e = doc.select("div.productBuy > div.productPanel").first();
-                frameName = e.select("h1").first().text();
-                framePrice = e.select("div.price").select("span.price").first().text();
+                frameName = doc.select("div.productBuy > div.productPanel").first().select("h1").first().text();
+                framePrice = doc.select("div.productBuy > div.productPanel").first().select("div.price").select("span.price").first().text();
             } else if (link.contains("genesisbikes")) {
                 frameName = doc.select("h1.page-title span").first().text();
                 framePrice = doc.select("div.price-box.price-final_price span.price").first().text();
@@ -122,7 +117,7 @@ public class BikePartsService {
 
             framePrice = framePrice.replaceAll("[^\\d.]", "");
             framePrice = framePrice.split("\\.")[0] + "." + framePrice.split("\\.")[1].substring(0, 2);
-            bike.getBikeParts().getListOfParts().add(new Part("Frame", frameName, new BigDecimal(framePrice), link));
+            bikeParts.getListOfParts().add(new Part("Frame", frameName, new BigDecimal(framePrice), link));
 
             LOGGER.info("Found Frame: " + frameName);
             LOGGER.info("For price: " + framePrice);
@@ -133,13 +128,13 @@ public class BikePartsService {
     }
 
     private void calculateTotalPrice() {
-        BigDecimal total = bike.getBikeParts().getListOfParts()
+        BigDecimal total = bikeParts.getListOfParts()
                 .stream()
                 .map(Part::getPrice)
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(2, RoundingMode.UP);
-        bike.getBikeParts().setTotalBikePrice(total);
+        bikeParts.setTotalBikePrice(total);
     }
 
     private void handleException(String message, Exception e) {

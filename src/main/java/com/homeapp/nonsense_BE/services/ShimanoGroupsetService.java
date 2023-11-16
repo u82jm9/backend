@@ -1,5 +1,6 @@
 package com.homeapp.nonsense_BE.services;
 
+import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
 import org.apache.logging.log4j.LogManager;
@@ -25,11 +26,13 @@ public class ShimanoGroupsetService {
     private static final String wiggleURL = "https://www.wiggle.com/p/";
     private static String link;
     private static FullBike bike;
+    private BikeParts bikeParts;
 
     @Autowired
     FullBikeService fullBikeService;
 
-    public void getShimanoGroupset() {
+    public void getShimanoGroupset(BikeParts parts) {
+        bikeParts = parts;
         bike = fullBikeService.getBike();
         if (!bike.getShifterStyle().equals(STI)) {
             getLeverShifters();
@@ -288,7 +291,7 @@ public class ShimanoGroupsetService {
         LOGGER.info("Found Product: " + name);
         LOGGER.info("For Price: " + price);
         LOGGER.info("Link: " + link);
-        bike.getBikeParts().getListOfParts().add(new Part(component, name, new BigDecimal(price), link));
+        bikeParts.getListOfParts().add(new Part(component, name, new BigDecimal(price), link));
     }
 
     private void handleIOException(String message, IOException e) {
