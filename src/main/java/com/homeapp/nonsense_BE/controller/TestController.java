@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:3000")
 public class TestController {
 
-    private static Logger LOGGER = LogManager.getLogger(TestController.class);
+    private static final Logger LOGGER = LogManager.getLogger(TestController.class);
 
     @GetMapping("IsThisThingOn")
     public ResponseEntity<Boolean> isThisThingOn() {

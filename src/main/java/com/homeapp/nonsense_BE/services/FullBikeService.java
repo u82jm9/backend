@@ -17,9 +17,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
+import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.NOT_REQUIRED;
+import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.RIM;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.*;
+import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 

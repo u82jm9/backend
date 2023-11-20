@@ -17,7 +17,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class StickyNoteController {
 
-    private static Logger LOGGER = LogManager.getLogger(StickyNoteController.class);
+    private static final Logger LOGGER = LogManager.getLogger(StickyNoteController.class);
 
     @Autowired
     private StickyNoteService stickyNoteService;

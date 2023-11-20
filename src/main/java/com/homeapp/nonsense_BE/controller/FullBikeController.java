@@ -1,7 +1,6 @@
 package com.homeapp.nonsense_BE.controller;
 
 import com.homeapp.nonsense_BE.models.bike.FullBike;
-import com.homeapp.nonsense_BE.repository.FullBikeDao;
 import com.homeapp.nonsense_BE.services.FullBikeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,8 +20,6 @@ public class FullBikeController {
 
     @Autowired
     private FullBikeService fullBikeService;
-    @Autowired
-    private FullBikeDao fullBikeDao;
 
     @GetMapping("GetAll")
     public ResponseEntity<List<FullBike>> getallBikes() {

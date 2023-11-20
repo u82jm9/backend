@@ -1,57 +1,100 @@
 package com.homeapp.nonsense_BE.models.bike;
 
-import com.homeapp.nonsense_BE.models.bike.Enums.*;
+import com.homeapp.nonsense_BE.models.bike.Enums.BrakeType;
+import com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle;
+import com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand;
+import com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.*;
 
 public class Options {
 
     private List<GroupsetBrand> groupsetBrand = new ArrayList<>();
 
-    private List<Long> numberOfFrontGears;
+    private boolean showGroupSetBrand = false;
 
-    private List<Long> numberOfRearGears;
+    private List<Long> numberOfFrontGears = new ArrayList<>();
 
-    private List<Long> frameSizes;
+    private boolean showFrontGears = false;
 
-    private List<Long> tireClearances;
+    private List<Long> numberOfRearGears = new ArrayList<>();
 
-    private List<FrameStyle> frameStyles;
+    private boolean showRearGears = false;
 
-    private List<HandleBarType> barStyles;
+    private List<Long> frameSizes = new ArrayList<>();
 
-    private List<BrakeType> brakeSyles;
+    private boolean showFrameSizes = false;
+
+    private List<FrameStyle> frameStyles = new ArrayList<>();
+
+    private boolean showFrameStyles = false;
+
+    private List<HandleBarType> barStyles = new ArrayList<>();
+
+    private boolean showBarStyles = false;
+
+    private List<BrakeType> brakeStyles = new ArrayList<>();
+
+    private boolean showBrakeStyles = false;
 
     public Options() {
-        List<GroupsetBrand> gs = new ArrayList<>();
-        gs.add(SHIMANO);
-        gs.add(SRAM);
-        gs.add(CAMPAGNOLO);
-        setGroupsetBrand(gs);
-        List<Long> fSizes = new ArrayList<>();
-        fSizes.add(48L);
-        fSizes.add(50L);
-        fSizes.add(52L);
-        fSizes.add(54L);
-        fSizes.add(56L);
-        setFrameSizes(fSizes);
-        List<Long> ts = new ArrayList<>();
-        ts.add(23L);
-        ts.add(28L);
-        ts.add(33L);
-        ts.add(38L);
-        ts.add(48L);
-        setTireClearances(ts);
-        List<FrameStyle> fStyle = new ArrayList<>();
-        fStyle.add(SINGLE_SPEED);
-        fStyle.add(GRAVEL);
-        fStyle.add(TOUR);
-        fStyle.add(ROAD);
-        setFrameStyles(fStyle);
+    }
+
+    public boolean isShowGroupSetBrand() {
+        return showGroupSetBrand;
+    }
+
+    public void setShowGroupSetBrand(boolean showGroupSetBrand) {
+        this.showGroupSetBrand = showGroupSetBrand;
+    }
+
+    public boolean isShowFrontGears() {
+        return showFrontGears;
+    }
+
+    public void setShowFrontGears(boolean showFrontGears) {
+        this.showFrontGears = showFrontGears;
+    }
+
+    public boolean isShowRearGears() {
+        return showRearGears;
+    }
+
+    public void setShowRearGears(boolean showRearGears) {
+        this.showRearGears = showRearGears;
+    }
+
+    public boolean isShowFrameSizes() {
+        return showFrameSizes;
+    }
+
+    public void setShowFrameSizes(boolean showFrameSizes) {
+        this.showFrameSizes = showFrameSizes;
+    }
+
+    public boolean isShowFrameStyles() {
+        return showFrameStyles;
+    }
+
+    public void setShowFrameStyles(boolean showFrameStyles) {
+        this.showFrameStyles = showFrameStyles;
+    }
+
+    public boolean isShowBarStyles() {
+        return showBarStyles;
+    }
+
+    public void setShowBarStyles(boolean showBarStyles) {
+        this.showBarStyles = showBarStyles;
+    }
+
+    public boolean isShowBrakeStyles() {
+        return showBrakeStyles;
+    }
+
+    public void setShowBrakeStyles(boolean showBrakeStyles) {
+        this.showBrakeStyles = showBrakeStyles;
     }
 
     public List<Long> getFrameSizes() {
@@ -60,14 +103,6 @@ public class Options {
 
     public void setFrameSizes(List<Long> frameSizes) {
         this.frameSizes = frameSizes;
-    }
-
-    public List<Long> getTireClearances() {
-        return tireClearances;
-    }
-
-    public void setTireClearances(List<Long> tireClearances) {
-        this.tireClearances = tireClearances;
     }
 
     public List<FrameStyle> getFrameStyles() {
@@ -86,12 +121,12 @@ public class Options {
         this.barStyles = barStyles;
     }
 
-    public List<BrakeType> getBrakeSyles() {
-        return brakeSyles;
+    public List<BrakeType> getBrakeStyles() {
+        return brakeStyles;
     }
 
-    public void setBrakeSyles(List<BrakeType> brakeSyles) {
-        this.brakeSyles = brakeSyles;
+    public void setBrakeStyles(List<BrakeType> brakeSyles) {
+        this.brakeStyles = brakeSyles;
     }
 
     public List<GroupsetBrand> getGroupsetBrand() {
@@ -121,14 +156,20 @@ public class Options {
     @Override
     public String toString() {
         return "Options{" +
-                "groupsetBrand=" + groupsetBrand +
+                ", showFrontGears=" + showFrontGears +
+                "showGroupsetBrand=" + showGroupSetBrand +
                 ", numberOfFrontGears=" + numberOfFrontGears +
+                ", showFrontGears=" + showFrontGears +
                 ", numberOfRearGears=" + numberOfRearGears +
+                ", showRearGears=" + showRearGears +
                 ", frameSizes=" + frameSizes +
-                ", tireClearances=" + tireClearances +
+                ", showFrameSizes=" + showFrameSizes +
                 ", frameStyles=" + frameStyles +
+                ", showFrameStyles=" + showFrameStyles +
                 ", barStyles=" + barStyles +
-                ", brakeSyles=" + brakeSyles +
+                ", showBarStyles=" + showBarStyles +
+                ", brakeSyles=" + brakeStyles +
+                ", showBrakeStyles=" + showBrakeStyles +
                 '}';
     }
 }
