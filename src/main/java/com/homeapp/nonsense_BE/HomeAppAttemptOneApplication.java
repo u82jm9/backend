@@ -1,9 +1,7 @@
 package com.homeapp.nonsense_BE;
 
 import com.homeapp.nonsense_BE.models.bike.Frame;
-import com.homeapp.nonsense_BE.models.bike.FrontGears;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
-import com.homeapp.nonsense_BE.models.bike.RearGears;
 import com.homeapp.nonsense_BE.services.FullBikeService;
 import com.homeapp.nonsense_BE.services.StickyNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,8 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
+import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.NONE;
+import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
 
 @SpringBootApplication
 public class HomeAppAttemptOneApplication implements CommandLineRunner {
@@ -39,23 +38,15 @@ public class HomeAppAttemptOneApplication implements CommandLineRunner {
         stickyNoteService.create("Go for a run!", "Seriously get up early and go for a run!!\nYou're just being lazy!", false);
 
         Frame frame1 = new Frame(GRAVEL, true, false, true);
-        FrontGears frontGears1 = new FrontGears(1);
-        RearGears rearGears1 = new RearGears(11);
-        fullBikeService.create(new FullBike("Gravel", null, frame1, HYDRAULIC_DISC, SRAM, FLARE, frontGears1, rearGears1, STI));
+        fullBikeService.create(new FullBike("Gravel", frame1, HYDRAULIC_DISC, SRAM, FLARE, 1L, 11L, STI));
 
         Frame frame2 = new Frame(ROAD, false, false, true);
-        FrontGears frontGears2 = new FrontGears(3);
-        RearGears rearGears2 = new RearGears(9);
-        fullBikeService.create(new FullBike("Workhorse", null, frame2, RIM, SHIMANO, DROPS, frontGears2, rearGears2, STI));
+        fullBikeService.create(new FullBike("Workhorse", frame2, RIM, SHIMANO, DROPS, 3L, 9L, STI));
 
         Frame frame3 = new Frame(SINGLE_SPEED, false, false, false);
-        FrontGears frontGears3 = new FrontGears(1);
-        RearGears rearGears3 = new RearGears(1);
-        fullBikeService.create(new FullBike("Fixie", null, frame3, RIM, OTHER, BULLHORNS, frontGears3, rearGears3, NONE));
+        fullBikeService.create(new FullBike("Fixie", frame3, RIM, OTHER, BULLHORNS, 1L, 1L, NONE));
 
         Frame frame4 = new Frame(SINGLE_SPEED, true, false, false);
-        FrontGears frontGears4 = new FrontGears(1);
-        RearGears rearGears4 = new RearGears(1);
-        fullBikeService.create(new FullBike("City Cruiser", null, frame4, MECHANICAL_DISC, OTHER, FLAT, frontGears4, rearGears4, NONE));
+        fullBikeService.create(new FullBike("City Cruiser", frame4, MECHANICAL_DISC, OTHER, FLAT, 1L, 1L, NONE));
     }
 }

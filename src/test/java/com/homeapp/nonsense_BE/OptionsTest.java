@@ -1,14 +1,13 @@
 package com.homeapp.nonsense_BE;
 
+import com.homeapp.nonsense_BE.models.bike.CombinedData;
 import com.homeapp.nonsense_BE.models.bike.Frame;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Options;
 import com.homeapp.nonsense_BE.services.OptionsService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
@@ -16,8 +15,6 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class OptionsTest {
 
     @Autowired
@@ -40,16 +37,19 @@ public class OptionsTest {
         f.setFrameStyle(SINGLE_SPEED);
         FullBike bike = new FullBike();
         bike.setFrame(f);
-        Options options = optionsService.updateOptions(bike, o);
+        CombinedData cd = new CombinedData();
+        cd.setBike(bike);
+        cd.setOptions(o);
+        Options options = optionsService.updateOptions(cd);
         assertFalse(options.isShowFrontGears());
         assertFalse(options.isShowRearGears());
         assertTrue(options.isShowBarStyles());
         assertTrue(options.isShowBrakeStyles());
-        assertTrue(options.getBrakeStyles().contains(RIM));
+        assertTrue(options.getBrakeStyles().contains(RIM.getName()));
         assertEquals(options.getBrakeStyles().size(), 1);
-        assertTrue(options.getBarStyles().contains(BULLHORNS));
-        assertTrue(options.getBarStyles().contains(FLAT));
-        assertTrue(options.getBarStyles().contains(DROPS));
+        assertTrue(options.getBarStyles().contains(BULLHORNS.getName()));
+        assertTrue(options.getBarStyles().contains(FLAT.getName()));
+        assertTrue(options.getBarStyles().contains(DROPS.getName()));
         assertEquals(options.getBarStyles().size(), 3);
     }
 
@@ -61,17 +61,20 @@ public class OptionsTest {
         f.setFrameStyle(ROAD);
         FullBike bike = new FullBike();
         bike.setFrame(f);
-        Options options = optionsService.updateOptions(bike, o);
+        CombinedData cd = new CombinedData();
+        cd.setBike(bike);
+        cd.setOptions(o);
+        Options options = optionsService.updateOptions(cd);
         assertTrue(options.isShowFrontGears());
         assertTrue(options.isShowRearGears());
         assertTrue(options.isShowBarStyles());
-        assertTrue(options.getBrakeStyles().contains(RIM));
-        assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC));
-        assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC));
+        assertTrue(options.getBrakeStyles().contains(RIM.getName()));
+        assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC.getName()));
+        assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC.getName()));
         assertEquals(options.getBrakeStyles().size(), 3);
-        assertTrue(options.getBarStyles().contains(DROPS));
-        assertFalse(options.getBarStyles().contains(FLARE));
-        assertFalse(options.getBarStyles().contains(FLAT));
+        assertTrue(options.getBarStyles().contains(DROPS.getName()));
+        assertFalse(options.getBarStyles().contains(FLARE.getName()));
+        assertFalse(options.getBarStyles().contains(FLAT.getName()));
         assertEquals(options.getBarStyles().size(), 1);
         assertTrue(options.getNumberOfRearGears().contains(10L));
         assertTrue(options.getNumberOfRearGears().contains(11L));
@@ -89,16 +92,19 @@ public class OptionsTest {
         f.setFrameStyle(GRAVEL);
         FullBike bike = new FullBike();
         bike.setFrame(f);
-        Options options = optionsService.updateOptions(bike, o);
+        CombinedData cd = new CombinedData();
+        cd.setBike(bike);
+        cd.setOptions(o);
+        Options options = optionsService.updateOptions(cd);
         assertTrue(options.isShowFrontGears());
         assertTrue(options.isShowRearGears());
         assertTrue(options.isShowBarStyles());
-        assertTrue(options.getBrakeStyles().contains(RIM));
-        assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC));
-        assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC));
+        assertTrue(options.getBrakeStyles().contains(RIM.getName()));
+        assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC.getName()));
+        assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC.getName()));
         assertEquals(options.getBrakeStyles().size(), 3);
-        assertTrue(options.getBarStyles().contains(DROPS));
-        assertTrue(options.getBarStyles().contains(FLARE));
+        assertTrue(options.getBarStyles().contains(DROPS.getName()));
+        assertTrue(options.getBarStyles().contains(FLARE.getName()));
         assertEquals(options.getBarStyles().size(), 2);
         assertTrue(options.getNumberOfRearGears().contains(9L));
         assertTrue(options.getNumberOfRearGears().contains(10L));
@@ -117,17 +123,20 @@ public class OptionsTest {
         f.setFrameStyle(TOUR);
         FullBike bike = new FullBike();
         bike.setFrame(f);
-        Options options = optionsService.updateOptions(bike, o);
+        CombinedData cd = new CombinedData();
+        cd.setBike(bike);
+        cd.setOptions(o);
+        Options options = optionsService.updateOptions(cd);
         assertTrue(options.isShowFrontGears());
         assertTrue(options.isShowRearGears());
         assertTrue(options.isShowBarStyles());
-        assertTrue(options.getBrakeStyles().contains(RIM));
-        assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC));
-        assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC));
+        assertTrue(options.getBrakeStyles().contains(RIM.getName()));
+        assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC.getName()));
+        assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC.getName()));
         assertEquals(options.getBrakeStyles().size(), 3);
-        assertTrue(options.getBarStyles().contains(DROPS));
-        assertTrue(options.getBarStyles().contains(FLARE));
-        assertTrue(options.getBarStyles().contains(FLAT));
+        assertTrue(options.getBarStyles().contains(DROPS.getName()));
+        assertTrue(options.getBarStyles().contains(FLARE.getName()));
+        assertTrue(options.getBarStyles().contains(FLAT.getName()));
         assertEquals(options.getBarStyles().size(), 3);
         assertTrue(options.getNumberOfRearGears().contains(8L));
         assertTrue(options.getNumberOfRearGears().contains(9L));

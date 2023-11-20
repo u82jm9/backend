@@ -1,5 +1,6 @@
 package com.homeapp.nonsense_BE.services;
 
+import com.homeapp.nonsense_BE.models.bike.CombinedData;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Options;
 import org.apache.logging.log4j.LogManager;
@@ -40,8 +41,8 @@ public class OptionsService {
 
     public Options startNewBike() {
         LOGGER.info("Getting Options for a new Bike!");
-        Options o = getOptions();
-        o.getGroupsetBrand().add(SHIMANO);
+        Options o = new Options();
+        o.getGroupsetBrand().add(SHIMANO.getName());
         o.setShowGroupSetBrand(true);
         o.getFrameSizes().add(48L);
         o.getFrameSizes().add(50L);
@@ -49,20 +50,21 @@ public class OptionsService {
         o.getFrameSizes().add(54L);
         o.getFrameSizes().add(56L);
         o.setShowFrameSizes(true);
-        o.getFrameStyles().add(SINGLE_SPEED);
-        o.getFrameStyles().add(GRAVEL);
-        o.getFrameStyles().add(TOUR);
-        o.getFrameStyles().add(ROAD);
+        o.getFrameStyles().add(SINGLE_SPEED.getName());
+        o.getFrameStyles().add(GRAVEL.getName());
+        o.getFrameStyles().add(TOUR.getName());
+        o.getFrameStyles().add(ROAD.getName());
         o.setShowFrameStyles(true);
         return o;
     }
 
-    public Options updateOptions(FullBike bike, Options o) {
+    public Options updateOptions(CombinedData combinedData) {
+        Options o = combinedData.getOptions();
         setOptions(o);
         if (!o.isShowFrameStyles()) {
-            getGearOptions(bike);
-            getBarOptions(bike);
-            getBrakeOptions(bike);
+            getGearOptions(combinedData.getBike());
+            getBarOptions(combinedData.getBike());
+            getBrakeOptions(combinedData.getBike());
         }
         return o;
     }
@@ -104,18 +106,18 @@ public class OptionsService {
     public void getBarOptions(FullBike b) {
         Options o = getOptions();
         o.setShowBarStyles(true);
-        o.getBarStyles().add(DROPS);
+        o.getBarStyles().add(DROPS.getName());
         switch (b.getFrame().getFrameStyle()) {
             case SINGLE_SPEED -> {
-                o.getBarStyles().add(BULLHORNS);
-                o.getBarStyles().add(FLAT);
+                o.getBarStyles().add(BULLHORNS.getName());
+                o.getBarStyles().add(FLAT.getName());
             }
             case TOUR -> {
-                o.getBarStyles().add(FLARE);
-                o.getBarStyles().add(FLAT);
+                o.getBarStyles().add(FLARE.getName());
+                o.getBarStyles().add(FLAT.getName());
             }
             case GRAVEL -> {
-                o.getBarStyles().add(FLARE);
+                o.getBarStyles().add(FLARE.getName());
             }
             default -> {
             }
@@ -125,10 +127,10 @@ public class OptionsService {
     public void getBrakeOptions(FullBike b) {
         Options o = getOptions();
         o.setShowBrakeStyles(true);
-        o.getBrakeStyles().add(RIM);
+        o.getBrakeStyles().add(RIM.getName());
         if (!b.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
-            o.getBrakeStyles().add(MECHANICAL_DISC);
-            o.getBrakeStyles().add(HYDRAULIC_DISC);
+            o.getBrakeStyles().add(MECHANICAL_DISC.getName());
+            o.getBrakeStyles().add(HYDRAULIC_DISC.getName());
         }
     }
 }

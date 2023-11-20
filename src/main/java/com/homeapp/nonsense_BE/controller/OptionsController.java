@@ -1,5 +1,6 @@
 package com.homeapp.nonsense_BE.controller;
 
+import com.homeapp.nonsense_BE.models.bike.CombinedData;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Options;
 import com.homeapp.nonsense_BE.services.OptionsService;
@@ -28,9 +29,11 @@ public class OptionsController {
     }
 
     @PostMapping("GetOptions")
-    public ResponseEntity<Options> getOptions(FullBike bike, Options option) {
-        LOGGER.info("Updating Options for Bike");
-        option = optionsService.updateOptions(bike,option);
+    public ResponseEntity<Options> getOptions(@RequestBody CombinedData combinedData) {
+        LOGGER.info("Updating Options for Bike!");
+        System.out.println("Bike: " + combinedData.getBike());
+        System.out.println("Options: " + combinedData.getOptions());
+        Options option = optionsService.updateOptions(combinedData);
         return new ResponseEntity<>(option, HttpStatus.OK);
     }
 }

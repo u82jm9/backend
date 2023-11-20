@@ -2,9 +2,7 @@ package com.homeapp.nonsense_BE.services;
 
 import com.homeapp.nonsense_BE.models.bike.Enums.*;
 import com.homeapp.nonsense_BE.models.bike.Frame;
-import com.homeapp.nonsense_BE.models.bike.FrontGears;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
-import com.homeapp.nonsense_BE.models.bike.RearGears;
 import com.homeapp.nonsense_BE.repository.FullBikeDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -126,20 +124,20 @@ public class FullBikeService {
         if (bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
             bike.getFrame().setRequiresFrontGearCable(false);
             bike.getFrame().setRequiresRearGearCable(false);
-            bike.getRearGears().setNumberOfGears(1);
-            bike.getFrontGears().setNumberOfGears(1);
+            bike.setNumberOfRearGears(1);
+            bike.setNumberOfFrontGears(1);
         } else if (bike.getFrame().getFrameStyle().equals(GRAVEL)) {
             bike.getFrame().setDiscBrakeCompatible(true);
             bike.getFrame().setRequiresFrontGearCable(false);
         } else if (bike.getFrame().getFrameStyle().equals(TOUR)) {
             bike.getFrame().setDiscBrakeCompatible(true);
         }
-        if (bike.getFrontGears().getNumberOfGears() > 1) {
+        if (bike.getNumberOfFrontGears() > 1) {
             bike.getFrame().setRequiresFrontGearCable(true);
         } else {
             bike.getFrame().setRequiresFrontGearCable(false);
         }
-        if (bike.getRearGears().getNumberOfGears() > 1) {
+        if (bike.getNumberOfRearGears() > 1) {
             bike.getFrame().setRequiresRearGearCable(true);
         } else {
             bike.getFrame().setRequiresRearGearCable(false);
@@ -175,8 +173,8 @@ public class FullBikeService {
             bike.setShifterStyle(ShifterStyle.NONE);
             bike.setGroupsetBrand(SHIMANO);
             bike.setHandleBarType(NOT_SELECTED);
-            bike.setFrontGears(new FrontGears(1));
-            bike.setRearGears(new RearGears(1));
+            bike.setNumberOfFrontGears(1);
+            bike.setNumberOfRearGears(1);
             create(bike);
         }
         return bike;

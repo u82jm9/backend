@@ -1,16 +1,11 @@
 package com.homeapp.nonsense_BE.models.bike;
 
-import com.homeapp.nonsense_BE.models.bike.Enums.BrakeType;
-import com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle;
-import com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand;
-import com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Options {
 
-    private List<GroupsetBrand> groupsetBrand = new ArrayList<>();
+    private List<String> groupsetBrand = new ArrayList<>();
 
     private boolean showGroupSetBrand = false;
 
@@ -26,15 +21,15 @@ public class Options {
 
     private boolean showFrameSizes = false;
 
-    private List<FrameStyle> frameStyles = new ArrayList<>();
+    private List<String> frameStyles = new ArrayList<>();
 
     private boolean showFrameStyles = false;
 
-    private List<HandleBarType> barStyles = new ArrayList<>();
+    private List<String> barStyles = new ArrayList<>();
 
     private boolean showBarStyles = false;
 
-    private List<BrakeType> brakeStyles = new ArrayList<>();
+    private List<String> brakeStyles = new ArrayList<>();
 
     private boolean showBrakeStyles = false;
 
@@ -105,35 +100,35 @@ public class Options {
         this.frameSizes = frameSizes;
     }
 
-    public List<FrameStyle> getFrameStyles() {
+    public List<String> getFrameStyles() {
         return frameStyles;
     }
 
-    public void setFrameStyles(List<FrameStyle> frameStyles) {
+    public void setFrameStyles(List<String> frameStyles) {
         this.frameStyles = frameStyles;
     }
 
-    public List<HandleBarType> getBarStyles() {
+    public List<String> getBarStyles() {
         return barStyles;
     }
 
-    public void setBarStyles(List<HandleBarType> barStyles) {
+    public void setBarStyles(List<String> barStyles) {
         this.barStyles = barStyles;
     }
 
-    public List<BrakeType> getBrakeStyles() {
+    public List<String> getBrakeStyles() {
         return brakeStyles;
     }
 
-    public void setBrakeStyles(List<BrakeType> brakeSyles) {
+    public void setBrakeStyles(List<String> brakeSyles) {
         this.brakeStyles = brakeSyles;
     }
 
-    public List<GroupsetBrand> getGroupsetBrand() {
+    public List<String> getGroupsetBrand() {
         return groupsetBrand;
     }
 
-    public void setGroupsetBrand(List<GroupsetBrand> groupsetBrand) {
+    public void setGroupsetBrand(List<String> groupsetBrand) {
         this.groupsetBrand = groupsetBrand;
     }
 

@@ -34,13 +34,11 @@ public class FullBike {
     @Column(name = "Bars")
     private HandleBarType handleBarType;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "FrontGearsId")
-    private FrontGears frontGears;
+    @Column
+    private long numberOfFrontGears;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "RearGearsId")
-    private RearGears rearGears;
+    @Column
+    private long numberOfRearGears;
 
     @Enumerated(EnumType.STRING)
     @Column
@@ -49,14 +47,14 @@ public class FullBike {
     public FullBike() {
     }
 
-    public FullBike(String bikeName, BikeParts bikeParts, Frame frame, BrakeType brakeType, GroupsetBrand groupsetBrand, HandleBarType handleBarType, FrontGears frontGears, RearGears rearGears, ShifterStyle shifterStyle) {
+    public FullBike(String bikeName, Frame frame,  BrakeType brakeType, GroupsetBrand groupsetBrand, HandleBarType handleBarType, long numberOfFrontGears, long numberOfRearGears, ShifterStyle shifterStyle) {
         this.frame = frame;
         this.bikeName = bikeName;
         this.brakeType = brakeType;
         this.groupsetBrand = groupsetBrand;
         this.handleBarType = handleBarType;
-        this.frontGears = frontGears;
-        this.rearGears = rearGears;
+        this.numberOfFrontGears = numberOfFrontGears;
+        this.numberOfRearGears = numberOfRearGears;
         this.shifterStyle = shifterStyle;
     }
 
@@ -104,20 +102,20 @@ public class FullBike {
         this.handleBarType = handleBarType;
     }
 
-    public FrontGears getFrontGears() {
-        return frontGears;
+    public long getNumberOfFrontGears() {
+        return numberOfFrontGears;
     }
 
-    public void setFrontGears(FrontGears frontGears) {
-        this.frontGears = frontGears;
+    public void setNumberOfFrontGears(long numberOfFrontGears) {
+        this.numberOfFrontGears = numberOfFrontGears;
     }
 
-    public RearGears getRearGears() {
-        return rearGears;
+    public long getNumberOfRearGears() {
+        return numberOfRearGears;
     }
 
-    public void setRearGears(RearGears rearGears) {
-        this.rearGears = rearGears;
+    public void setNumberOfRearGears(long numberOfRearGears) {
+        this.numberOfRearGears = numberOfRearGears;
     }
 
     public ShifterStyle getShifterStyle() {
@@ -137,8 +135,8 @@ public class FullBike {
                 ", brakeType=" + brakeType +
                 ", groupsetBrand=" + groupsetBrand +
                 ", handleBarType=" + handleBarType +
-                ", frontGears=" + frontGears +
-                ", rearGears=" + rearGears +
+                ", numberOfFrontGears=" + numberOfFrontGears +
+                ", numberOfRearGears=" + numberOfRearGears +
                 ", shifterStyle=" + shifterStyle +
                 '}';
     }

@@ -1,6 +1,9 @@
 package com.homeapp.nonsense_BE;
 
-import com.homeapp.nonsense_BE.models.bike.*;
+import com.homeapp.nonsense_BE.models.bike.BikeParts;
+import com.homeapp.nonsense_BE.models.bike.Frame;
+import com.homeapp.nonsense_BE.models.bike.FullBike;
+import com.homeapp.nonsense_BE.models.bike.Part;
 import com.homeapp.nonsense_BE.services.BikePartsService;
 import com.homeapp.nonsense_BE.services.FullBikeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,38 +33,31 @@ public class BikePartsTest {
     @Autowired
     private BikePartsService bikePartsService;
 
+    private static boolean isSetupDone = false;
+
     @BeforeEach
     public void setup() {
-        Frame frame = new Frame(GRAVEL, true, false, true);
-        FrontGears frontGears = new FrontGears(1);
-        RearGears rearGears = new RearGears(11);
-        FullBike bike = new FullBike("bike", null, frame, MECHANICAL_DISC, SHIMANO, DROPS, frontGears, rearGears, STI);
-        fullBikeService.create(bike);
-        Frame frame1 = new Frame(ROAD, false, true, true);
-        FrontGears frontGears1 = new FrontGears(2);
-        RearGears rearGears1 = new RearGears(10);
-        FullBike bike1 = new FullBike("bike1", null, frame1, RIM, SHIMANO, DROPS, frontGears1, rearGears1, STI);
-        fullBikeService.create(bike1);
-        Frame frame2 = new Frame(SINGLE_SPEED, false, false, false);
-        FrontGears frontGears2 = new FrontGears(1);
-        RearGears rearGears2 = new RearGears(1);
-        FullBike bike2 = new FullBike("bike2", null, frame2, NOT_REQUIRED, SHIMANO, BULLHORNS, frontGears2, rearGears2, NONE);
-        fullBikeService.create(bike2);
-        Frame frame3 = new Frame(ROAD, true, true, true);
-        FrontGears frontGears3 = new FrontGears(2);
-        RearGears rearGears3 = new RearGears(12);
-        FullBike bike3 = new FullBike("bike3", null, frame3, HYDRAULIC_DISC, SHIMANO, DROPS, frontGears3, rearGears3, STI);
-        fullBikeService.create(bike3);
-        Frame frame4 = new Frame(SINGLE_SPEED, false, false, false);
-        FrontGears frontGears4 = new FrontGears(1);
-        RearGears rearGears4 = new RearGears(1);
-        FullBike bike4 = new FullBike("bike4", null, frame4, RIM, SHIMANO, FLAT, frontGears4, rearGears4, NONE);
-        fullBikeService.create(bike4);
-        Frame frame5 = new Frame(TOUR, true, true, true);
-        FrontGears frontGears5 = new FrontGears(3);
-        RearGears rearGears5 = new RearGears(11);
-        FullBike bike5 = new FullBike("bike5", null, frame5, MECHANICAL_DISC, SHIMANO, FLARE, frontGears5, rearGears5, TRIGGER);
-        fullBikeService.create(bike5);
+        if (!isSetupDone) {
+            Frame frame = new Frame(GRAVEL, true, false, true);
+            FullBike bike = new FullBike("bike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
+            fullBikeService.create(bike);
+            Frame frame1 = new Frame(ROAD, false, true, true);
+            FullBike bike1 = new FullBike("bike1", frame1, RIM, SHIMANO, DROPS, 2L, 10L, STI);
+            fullBikeService.create(bike1);
+            Frame frame2 = new Frame(SINGLE_SPEED, false, false, false);
+            FullBike bike2 = new FullBike("bike2", frame2, NOT_REQUIRED, SHIMANO, BULLHORNS, 1L, 1L, NONE);
+            fullBikeService.create(bike2);
+            Frame frame3 = new Frame(ROAD, true, true, true);
+            FullBike bike3 = new FullBike("bike3", frame3, HYDRAULIC_DISC, SHIMANO, DROPS, 2L, 12L, STI);
+            fullBikeService.create(bike3);
+            Frame frame4 = new Frame(SINGLE_SPEED, false, false, false);
+            FullBike bike4 = new FullBike("bike4", frame4, RIM, SHIMANO, FLAT, 1L, 1L, NONE);
+            fullBikeService.create(bike4);
+            Frame frame5 = new Frame(TOUR, true, true, true);
+            FullBike bike5 = new FullBike("bike5", frame5, MECHANICAL_DISC, SHIMANO, FLARE, 3L, 11L, TRIGGER);
+            fullBikeService.create(bike5);
+            isSetupDone = true;
+        }
     }
 
     @Test
