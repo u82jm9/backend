@@ -18,26 +18,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class StickyNoteTest {
 
     @Autowired
     private StickyNoteService stickyNoteService;
 
+    private static boolean isSetupDone = false;
+
     @BeforeEach
     private void setup() {
-        Map<String, Boolean> map1 = new HashMap<>();
-        map1.put("This is the message for the before all method", false);
-        StickyNote note = new StickyNote("Before All Method", map1, false);
-        stickyNoteService.create(note);
-        Map<String, Boolean> map2 = new HashMap<>();
-        map2.put("This is the message for the second before all method", true);
-        StickyNote note2 = new StickyNote("Second Before All Method", map2, true);
-        stickyNoteService.create(note2);
-        Map<String, Boolean> map3 = new HashMap<>();
-        map3.put("This is the message for the third before all method", false);
-        StickyNote note3 = new StickyNote("Third Before All Method", map3, false);
-        stickyNoteService.create(note3);
+        if (!isSetupDone) {
+            Map<String, Boolean> map1 = new HashMap<>();
+            map1.put("This is the message for the before all method", false);
+            StickyNote note = new StickyNote("Before All Method", map1, false);
+            stickyNoteService.create(note);
+            Map<String, Boolean> map2 = new HashMap<>();
+            map2.put("This is the message for the second before all method", true);
+            StickyNote note2 = new StickyNote("Second Before All Method", map2, true);
+            stickyNoteService.create(note2);
+            Map<String, Boolean> map3 = new HashMap<>();
+            map3.put("This is the message for the third before all method", false);
+            StickyNote note3 = new StickyNote("Third Before All Method", map3, false);
+            stickyNoteService.create(note3);
+            stickyNoteService.create("Gardening Work Left", "Dig more soil from Zebo. Flatten front and back lawns. Seed new grass. Fix nasty bit behind shed", true);
+            stickyNoteService.create("Nothing Useful", "This is just to make an extra Sticky Note as I thought 4 would look better than 3!", true);
+            stickyNoteService.create("Go for a run!", "Seriously get up early and go for a run!!\nYou're just being lazy!", false);
+            isSetupDone = true;
+        }
     }
 
     @Test
@@ -58,7 +66,7 @@ public class StickyNoteTest {
 
     @Test
     public void test_That_A_StickyNote_Can_Be_Retrieved_By_Id() {
-        assertNotNull(stickyNoteService.retrieveById(2L));
+        assertNotNull(stickyNoteService.retrieveById(2L).get());
     }
 
     @Test
@@ -66,6 +74,8 @@ public class StickyNoteTest {
         StickyNote noteBefore = stickyNoteService.retrieveById(2L).get();
         Map<String, Boolean> map = new HashMap<>();
         map.put("Test Message", false);
+        map.put("Test Message2", false);
+        map.put("Test Messagee", true);
         noteBefore.setMessageMap(map);
         stickyNoteService.editStickyNote(noteBefore);
         StickyNote noteAfter = stickyNoteService.retrieveById(2L).get();

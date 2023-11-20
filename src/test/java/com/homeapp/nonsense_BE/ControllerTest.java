@@ -64,7 +64,7 @@ public class ControllerTest {
 
     @Test
     public void test_That_Options_is_returned_with_Brands() throws Exception {
-        this.mockMvc.perform(get(OPTIONS_URL + "startingNewBike"))
+        this.mockMvc.perform(get(OPTIONS_URL + "StartNewBike"))
                 .andExpect(status().isOk());
     }
 
@@ -137,9 +137,7 @@ public class ControllerTest {
     @Test
     public void test_That_an_in_flight_bike_can_be_updated() throws Exception {
         Frame frame = new Frame(GRAVEL, true, false, true);
-        FrontGears frontGears = new FrontGears(1);
-        RearGears rearGears = new RearGears(11);
-        FullBike bike = new FullBike("bike", null, frame, HYDRAULIC_DISC, SRAM, DROPS, frontGears, rearGears, STI);
+        FullBike bike = new FullBike("bike", frame, HYDRAULIC_DISC, SRAM, DROPS, 1L, 11L, STI);
         bike.setBikeName("Bike Update");
         this.mockMvc.perform(post(FULL_BIKE_URL + "UpdateBike").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(bike))).andExpect(status().isAccepted());
@@ -150,7 +148,7 @@ public class ControllerTest {
         Frame frame = new Frame(GRAVEL, false, true, true);
         FrontGears frontGears = new FrontGears(1);
         RearGears rearGears = new RearGears(11);
-        FullBike testBike = new FullBike("testBike", null, frame, MECHANICAL_DISC, SHIMANO, DROPS, frontGears, rearGears, STI);
+        FullBike testBike = new FullBike("testBike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
         this.mockMvc.perform(post(FULL_BIKE_URL + "AddFullBike").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(testBike))).andExpect(status().isCreated());
     }

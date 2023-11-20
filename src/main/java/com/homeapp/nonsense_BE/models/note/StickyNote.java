@@ -16,7 +16,7 @@ public class StickyNote {
     @Column(nullable = false)
     private String title;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column
     private Map<String, Boolean> messageMap = new HashMap<String, Boolean>();
 
