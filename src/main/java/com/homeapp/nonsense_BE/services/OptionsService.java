@@ -7,6 +7,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
@@ -69,68 +72,86 @@ public class OptionsService {
         return o;
     }
 
-    public void getGearOptions(FullBike bike) {
+    public void getGearOptions(FullBike b) {
+        List<Long> rearGears = new ArrayList<>();
+        List<Long> frontGears = new ArrayList<>();
         Options o = getOptions();
-        switch (bike.getFrame().getFrameStyle()) {
+        switch (b.getFrame().getFrameStyle()) {
             case ROAD -> {
-                o.getNumberOfRearGears().add(10L);
-                o.getNumberOfRearGears().add(11L);
-                o.getNumberOfRearGears().add(12L);
-                o.getNumberOfFrontGears().add(2L);
+                rearGears.add(10L);
+                rearGears.add(11L);
+                rearGears.add(12L);
+                frontGears.add(2L);
             }
             case TOUR -> {
-                o.getNumberOfRearGears().add(11L);
-                o.getNumberOfRearGears().add(10L);
-                o.getNumberOfRearGears().add(9L);
-                o.getNumberOfRearGears().add(8L);
-                o.getNumberOfFrontGears().add(2L);
-                o.getNumberOfFrontGears().add(3L);
+                rearGears.add(11L);
+                rearGears.add(10L);
+                rearGears.add(9L);
+                rearGears.add(8L);
+                frontGears.add(2L);
+                frontGears.add(3L);
             }
             case GRAVEL -> {
-                o.getNumberOfRearGears().add(9L);
-                o.getNumberOfRearGears().add(10L);
-                o.getNumberOfRearGears().add(11L);
-                o.getNumberOfFrontGears().add(2L);
-                o.getNumberOfFrontGears().add(1L);
+                rearGears.add(9L);
+                rearGears.add(10L);
+                rearGears.add(11L);
+                frontGears.add(2L);
+                frontGears.add(1L);
             }
             default -> {
 
             }
         }
-        if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
-            o.setShowFrontGears(true);
-            o.setShowRearGears(true);
+        o.setNumberOfFrontGears(frontGears);
+        o.setNumberOfRearGears(rearGears);
+        if (!b.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
+            if (b.getNumberOfFrontGears() == 0) {
+                o.setShowFrontGears(true);
+            }
+            if (b.getNumberOfRearGears() == 0) {
+                o.setShowRearGears(true);
+            }
         }
     }
 
     public void getBarOptions(FullBike b) {
+        List<String> bars = new ArrayList<>();
         Options o = getOptions();
-        o.setShowBarStyles(true);
-        o.getBarStyles().add(DROPS.getName());
+        if (b.getHandleBarType().equals(NOT_SELECTED)) {
+            o.setShowBarStyles(true);
+        }
+        bars.add(DROPS.getName());
         switch (b.getFrame().getFrameStyle()) {
             case SINGLE_SPEED -> {
-                o.getBarStyles().add(BULLHORNS.getName());
-                o.getBarStyles().add(FLAT.getName());
+                bars.add(BULLHORNS.getName());
+                bars.add(FLAT.getName());
             }
             case TOUR -> {
-                o.getBarStyles().add(FLARE.getName());
-                o.getBarStyles().add(FLAT.getName());
+                bars.add(FLARE.getName());
+                bars.add(FLAT.getName());
             }
             case GRAVEL -> {
-                o.getBarStyles().add(FLARE.getName());
+                bars.add(FLARE.getName());
             }
             default -> {
             }
         }
+        o.setBarStyles(bars);
     }
 
     public void getBrakeOptions(FullBike b) {
+        List<String> brakes = new ArrayList<>();
         Options o = getOptions();
-        o.setShowBrakeStyles(true);
-        o.getBrakeStyles().add(RIM.getName());
-        if (!b.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
-            o.getBrakeStyles().add(MECHANICAL_DISC.getName());
-            o.getBrakeStyles().add(HYDRAULIC_DISC.getName());
+        if (b.getBrakeType().equals(NO_SELECTION)) {
+            o.setShowBrakeStyles(true);
         }
+        brakes.add(RIM.getName());
+        if (!b.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
+            brakes.add(MECHANICAL_DISC.getName());
+            brakes.add(HYDRAULIC_DISC.getName());
+        } else {
+            brakes.add(NOT_REQUIRED.getName());
+        }
+        o.setBrakeStyles(brakes);
     }
 }

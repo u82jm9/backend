@@ -43,6 +43,19 @@ public class Frame {
         this.requiresRearGearCable = requiresRearGearCable;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Frame frame = (Frame) o;
+        return frameId == frame.frameId && size == frame.size && tireClearance == frame.tireClearance && discBrakeCompatible == frame.discBrakeCompatible && requiresFrontGearCable == frame.requiresFrontGearCable && requiresRearGearCable == frame.requiresRearGearCable && frameStyle == frame.frameStyle;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(frameId, size, tireClearance, frameStyle, discBrakeCompatible, requiresFrontGearCable, requiresRearGearCable);
+    }
+
     public long getFrameId() {
         return frameId;
     }
@@ -93,19 +106,6 @@ public class Frame {
 
     public void setRequiresRearGearCable(boolean requiresRearGearCable) {
         this.requiresRearGearCable = requiresRearGearCable;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Frame)) return false;
-        Frame frame = (Frame) o;
-        return getFrameId() == frame.getFrameId() && getSize() == frame.getSize() && getTireClearance() == frame.getTireClearance() && isDiscBrakeCompatible() == frame.isDiscBrakeCompatible() && isRequiresFrontGearCable() == frame.isRequiresFrontGearCable() && isRequiresRearGearCable() == frame.isRequiresRearGearCable() && getFrameStyle() == frame.getFrameStyle();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getFrameId(), getSize(), getTireClearance(), getFrameStyle(), isDiscBrakeCompatible(), isRequiresFrontGearCable(), isRequiresRearGearCable());
     }
 
     @Override

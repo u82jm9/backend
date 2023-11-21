@@ -15,7 +15,7 @@ public class FullBike {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "FullBikeId")
     private long fullBikeId;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "FrameId")
     private Frame frame;
 

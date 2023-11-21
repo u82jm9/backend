@@ -15,7 +15,6 @@ public class TestController {
 
     @GetMapping("IsThisThingOn")
     public ResponseEntity<Boolean> isThisThingOn() {
-        LOGGER.info("Testing if Back End is running.");
         Boolean backendOn = true;
         return new ResponseEntity<>(backendOn, HttpStatus.OK);
     }
