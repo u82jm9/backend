@@ -84,7 +84,6 @@ public class BikePartsService {
             String framePrice;
             Document doc;
             String link = "";
-
             switch (bike.getFrame().getFrameStyle()) {
                 case ROAD -> {
                     if (bike.getFrame().isDiscBrakeCompatible()) {

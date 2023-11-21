@@ -26,7 +26,7 @@ public class BikePartsController {
     private FullBikeService fullBikeService;
 
     @PostMapping("GetAllParts")
-    public ResponseEntity<BikeParts> getAllParts(FullBike bike) {
+    public ResponseEntity<BikeParts> getAllParts(@RequestBody FullBike bike) {
         LOGGER.info("Get Bike Parts, API");
         fullBikeService.setBike(bike);
         BikeParts bikeParts = bikePartsService.getBikePartsForBike();
