@@ -30,14 +30,14 @@ public class StickyNoteController {
     }
 
     @PostMapping("AddNote")
-    public ResponseEntity<List> addStickyNote(@RequestBody DTOnote note) {
+    public ResponseEntity<HttpStatus> addStickyNote(@RequestBody DTOnote note) {
         LOGGER.info("Adding new Sticky Note, AddNote API");
         stickyNoteService.create(note.getNoteTitle(), note.getNoteMessage(), note.getNoteComplete());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("DeleteNote/{id}")
-    public ResponseEntity<List> deleteStickyNote(@PathVariable(value = "id") Long stickyNoteId) {
+    public ResponseEntity<HttpStatus> deleteStickyNote(@PathVariable(value = "id") Long stickyNoteId) {
         LOGGER.info("Deleting Sticky Note, Delete Note API");
         StickyNote note = stickyNoteService.retrieveById(stickyNoteId).get();
         stickyNoteService.deleteNote(note);
@@ -45,14 +45,14 @@ public class StickyNoteController {
     }
 
     @DeleteMapping("DeleteAllNotes")
-    public ResponseEntity<List> deleteAllNotes() {
+    public ResponseEntity<HttpStatus> deleteAllNotes() {
         LOGGER.info("Deleting ALL Sticky Notes, Delete Note API");
         stickyNoteService.deleteAll();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("EditNote")
-    public ResponseEntity<List> editStickyNote(@RequestBody StickyNote note) {
+    public ResponseEntity<HttpStatus> editStickyNote(@RequestBody StickyNote note) {
         LOGGER.info("Editing Sticky Note, Edit Note API");
         stickyNoteService.updateNoteComplete(note);
         stickyNoteService.editStickyNote(note);

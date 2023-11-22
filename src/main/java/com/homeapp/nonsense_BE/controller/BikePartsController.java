@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("FullBike/")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -30,6 +28,6 @@ public class BikePartsController {
         LOGGER.info("Get Bike Parts, API");
         fullBikeService.setBike(bike);
         BikeParts bikeParts = bikePartsService.getBikePartsForBike();
-        return new ResponseEntity<BikeParts>(bikeParts, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(bikeParts, HttpStatus.ACCEPTED);
     }
 }
