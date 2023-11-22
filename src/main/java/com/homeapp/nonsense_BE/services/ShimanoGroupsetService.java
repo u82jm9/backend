@@ -25,7 +25,6 @@ public class ShimanoGroupsetService {
     private static final Logger LOGGER = LogManager.getLogger(ShimanoGroupsetService.class);
     private static final String chainReactionURL = "https://www.chainreactioncycles.com/p/";
     private static final String wiggleURL = "https://www.wiggle.com/p/";
-    private static String link;
     private static FullBike bike;
     private BikeParts bikeParts;
 
@@ -53,6 +52,7 @@ public class ShimanoGroupsetService {
     }
 
     private void getBrakeCalipers() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             switch (bike.getBrakeType()) {
@@ -83,6 +83,7 @@ public class ShimanoGroupsetService {
     }
 
     private void getMechanicalSTIShifters() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfFrontGears()) {
@@ -122,13 +123,14 @@ public class ShimanoGroupsetService {
                     }
                 }
             }
-            setBikePartsFromLink(link, "shifters");
+            setBikePartsFromLink(link, "Shifters");
         } catch (IOException e) {
             handleIOException("Get STI Shifters", e);
         }
     }
 
     private void getHydraulicSTIShifters() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             if (bike.getNumberOfRearGears() == 10) {
@@ -147,7 +149,6 @@ public class ShimanoGroupsetService {
                 IOException e) {
             handleIOException("Get STI Shifters", e);
         }
-
     }
 
     private void getLeverShifters() {
@@ -156,6 +157,7 @@ public class ShimanoGroupsetService {
     }
 
     private void getChainring() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfFrontGears()) {
@@ -192,13 +194,14 @@ public class ShimanoGroupsetService {
                     }
                 }
             }
-            setBikePartsFromLink(link, "chainring");
+            setBikePartsFromLink(link, "Chainring");
         } catch (IOException e) {
             handleIOException("Get Chainring", e);
         }
     }
 
     private void getCassette() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfRearGears()) {
@@ -208,13 +211,14 @@ public class ShimanoGroupsetService {
                 case 11 -> link = chainReactionURL + "shimano-105-r7000-11-speed-cassette";
                 case 12 -> link = chainReactionURL + "shimano-105-r7100-12-speed-cassette";
             }
-            setBikePartsFromLink(link, "cassette");
+            setBikePartsFromLink(link, "Cassette");
         } catch (IOException e) {
             handleIOException("Get Cassette", e);
         }
     }
 
     private void getChain() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfRearGears()) {
@@ -224,13 +228,14 @@ public class ShimanoGroupsetService {
                 case 11 -> link = wiggleURL + "shimano-hg601q-105-5800-11-speed-chain";
                 case 12 -> link = wiggleURL + "shimano-slx-m7100-12-speed-chain";
             }
-            setBikePartsFromLink(link, "chain");
+            setBikePartsFromLink(link, "Chain");
         } catch (IOException e) {
             handleIOException("Get Chain", e);
         }
     }
 
     private void getRearDerailleur() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfRearGears()) {
@@ -240,13 +245,14 @@ public class ShimanoGroupsetService {
                 case 11 -> link = chainReactionURL + "shimano-105-r7000-11-speed-rear-derailleur";
                 case 12 -> link = chainReactionURL + "shimano-ultegra-r8150-di2-12-speed-rear-derailleur";
             }
-            setBikePartsFromLink(link, "rear-derailleur");
+            setBikePartsFromLink(link, "Rear-Derailleur");
         } catch (IOException e) {
             handleIOException("Get Rear Derailleur", e);
         }
     }
 
     private void getFrontDerailleur() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfFrontGears()) {
@@ -277,7 +283,7 @@ public class ShimanoGroupsetService {
                     }
                 }
             }
-            setBikePartsFromLink(link, "front-derailleur");
+            setBikePartsFromLink(link, "Front-Derailleur");
         } catch (IOException e) {
             handleIOException("Get Front Derailleur", e);
         }
@@ -290,10 +296,13 @@ public class ShimanoGroupsetService {
         String name = Objects.requireNonNull(e.select("h1").first()).text();
         String price = Objects.requireNonNull(e.select("div.ProductPrice_productPrice__Fg1nA")
                 .select("p").first()).text().replace("£", "").split(" ")[0];
+        if (!price.contains(".")) {
+            price = price + ".00";
+        }
         LOGGER.info("Found Product: " + name);
         LOGGER.info("For Price: " + price);
         LOGGER.info("Link: " + link);
-        bikeParts.getListOfParts().add(new Part(component, name, new BigDecimal(price), link));
+        bikeParts.getListOfParts().add(new Part(component, name, price, link));
     }
 
     private void handleIOException(String message, IOException e) {

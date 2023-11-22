@@ -7,15 +7,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
@@ -29,7 +26,6 @@ public class BikePartsService {
     private static final String wiggleURL = "https://www.wiggle.com/p/";
     private static final String dolanURL = "https://www.dolan-bikes.com/";
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
-    private static String link;
     private static FullBike bike;
     private BikeParts bikeParts;
 
@@ -46,7 +42,7 @@ public class BikePartsService {
             CompletableFuture<Void> handleBarFuture = CompletableFuture.runAsync(this::getHandlebarParts);
             CompletableFuture<Void> frameFuture = CompletableFuture.runAsync(this::getFrameParts);
             CompletableFuture<Void> gearFuture = CompletableFuture.runAsync(this::getGearSet);
-            CompletableFuture.allOf(handleBarFuture,frameFuture,gearFuture).join();
+            CompletableFuture.allOf(handleBarFuture, frameFuture, gearFuture).join();
             calculateTotalPrice();
         } catch (Exception e) {
             handleException("Get Bike Parts", e);
@@ -61,6 +57,7 @@ public class BikePartsService {
     }
 
     private void getHandlebarParts() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             LOGGER.info("Method for Getting Handlebar Parts from web");
@@ -70,20 +67,20 @@ public class BikePartsService {
                 case BULLHORNS -> link = chainReactionURL + "cinelli-bullhorn-road-handlebar";
                 case FLARE -> link = chainReactionURL + "ritchey-comp-venturemax-handlebar";
             }
-            shimanoGroupsetService.setBikePartsFromLink(link, "bar");
+            shimanoGroupsetService.setBikePartsFromLink(link, "Bar");
         } catch (Exception e) {
             handleException("Get HandleBar Parts", e);
         }
     }
 
     private void getFrameParts() {
+        String link = "";
         try {
             bike = fullBikeService.getBike();
             LOGGER.info("Jsoup Method for Getting Frame Parts");
             String frameName;
             String framePrice;
             Document doc;
-            String link = "";
             switch (bike.getFrame().getFrameStyle()) {
                 case ROAD -> {
                     if (bike.getFrame().isDiscBrakeCompatible()) {
@@ -93,7 +90,11 @@ public class BikePartsService {
                     }
                 }
                 case TOUR -> {
-                    link = genesisURL + "genesis-fugio-frameset-vargn22330/";
+                    if (bike.getFrame().isDiscBrakeCompatible()) {
+                        link = genesisURL + "genesis-fugio-frameset-vargn22330/";
+                    } else {
+                        link = genesisURL + "genesis-equilibrium-725-frameset-vargn21810";
+                    }
                 }
                 case GRAVEL -> {
                     link = dolanURL + "dolan-gxa2020-aluminium-gravel-frameset/";
@@ -115,11 +116,12 @@ public class BikePartsService {
                 frameName = "";
                 framePrice = "";
             }
-
             framePrice = framePrice.replaceAll("[^\\d.]", "");
             framePrice = framePrice.split("\\.")[0] + "." + framePrice.split("\\.")[1].substring(0, 2);
-            bikeParts.getListOfParts().add(new Part("Frame", frameName, new BigDecimal(framePrice), link));
-
+            if (!framePrice.contains(".")) {
+                framePrice = framePrice + ".00";
+            }
+            bikeParts.getListOfParts().add(new Part("Frame", frameName, framePrice, link));
             LOGGER.info("Found Frame: " + frameName);
             LOGGER.info("For price: " + framePrice);
             LOGGER.info("Frame link: " + link);
@@ -129,12 +131,11 @@ public class BikePartsService {
     }
 
     private void calculateTotalPrice() {
-        BigDecimal total = bikeParts.getListOfParts()
-                .stream()
-                .map(Part::getPrice)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.UP);
+        BigDecimal total = new BigDecimal(0);
+        for (Part p : bikeParts.getListOfParts()) {
+            BigDecimal bd = new BigDecimal(p.getPrice());
+            total = total.add(bd);
+        }
         bikeParts.setTotalBikePrice(total);
     }
 

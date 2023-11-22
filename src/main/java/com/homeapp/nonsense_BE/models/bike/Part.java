@@ -1,7 +1,6 @@
 package com.homeapp.nonsense_BE.models.bike;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 public class Part {
@@ -15,11 +14,11 @@ public class Part {
 
     private String name;
 
-    private BigDecimal price;
+    private String price;
 
     private String link;
 
-    public Part(String component, String name, BigDecimal price, String link) {
+    public Part(String component, String name, String price, String link) {
         this.component = component;
         this.name = name;
         this.price = price;
@@ -46,11 +45,11 @@ public class Part {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
