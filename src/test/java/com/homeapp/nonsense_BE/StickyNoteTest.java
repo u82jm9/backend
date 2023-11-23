@@ -66,19 +66,19 @@ public class StickyNoteTest {
 
     @Test
     public void test_That_A_StickyNote_Can_Be_Retrieved_By_Id() {
-        assertNotNull(stickyNoteService.retrieveById(2L).get());
+        assertNotNull(stickyNoteService.retrieveById(2L));
     }
 
     @Test
     public void test_That_A_StickNote_Can_Be_Edited() {
-        StickyNote noteBefore = stickyNoteService.retrieveById(2L).get();
+        StickyNote noteBefore = stickyNoteService.retrieveById(2L);
         Map<String, Boolean> map = new HashMap<>();
         map.put("Test Message", false);
         map.put("Test Message2", false);
         map.put("Test Messagee", true);
         noteBefore.setMessageMap(map);
         stickyNoteService.editStickyNote(noteBefore);
-        StickyNote noteAfter = stickyNoteService.retrieveById(2L).get();
+        StickyNote noteAfter = stickyNoteService.retrieveById(2L);
         assertNotEquals(noteAfter, noteBefore);
     }
 
@@ -108,7 +108,7 @@ public class StickyNoteTest {
     @Test
     public void test_That_A_StickyNote_Can_Be_Deleted() {
         int notesBefore = stickyNoteService.retrieveAllNotes().size();
-        StickyNote note = stickyNoteService.retrieveById(2L).get();
+        StickyNote note = stickyNoteService.retrieveById(2L);
         stickyNoteService.deleteNote(note);
         int notesAfter = stickyNoteService.retrieveAllNotes().size();
         assertTrue(notesAfter < notesBefore);

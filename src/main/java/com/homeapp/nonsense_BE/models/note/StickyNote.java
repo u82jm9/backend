@@ -36,6 +36,10 @@ public class StickyNote {
         return stickyNoteId;
     }
 
+    public void setStickyNoteId(Long id) {
+        this.stickyNoteId = id;
+    }
+
     public String getTitle() {
         return title;
     }
