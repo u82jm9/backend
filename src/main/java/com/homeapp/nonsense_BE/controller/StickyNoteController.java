@@ -39,7 +39,7 @@ public class StickyNoteController {
     @DeleteMapping("DeleteNote/{id}")
     public ResponseEntity<HttpStatus> deleteStickyNote(@PathVariable(value = "id") Long stickyNoteId) {
         LOGGER.info("Deleting Sticky Note, Delete Note API");
-        StickyNote note = stickyNoteService.retrieveById(stickyNoteId).get();
+        StickyNote note = stickyNoteService.retrieveById(stickyNoteId);
         stickyNoteService.deleteNote(note);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -54,7 +54,6 @@ public class StickyNoteController {
     @PostMapping("EditNote")
     public ResponseEntity<HttpStatus> editStickyNote(@RequestBody StickyNote note) {
         LOGGER.info("Editing Sticky Note, Edit Note API");
-        stickyNoteService.updateNoteComplete(note);
         stickyNoteService.editStickyNote(note);
         return new ResponseEntity<>(HttpStatus.OK);
     }
