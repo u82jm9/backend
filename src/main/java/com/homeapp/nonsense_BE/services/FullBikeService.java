@@ -64,46 +64,6 @@ public class FullBikeService {
         fullBikeDao.save(bike);
     }
 
-    public List<String> getAllGroupsetBrandNames() {
-        List<GroupsetBrand> groupsets = Arrays.stream(GroupsetBrand.values()).toList();
-        List<String> names = new ArrayList<>();
-        for (GroupsetBrand gs : groupsets) {
-            names.add(gs.getName());
-        }
-        LOGGER.info("Getting all Groupset Brands available, number returned: " + names.size());
-        return names;
-    }
-
-    public List<String> getAllFrameStyleNames() {
-        List<FrameStyle> frameStyles = Arrays.stream(FrameStyle.values()).toList();
-        List<String> names = new ArrayList<>();
-        for (FrameStyle fs : frameStyles) {
-            names.add(fs.getName());
-        }
-        LOGGER.info("Getting all Frame Styles available, number returned: " + names.size());
-        return names;
-    }
-
-    public List<String> getAllBars() {
-        List<HandleBarType> barTypes = Arrays.stream(HandleBarType.values()).toList();
-        List<String> bars = new ArrayList<>();
-        for (HandleBarType b : barTypes) {
-            bars.add(b.getName());
-        }
-        LOGGER.info("Getting all Handlebar Types, number returned: " + bars.size());
-        return bars;
-    }
-
-    public List<String> getAllBrakes() {
-        List<BrakeType> brakeTypes = Arrays.stream(BrakeType.values()).toList();
-        List<String> brakes = new ArrayList<>();
-        for (BrakeType b : brakeTypes) {
-            brakes.add(b.getName());
-        }
-        LOGGER.info("Getting all Brake Types, number returned: " + brakes.size());
-        return brakes;
-    }
-
     public FullBike updateBike(FullBike bike) {
         LOGGER.info("Updating bike in DB!");
         setBike(bike);

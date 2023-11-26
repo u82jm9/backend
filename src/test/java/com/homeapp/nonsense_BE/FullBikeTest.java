@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.List;
-
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
@@ -27,10 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class FullBikeTest {
 
+    private static boolean isSetupDone = false;
     @Autowired
     private FullBikeService fullBikeService;
-
-    private static boolean isSetupDone = false;
 
     @BeforeEach
     public void setup() {
@@ -57,13 +54,7 @@ public class FullBikeTest {
     }
 
     @Test
-    public void test_That_a_list_of_frame_Styles_is_returned_as_string() {
-        List<String> names = fullBikeService.getAllFrameStyleNames();
-        assertTrue(names.size() > 0);
-    }
-
-    @Test
-    public void test_That_a_Full_Bike_can_be_created() {
+    public void test_That_a_Full_Bike_can_be_Created() {
         int numberOfBikesBefore = fullBikeService.getAllFullBikes().size();
         Frame frame = new Frame(ROAD, false, true, true);
         FullBike testBike = new FullBike("test Bike", frame, RIM, SHIMANO, DROPS, 2L, 10L, STI);
@@ -73,7 +64,7 @@ public class FullBikeTest {
     }
 
     @Test
-    public void test_That_a_Full_Bike_can_be_updated() {
+    public void test_That_a_Full_Bike_can_be_Updated() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike");
         bikeBefore.setNumberOfRearGears(9);
         fullBikeService.updateBike(bikeBefore);

@@ -2,6 +2,7 @@ package com.homeapp.nonsense_BE;
 
 import com.homeapp.nonsense_BE.models.note.StickyNote;
 import com.homeapp.nonsense_BE.services.StickyNoteService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +27,15 @@ public class StickyNoteTest {
     private StickyNoteService stickyNoteService;
 
     private static boolean isSetupDone = false;
+    private static boolean isFileSaved = false;
+    private List<StickyNote> list = new ArrayList<>();
 
     @BeforeEach
     private void setup() {
+        if (!isFileSaved) {
+            list = stickyNoteService.retrieveAllNotes();
+            isFileSaved = true;
+        }
         if (!isSetupDone) {
             Map<String, Boolean> map1 = new HashMap<>();
             map1.put("This is the message for the before all method", false);
@@ -46,6 +54,11 @@ public class StickyNoteTest {
             stickyNoteService.create("Go for a run!", "Seriously get up early and go for a run!!\nYou're just being lazy!", false);
             isSetupDone = true;
         }
+    }
+
+    @AfterAll
+    private void clearup() {
+        stickyNoteService.writeNotesToFile(list);
     }
 
     @Test
@@ -110,6 +123,7 @@ public class StickyNoteTest {
         int notesBefore = stickyNoteService.retrieveAllNotes().size();
         StickyNote note = stickyNoteService.retrieveById(2L);
         stickyNoteService.deleteNote(note);
+        isSetupDone = false;
         int notesAfter = stickyNoteService.retrieveAllNotes().size();
         assertTrue(notesAfter < notesBefore);
     }
@@ -118,6 +132,7 @@ public class StickyNoteTest {
     public void test_All_StickyNotes_Can_Be_Deleted() {
         stickyNoteService.create("Delete me!", "I will be deleted, goodbye. But I will have served a purpose. Please remember me.", true);
         stickyNoteService.deleteAll();
+        isSetupDone = false;
         assertNotNull(stickyNoteService.retrieveAllNotes());
     }
 }

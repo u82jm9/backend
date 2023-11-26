@@ -35,7 +35,7 @@ public class StickyNoteService {
         return list;
     }
 
-    private void writeNotesToFile(List<StickyNote> list) {
+    public void writeNotesToFile(List<StickyNote> list) {
         try {
             om.writeValue(new File(JSON_NOTES_FILE), list);
         } catch (IOException e) {
@@ -134,7 +134,7 @@ public class StickyNoteService {
         writeNotesToFile(new ArrayList<>());
     }
 
-    public StickyNote updateNoteComplete(StickyNote note) {
+    private StickyNote updateNoteComplete(StickyNote note) {
         if (note.getMessageMap().containsValue(false)) {
             note.setComplete(false);
         } else {

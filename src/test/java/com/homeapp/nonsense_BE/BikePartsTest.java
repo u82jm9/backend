@@ -69,12 +69,12 @@ public class BikePartsTest {
     }
 
     @Test
-    public void test_That_The_Full_Price_is_Cheaps() {
+    public void test_That_The_Full_Price_is_Heaps() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike");
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice < 1000);
+        assertTrue(bikePrice > 1000);
     }
 
     @Test

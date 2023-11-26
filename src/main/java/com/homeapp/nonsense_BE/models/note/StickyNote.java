@@ -32,6 +32,13 @@ public class StickyNote {
         this.complete = complete;
     }
 
+    public StickyNote(long id, String title, Map<String, Boolean> messageMap, boolean complete) {
+        this.stickyNoteId = id;
+        this.title = title;
+        this.messageMap = messageMap;
+        this.complete = complete;
+    }
+
     public long getStickyNoteId() {
         return stickyNoteId;
     }

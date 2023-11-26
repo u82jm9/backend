@@ -8,9 +8,8 @@ import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.RearGears;
 import com.homeapp.nonsense_BE.models.note.DTOnote;
 import com.homeapp.nonsense_BE.models.note.StickyNote;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.homeapp.nonsense_BE.services.StickyNoteService;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +19,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.HYDRAULIC_DISC;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ControllerTest {
 
     @Autowired
@@ -43,15 +45,34 @@ public class ControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private StickyNoteController stickyNoteController;
+    @Autowired
+    private StickyNoteService stickyNoteService;
     private MockMvc mockMvc;
     private MockHttpSession session;
     final static String TEST_API_URL = "/Test/";
     final static String STICKY_NOTE_URL = "/StickyNotes/";
     final static String FULL_BIKE_URL = "/FullBike/";
     final static String OPTIONS_URL = "/Options/";
+    private static boolean isSetupDone = false;
+    private static boolean isFileSaved = false;
+    private List<StickyNote> list = new ArrayList<>();
 
     @BeforeEach
     public void setup() {
+        if (!isFileSaved) {
+            list = stickyNoteService.retrieveAllNotes();
+            isFileSaved = true;
+        }
+        if (!isSetupDone) {
+            Map<String, Boolean> map3 = new HashMap<>();
+            map3.put("This is the message for the third before all method", false);
+            StickyNote note3 = new StickyNote("Third Before All Method", map3, false);
+            stickyNoteService.create(note3);
+            stickyNoteService.create("Gardening Work Left", "Dig more soil from Zebo. Flatten front and back lawns. Seed new grass. Fix nasty bit behind shed", true);
+            stickyNoteService.create("Nothing Useful", "This is just to make an extra Sticky Note as I thought 4 would look better than 3!", true);
+            stickyNoteService.create("Go for a run!", "Seriously get up early and go for a run!!\nYou're just being lazy!", false);
+            isSetupDone = true;
+        }
         this.session = new MockHttpSession();
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(SharedHttpSessionConfigurer.sharedHttpSession()).build();
     }
@@ -61,6 +82,12 @@ public class ControllerTest {
         this.session = null;
         this.mockMvc = null;
     }
+
+    @AfterAll
+    private void clearup() {
+        stickyNoteService.writeNotesToFile(list);
+    }
+
 
     @Test
     public void test_That_Options_is_returned_with_Brands() throws Exception {
@@ -91,19 +118,21 @@ public class ControllerTest {
     public void test_That_a_single_Note_can_be_deleted() throws Exception {
         this.mockMvc.perform(delete(STICKY_NOTE_URL + "DeleteNote/2"))
                 .andExpect(status().isOk());
+        isSetupDone = false;
     }
 
     @Test
     public void test_That_all_Notes_can_be_deleted() throws Exception {
         this.mockMvc.perform(delete(STICKY_NOTE_URL + "DeleteAllNotes"))
                 .andExpect(status().isOk());
+        isSetupDone = false;
     }
 
     @Test
     public void test_That_a_Note_can_be_edited() throws Exception {
         Map<String, Boolean> map = new HashMap<>();
         map.put("Do it NOW!", false);
-        StickyNote note = new StickyNote("Go for a run!", map, false);
+        StickyNote note = new StickyNote(2,"Paint! Boo", map, false);
         this.mockMvc.perform(post(STICKY_NOTE_URL + "EditNote").session(session).contentType("application/json")
                         .content(objectMapper.writeValueAsString(note)))
                 .andExpect(status().isOk());
@@ -118,12 +147,6 @@ public class ControllerTest {
     @Test
     public void test_That_an_empty_Bikes_can_be_created() throws Exception {
         this.mockMvc.perform(get(FULL_BIKE_URL + "StartNewBike"))
-                .andExpect(status().isAccepted());
-    }
-
-    @Test
-    public void test_That_a_list_of_Frames_can_be_returned() throws Exception {
-        this.mockMvc.perform(get(FULL_BIKE_URL + "GetFrames"))
                 .andExpect(status().isAccepted());
     }
 
