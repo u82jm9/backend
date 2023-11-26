@@ -1,11 +1,11 @@
 package com.homeapp.nonsense_BE;
 
-import com.homeapp.nonsense_BE.models.bike.BikeParts;
-import com.homeapp.nonsense_BE.models.bike.Frame;
-import com.homeapp.nonsense_BE.models.bike.FullBike;
-import com.homeapp.nonsense_BE.models.bike.Part;
+import com.homeapp.nonsense_BE.models.bike.*;
+import com.homeapp.nonsense_BE.models.bike.Enums.BrakeType;
+import com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType;
 import com.homeapp.nonsense_BE.services.BikePartsService;
 import com.homeapp.nonsense_BE.services.FullBikeService;
+import com.homeapp.nonsense_BE.services.OptionsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
@@ -32,6 +33,8 @@ public class BikePartsTest {
 
     @Autowired
     private BikePartsService bikePartsService;
+    @Autowired
+    private OptionsService optionsService;
 
     private static boolean isSetupDone = false;
 
@@ -57,6 +60,130 @@ public class BikePartsTest {
             FullBike bike5 = new FullBike("bike5", frame5, MECHANICAL_DISC, SHIMANO, FLARE, 3L, 11L, TRIGGER);
             fullBikeService.create(bike5);
             isSetupDone = true;
+        }
+    }
+
+    @Test
+    public void test_That_All_SINGLE_SPEED_Options_Work() {
+        int numberOfLoops = 1;
+        Options o = optionsService.startNewBike();
+        o.setShowFrameStyles(false);
+        FullBike b = fullBikeService.startNewBike();
+        b.getFrame().setFrameStyle(SINGLE_SPEED);
+        CombinedData cd = new CombinedData();
+        cd.setBike(b);
+        cd.setOptions(o);
+        o = optionsService.updateOptions(cd);
+        for (String bt : o.getBrakeStyles()) {
+            b.setBrakeType(BrakeType.fromName(bt));
+            for (String ht : o.getBarStyles()) {
+                b.setHandleBarType(HandleBarType.fromName(ht));
+                for (Long fg : o.getNumberOfFrontGears()) {
+                    b.setNumberOfFrontGears(fg);
+                    for (Long rg : o.getNumberOfRearGears()) {
+                        b.setNumberOfRearGears(rg);
+                        fullBikeService.setBike(b);
+                        BikeParts parts = bikePartsService.getBikePartsForBike();
+                        BigDecimal bikePrice = parts.getTotalBikePrice();
+                        assertNotNull(bikePrice);
+                        numberOfLoops = numberOfLoops + 1;
+                        System.out.println(numberOfLoops);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void test_That_All_ROAD_Options_Work() {
+        int numberOfLoops = 1;
+        Options o = optionsService.startNewBike();
+        o.setShowFrameStyles(false);
+        FullBike b = fullBikeService.startNewBike();
+        b.getFrame().setFrameStyle(ROAD);
+        CombinedData cd = new CombinedData();
+        cd.setBike(b);
+        cd.setOptions(o);
+        o = optionsService.updateOptions(cd);
+        for (String bt : o.getBrakeStyles()) {
+            b.setBrakeType(BrakeType.fromName(bt));
+            for (String ht : o.getBarStyles()) {
+                b.setHandleBarType(HandleBarType.fromName(ht));
+                for (Long fg : o.getNumberOfFrontGears()) {
+                    b.setNumberOfFrontGears(fg);
+                    for (Long rg : o.getNumberOfRearGears()) {
+                        b.setNumberOfRearGears(rg);
+                        fullBikeService.setBike(b);
+                        BikeParts parts = bikePartsService.getBikePartsForBike();
+                        BigDecimal bikePrice = parts.getTotalBikePrice();
+                        assertNotNull(bikePrice);
+                        numberOfLoops = numberOfLoops + 1;
+                        System.out.println(numberOfLoops);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void test_That_All_GRAVEL_Options_Work() {
+        int numberOfLoops = 1;
+        Options o = optionsService.startNewBike();
+        o.setShowFrameStyles(false);
+        FullBike b = fullBikeService.startNewBike();
+        b.getFrame().setFrameStyle(GRAVEL);
+        CombinedData cd = new CombinedData();
+        cd.setBike(b);
+        cd.setOptions(o);
+        o = optionsService.updateOptions(cd);
+        for (String bt : o.getBrakeStyles()) {
+            b.setBrakeType(BrakeType.fromName(bt));
+            for (String ht : o.getBarStyles()) {
+                b.setHandleBarType(HandleBarType.fromName(ht));
+                for (Long fg : o.getNumberOfFrontGears()) {
+                    b.setNumberOfFrontGears(fg);
+                    for (Long rg : o.getNumberOfRearGears()) {
+                        b.setNumberOfRearGears(rg);
+                        fullBikeService.setBike(b);
+                        BikeParts parts = bikePartsService.getBikePartsForBike();
+                        BigDecimal bikePrice = parts.getTotalBikePrice();
+                        assertNotNull(bikePrice);
+                        numberOfLoops = numberOfLoops + 1;
+                        System.out.println(numberOfLoops);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void test_That_All_TOUR_Options_Work() {
+        int numberOfLoops = 1;
+        Options o = optionsService.startNewBike();
+        o.setShowFrameStyles(false);
+        FullBike b = fullBikeService.startNewBike();
+        b.getFrame().setFrameStyle(TOUR);
+        CombinedData cd = new CombinedData();
+        cd.setBike(b);
+        cd.setOptions(o);
+        o = optionsService.updateOptions(cd);
+        for (String bt : o.getBrakeStyles()) {
+            b.setBrakeType(BrakeType.fromName(bt));
+            for (String ht : o.getBarStyles()) {
+                b.setHandleBarType(HandleBarType.fromName(ht));
+                for (Long fg : o.getNumberOfFrontGears()) {
+                    b.setNumberOfFrontGears(fg);
+                    for (Long rg : o.getNumberOfRearGears()) {
+                        b.setNumberOfRearGears(rg);
+                        fullBikeService.setBike(b);
+                        BikeParts parts = bikePartsService.getBikePartsForBike();
+                        BigDecimal bikePrice = parts.getTotalBikePrice();
+                        assertNotNull(bikePrice);
+                        numberOfLoops = numberOfLoops + 1;
+                        System.out.println(numberOfLoops);
+                    }
+                }
+            }
         }
     }
 
