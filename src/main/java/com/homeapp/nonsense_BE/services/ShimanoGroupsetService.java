@@ -12,11 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.MECHANICAL_DISC;
+import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
 
 @Service
@@ -37,9 +36,9 @@ public class ShimanoGroupsetService {
         if (!bike.getShifterStyle().equals(STI)) {
             getLeverShifters();
         }
-        if (bike.getBrakeType().equals(MECHANICAL_DISC)) {
+        if ((bike.getBrakeType().equals(MECHANICAL_DISC)) || (bike.getBrakeType().equals(RIM))) {
             getMechanicalSTIShifters();
-        } else {
+        } else if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
             getHydraulicSTIShifters();
         }
         CompletableFuture<Void> brakeFuture = CompletableFuture.runAsync(this::getBrakeCalipers);
@@ -62,7 +61,7 @@ public class ShimanoGroupsetService {
                     } else if (bike.getNumberOfRearGears() == 10) {
                         link = wiggleURL + "shimano-tiagra-4700-rear-brake-caliper";
                     } else {
-                        link = wiggleURL + "shimano-105-r7000-brake-caliper";
+                        link = chainReactionURL + "shimano-105-r7000-brake-caliper";
                     }
                 }
                 case MECHANICAL_DISC -> {
@@ -74,9 +73,14 @@ public class ShimanoGroupsetService {
                         link = wiggleURL + "trp-spyke-mechanical-disc-brake-caliper";
                     }
                 }
+                default -> {
+                }
             }
-            setBikePartsFromLink(link, "Front Brake Caliper");
-            setBikePartsFromLink(link, "Rear Brake Caliper");
+            if (!link.isEmpty()) {
+                setBikePartsFromLink(link, "Front Brake Caliper");
+                setBikePartsFromLink(link, "Rear Brake Caliper");
+
+            }
         } catch (IOException e) {
             handleIOException("Get Brake calipers", e);
         }
@@ -137,8 +141,10 @@ public class ShimanoGroupsetService {
                 link = chainReactionURL + "shimano-tiagra-4725-2x10-speed-road-disc-brake";
             } else if (bike.getNumberOfRearGears() == 11) {
                 link = chainReactionURL + "shimano-105-r7025-hydraulic-disc-brake";
-            } else {
+            } else if (bike.getNumberOfRearGears() == 12) {
                 link = wiggleURL + "shimano-105-r7170-di2-hydraulic-disc-brake";
+            } else {
+                link = wiggleURL + "clarks-m2-hydraulic-disc-brake-with-rotor";
             }
             setBikePartsFromLink(link, "Right Shifter");
             if (bike.getNumberOfFrontGears() == 1) {
@@ -210,8 +216,12 @@ public class ShimanoGroupsetService {
                 case 10 -> link = chainReactionURL + "shimano-tiagra-hg500-10-speed-road-cassette-5360107149";
                 case 11 -> link = chainReactionURL + "shimano-105-r7000-11-speed-cassette";
                 case 12 -> link = chainReactionURL + "shimano-105-r7100-12-speed-cassette";
+                default -> {
+                }
             }
-            setBikePartsFromLink(link, "Cassette");
+            if (!link.isEmpty()) {
+                setBikePartsFromLink(link, "Cassette");
+            }
         } catch (IOException e) {
             handleIOException("Get Cassette", e);
         }
@@ -227,6 +237,7 @@ public class ShimanoGroupsetService {
                 case 10 -> link = wiggleURL + "shimano-hg95-10-speed-chain";
                 case 11 -> link = wiggleURL + "shimano-hg601q-105-5800-11-speed-chain";
                 case 12 -> link = wiggleURL + "shimano-slx-m7100-12-speed-chain";
+                default -> link = chainReactionURL + "shimano-nexus-single-speed-chain";
             }
             setBikePartsFromLink(link, "Chain");
         } catch (IOException e) {
@@ -244,8 +255,12 @@ public class ShimanoGroupsetService {
                 case 10 -> link = wiggleURL + "shimano-tiagra-4700-10-speed-rear-derailleur-gs";
                 case 11 -> link = chainReactionURL + "shimano-105-r7000-11-speed-rear-derailleur";
                 case 12 -> link = chainReactionURL + "shimano-ultegra-r8150-di2-12-speed-rear-derailleur";
+                default -> {
+                }
             }
-            setBikePartsFromLink(link, "Rear-Derailleur");
+            if (!link.isEmpty()) {
+                setBikePartsFromLink(link, "Rear-Derailleur");
+            }
         } catch (IOException e) {
             handleIOException("Get Rear Derailleur", e);
         }
@@ -291,6 +306,8 @@ public class ShimanoGroupsetService {
 
     public void setBikePartsFromLink(String link, String component) throws IOException {
         bike = fullBikeService.getBike();
+        LOGGER.info("Connecting to link: {}", link);
+        LOGGER.info("For Component: {}", component);
         Document doc = Jsoup.connect(link).get();
         Element e = doc.select("div.ProductDetail_container__FX6xF").get(0);
         String name = Objects.requireNonNull(e.select("h1").first()).text();
@@ -306,6 +323,6 @@ public class ShimanoGroupsetService {
     }
 
     private void handleIOException(String message, IOException e) {
-        LOGGER.error("An IOException occurred from: " + message + "! " + e.getMessage());
+        LOGGER.error("An IOException occurred from: {}!\n{}", message, e.getMessage());
     }
 }

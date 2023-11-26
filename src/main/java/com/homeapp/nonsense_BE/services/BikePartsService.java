@@ -23,7 +23,6 @@ public class BikePartsService {
 
     private static final Logger LOGGER = LogManager.getLogger(BikePartsService.class);
     private static final String chainReactionURL = "https://www.chainreactioncycles.com/p/";
-    private static final String wiggleURL = "https://www.wiggle.com/p/";
     private static final String dolanURL = "https://www.dolan-bikes.com/";
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
     private static FullBike bike;
@@ -37,16 +36,12 @@ public class BikePartsService {
 
     public BikeParts getBikePartsForBike() {
         bikeParts = new BikeParts();
-        try {
-            bike = fullBikeService.getBike();
-            CompletableFuture<Void> handleBarFuture = CompletableFuture.runAsync(this::getHandlebarParts);
-            CompletableFuture<Void> frameFuture = CompletableFuture.runAsync(this::getFrameParts);
-            CompletableFuture<Void> gearFuture = CompletableFuture.runAsync(this::getGearSet);
-            CompletableFuture.allOf(handleBarFuture, frameFuture, gearFuture).join();
-            calculateTotalPrice();
-        } catch (Exception e) {
-            handleException("Get Bike Parts", e);
-        }
+        bike = fullBikeService.getBike();
+        CompletableFuture<Void> handleBarFuture = CompletableFuture.runAsync(this::getHandlebarParts);
+        CompletableFuture<Void> frameFuture = CompletableFuture.runAsync(this::getFrameParts);
+        CompletableFuture<Void> gearFuture = CompletableFuture.runAsync(this::getGearSet);
+        CompletableFuture.allOf(handleBarFuture, frameFuture, gearFuture).join();
+        calculateTotalPrice();
         return bikeParts;
     }
 
@@ -62,8 +57,8 @@ public class BikePartsService {
             bike = fullBikeService.getBike();
             LOGGER.info("Method for Getting Handlebar Parts from web");
             switch (bike.getHandleBarType()) {
-                case DROPS -> link = chainReactionURL + "fsa-omega-compact-road-handlebar";
-                case FLAT -> link = chainReactionURL + "spank-spoon-35-mountain-bike-riser-handlebar";
+                case DROPS -> link = chainReactionURL + "prime-primavera-x-light-pro-carbon-handlebar";
+                case FLAT -> link = chainReactionURL + "nukeproof-horizon-v2-alloy-riser-handlebar-35mm";
                 case BULLHORNS -> link = chainReactionURL + "cinelli-bullhorn-road-handlebar";
                 case FLARE -> link = chainReactionURL + "ritchey-comp-venturemax-handlebar";
             }
@@ -103,7 +98,6 @@ public class BikePartsService {
                     link = dolanURL + "dolan-pre-cursa-aluminium-frameset/";
                 }
             }
-
             doc = Jsoup.connect(link).get();
 
             if (link.contains("dolan-bikes")) {
@@ -122,9 +116,9 @@ public class BikePartsService {
                 framePrice = framePrice + ".00";
             }
             bikeParts.getListOfParts().add(new Part("Frame", frameName, framePrice, link));
-            LOGGER.info("Found Frame: " + frameName);
-            LOGGER.info("For price: " + framePrice);
-            LOGGER.info("Frame link: " + link);
+            LOGGER.info("Found Frame: {}", frameName);
+            LOGGER.info("For price: {}", framePrice);
+            LOGGER.info("Frame link: {}", link);
         } catch (IOException e) {
             handleException("Get Frame Parts", e);
         }
@@ -140,6 +134,6 @@ public class BikePartsService {
     }
 
     private void handleException(String message, Exception e) {
-        LOGGER.error("An IOException occurred from: " + message + "! " + e.getMessage());
+        LOGGER.error("An IOException occurred from: {}!\n{}", message, e.getMessage());
     }
 }
