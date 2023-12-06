@@ -35,11 +35,13 @@ public class ShimanoGroupsetService {
         bike = fullBikeService.getBike();
         if (!bike.getShifterStyle().equals(STI)) {
             getLeverShifters();
-        }
-        if ((bike.getBrakeType().equals(MECHANICAL_DISC)) || (bike.getBrakeType().equals(RIM))) {
-            getMechanicalSTIShifters();
-        } else if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
-            getHydraulicSTIShifters();
+            getBrakeLevers();
+        } else {
+            if ((bike.getBrakeType().equals(MECHANICAL_DISC)) || (bike.getBrakeType().equals(RIM))) {
+                getMechanicalSTIShifters();
+            } else if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
+                getHydraulicSTIShifters();
+            }
         }
         CompletableFuture<Void> brakeFuture = CompletableFuture.runAsync(this::getBrakeCalipers);
         CompletableFuture<Void> chainringFuture = CompletableFuture.runAsync(this::getChainring);
@@ -48,6 +50,23 @@ public class ShimanoGroupsetService {
         CompletableFuture<Void> rearDerailleurFuture = CompletableFuture.runAsync(this::getRearDerailleur);
         CompletableFuture<Void> frontDerailleurFuture = CompletableFuture.runAsync(this::getFrontDerailleur);
         CompletableFuture.allOf(brakeFuture, chainringFuture, cassetteFuture, chainFuture, rearDerailleurFuture, frontDerailleurFuture).join();
+    }
+
+    private void getBrakeLevers() {
+        String link = "";
+        try {
+            bike = fullBikeService.getBike();
+            if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
+                link = wiggleURL + "shimano-grx-812-sub-brake-lever";
+                setBikePartsFromLink(link, "Left Brake Lever");
+                setBikePartsFromLink(link, "Right Brake Lever");
+            } else {
+                link = wiggleURL + "shimano-deore-t610-v-brake-levers";
+                setBikePartsFromLink(link, "Brake Levers");
+            }
+        } catch (IOException e) {
+            handleIOException("Get Brake Levers", e);
+        }
     }
 
     private void getBrakeCalipers() {
@@ -158,8 +177,21 @@ public class ShimanoGroupsetService {
     }
 
     private void getLeverShifters() {
-        LOGGER.info("No Shimano trigger shifters found ONLINE yet");
-        bike.setShifterStyle(STI);
+        String link = "";
+        try {
+            switch ((int) bike.getNumberOfRearGears()) {
+                case 8 -> link = wiggleURL + "microshift-acolyte-m7180-8-speed-trigger-shifter";
+                case 10 -> link = wiggleURL + "shimano-deore-m6000-10-speed-trigger-shifter";
+                case 11 -> link = wiggleURL + "shimano-xt-m8000-11-speed-trigger-shifter";
+                default -> {
+                }
+            }
+            if (!link.isEmpty()) {
+                setBikePartsFromLink(link, "Trigger Shifter");
+            }
+        } catch (IOException e) {
+            handleIOException("Get Trigger shifters", e);
+        }
     }
 
     private void getChainring() {
