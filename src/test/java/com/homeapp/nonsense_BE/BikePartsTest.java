@@ -57,8 +57,14 @@ public class BikePartsTest {
             FullBike bike4 = new FullBike("bike4", frame4, RIM, SHIMANO, FLAT, 1L, 1L, NONE);
             fullBikeService.create(bike4);
             Frame frame5 = new Frame(TOUR, true, true, true);
-            FullBike bike5 = new FullBike("bike5", frame5, MECHANICAL_DISC, SHIMANO, FLARE, 3L, 11L, TRIGGER);
+            FullBike bike5 = new FullBike("bike5", frame5, MECHANICAL_DISC, SHIMANO, FLARE, 3L, 11L, STI);
             fullBikeService.create(bike5);
+            Frame frame6 = new Frame(TOUR, true, true, true);
+            FullBike bike6 = new FullBike("bike6", frame6, MECHANICAL_DISC, SHIMANO, FLAT, 1L, 10L, TRIGGER);
+            fullBikeService.create(bike6);
+            Frame frame7 = new Frame(TOUR, true, true, true);
+            FullBike bike7 = new FullBike("bike7", frame7, HYDRAULIC_DISC, SHIMANO, FLAT, 1L, 11L, TRIGGER);
+            fullBikeService.create(bike7);
             isSetupDone = true;
         }
     }
@@ -245,6 +251,24 @@ public class BikePartsTest {
     @Test
     public void test_That_The_Full_Price_is_Heaps5() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike5");
+        fullBikeService.setBike(bikeBefore);
+        BikeParts parts = bikePartsService.getBikePartsForBike();
+        long bikePrice = parts.getTotalBikePrice().longValue();
+        assertTrue(bikePrice > 1000);
+    }
+
+    @Test
+    public void test_That_The_Full_Price_is_Heaps6() {
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike6");
+        fullBikeService.setBike(bikeBefore);
+        BikeParts parts = bikePartsService.getBikePartsForBike();
+        long bikePrice = parts.getTotalBikePrice().longValue();
+        assertTrue(bikePrice > 1000);
+    }
+
+    @Test
+    public void test_That_The_Full_Price_is_Heaps7() {
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike7");
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
