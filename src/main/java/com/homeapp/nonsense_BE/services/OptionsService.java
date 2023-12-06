@@ -76,31 +76,41 @@ public class OptionsService {
         List<Long> rearGears = new ArrayList<>();
         List<Long> frontGears = new ArrayList<>();
         Options o = getOptions();
-        switch (b.getFrame().getFrameStyle()) {
-            case ROAD -> {
-                rearGears.add(10L);
-                rearGears.add(11L);
-                rearGears.add(12L);
-                frontGears.add(2L);
+        if (!b.getHandleBarType().equals(FLAT)) {
+            switch (b.getFrame().getFrameStyle()) {
+                case ROAD -> {
+                    rearGears.add(10L);
+                    rearGears.add(11L);
+                    rearGears.add(12L);
+                    frontGears.add(2L);
+                }
+                case TOUR -> {
+                    rearGears.add(11L);
+                    rearGears.add(10L);
+                    rearGears.add(9L);
+                    rearGears.add(8L);
+                    frontGears.add(2L);
+                    frontGears.add(3L);
+                }
+                case GRAVEL -> {
+                    rearGears.add(9L);
+                    rearGears.add(10L);
+                    rearGears.add(11L);
+                    frontGears.add(2L);
+                    frontGears.add(1L);
+                }
+                default -> {
+                }
             }
-            case TOUR -> {
-                rearGears.add(11L);
-                rearGears.add(10L);
-                rearGears.add(9L);
-                rearGears.add(8L);
-                frontGears.add(2L);
-                frontGears.add(3L);
-            }
-            case GRAVEL -> {
-                rearGears.add(9L);
-                rearGears.add(10L);
-                rearGears.add(11L);
-                frontGears.add(2L);
-                frontGears.add(1L);
-            }
-            default -> {
-
-            }
+        } else {
+            rearGears.add(8L);
+            rearGears.add(10L);
+            rearGears.add(11L);
+            frontGears.add(1L);
+        }
+        if (b.getBrakeType().equals(HYDRAULIC_DISC)) {
+            frontGears.removeIf(item -> item == 2L);
+            frontGears.removeIf(item -> item == 3L);
         }
         o.setNumberOfFrontGears(frontGears);
         o.setNumberOfRearGears(rearGears);
