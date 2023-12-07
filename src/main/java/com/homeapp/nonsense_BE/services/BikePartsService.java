@@ -82,7 +82,11 @@ public class BikePartsService {
                 Document doc = Jsoup.connect(link).get();
                 Element e = doc.select("div.productDetails").get(0);
                 wheelName = e.select("h1").first().text();
-                wheelPrice = e.select("div.priceSummary").select("ins").select("span").first().text().replace("£", "").split(" ")[0];
+                if (e.select("div.priceSummary").select("ins").first() != null) {
+                    wheelPrice = e.select("div.priceSummary").select("ins").select("span").first().text().replace("£", "").split(" ")[0];
+                } else {
+                    wheelPrice = e.select("div.priceSummary").select("span").first().text().replace("£", "").split(" ")[0];
+                }
                 e = e.select("div.priceSummary").select("ins").first();
                 System.out.println(e);
                 if (!wheelPrice.contains(".")) {
