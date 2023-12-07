@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.concurrent.CompletableFuture;
 
+import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.RIM;
+import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.SINGLE_SPEED;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 
 @Service
@@ -23,6 +26,8 @@ public class BikePartsService {
 
     private static final Logger LOGGER = LogManager.getLogger(BikePartsService.class);
     private static final String chainReactionURL = "https://www.chainreactioncycles.com/p/";
+    private static final String wiggleURL = "https://www.wiggle.com/p/";
+    private static final String haloURL = "https://www.halowheels.com/";
     private static final String dolanURL = "https://www.dolan-bikes.com/";
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
     private static FullBike bike;
@@ -40,9 +45,57 @@ public class BikePartsService {
         CompletableFuture<Void> handleBarFuture = CompletableFuture.runAsync(this::getHandlebarParts);
         CompletableFuture<Void> frameFuture = CompletableFuture.runAsync(this::getFrameParts);
         CompletableFuture<Void> gearFuture = CompletableFuture.runAsync(this::getGearSet);
-        CompletableFuture.allOf(handleBarFuture, frameFuture, gearFuture).join();
+        CompletableFuture<Void> wheelFuture = CompletableFuture.runAsync(this::getWheels);
+        CompletableFuture.allOf(handleBarFuture, frameFuture, gearFuture, wheelFuture).join();
         calculateTotalPrice();
         return bikeParts;
+    }
+
+    private void getWheels() {
+        String link = "";
+        try {
+            bike = fullBikeService.getBike();
+            LOGGER.info("Method for getting Bike Wheels from Web");
+            if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
+                if (!bike.getBrakeType().equals(RIM)) {
+                    if (bike.getWheelPreference().equals("Cheap")) {
+                        link = wiggleURL + "prime-baroudeur-disc-alloy-wheelset";
+                    } else {
+                        link = wiggleURL + "prime-baroudeur-alloy-wheelset";
+                    }
+                } else {
+                    if (bike.getWheelPreference().equals("Cheap")) {
+                        link = wiggleURL + "prime-primavera-56-carbon-disc-wheelset";
+                    } else {
+                        link = wiggleURL + "prime-primavera-50-carbon-rim-brake-wheelset";
+                    }
+                }
+                shimanoGroupsetService.setBikePartsFromLink(link, "Wheel Set");
+            } else {
+                if (bike.getWheelPreference().equals("Cheap")) {
+                    link = haloURL + "shop/wheels/aerorage-track-700c-wheels/";
+                } else {
+                    link = haloURL + "shop/wheels/carbaura-crit-700c-wheelset/";
+                }
+                String wheelPrice;
+                String wheelName;
+                Document doc = Jsoup.connect(link).get();
+                Element e = doc.select("div.productDetails").get(0);
+                wheelName = e.select("h1").first().text();
+                wheelPrice = e.select("div.priceSummary").select("ins").select("span").first().text().replace("£", "").split(" ")[0];
+                e = e.select("div.priceSummary").select("ins").first();
+                System.out.println(e);
+                if (!wheelPrice.contains(".")) {
+                    wheelPrice = wheelPrice + ".00";
+                }
+                LOGGER.info("Found Product: " + wheelName);
+                LOGGER.info("For Price: " + wheelPrice);
+                LOGGER.info("Link: " + link);
+                bikeParts.getListOfParts().add(new Part("Wheel Set", wheelName, wheelPrice, link));
+            }
+        } catch (IOException e) {
+            handleException("Get Wheels", e);
+        }
     }
 
     private void getGearSet() {
@@ -99,7 +152,6 @@ public class BikePartsService {
                 }
             }
             doc = Jsoup.connect(link).get();
-
             if (link.contains("dolan-bikes")) {
                 frameName = doc.select("div.productBuy > div.productPanel").first().select("h1").first().text();
                 framePrice = doc.select("div.productBuy > div.productPanel").first().select("div.price").select("span.price").first().text();

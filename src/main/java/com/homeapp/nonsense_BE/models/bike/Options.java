@@ -33,6 +33,10 @@ public class Options {
 
     private boolean showBrakeStyles = false;
 
+    private List<String> wheelPreference = new ArrayList<>();
+
+    private boolean showWheelPreference = false;
+
     public Options() {
     }
 
@@ -90,6 +94,22 @@ public class Options {
 
     public void setShowBrakeStyles(boolean showBrakeStyles) {
         this.showBrakeStyles = showBrakeStyles;
+    }
+
+    public List<String> getWheelPreference() {
+        return wheelPreference;
+    }
+
+    public void setWheelPreference(List<String> wheelPreference) {
+        this.wheelPreference = wheelPreference;
+    }
+
+    public boolean isShowWheelPreference() {
+        return showWheelPreference;
+    }
+
+    public void setShowWheelPreference(boolean showWheelPreference) {
+        this.showWheelPreference = showWheelPreference;
     }
 
     public List<Long> getFrameSizes() {
@@ -151,8 +171,8 @@ public class Options {
     @Override
     public String toString() {
         return "Options{" +
-                ", showFrontGears=" + showFrontGears +
-                "showGroupsetBrand=" + showGroupSetBrand +
+                "groupsetBrand=" + groupsetBrand +
+                ", showGroupSetBrand=" + showGroupSetBrand +
                 ", numberOfFrontGears=" + numberOfFrontGears +
                 ", showFrontGears=" + showFrontGears +
                 ", numberOfRearGears=" + numberOfRearGears +
@@ -163,8 +183,10 @@ public class Options {
                 ", showFrameStyles=" + showFrameStyles +
                 ", barStyles=" + barStyles +
                 ", showBarStyles=" + showBarStyles +
-                ", brakeSyles=" + brakeStyles +
+                ", brakeStyles=" + brakeStyles +
                 ", showBrakeStyles=" + showBrakeStyles +
+                ", wheelPreference=" + wheelPreference +
+                ", showWheelPreference=" + showWheelPreference +
                 '}';
     }
 }
