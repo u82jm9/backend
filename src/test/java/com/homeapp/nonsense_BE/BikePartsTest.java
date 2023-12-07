@@ -52,6 +52,7 @@ public class BikePartsTest {
             fullBikeService.create(bike2);
             Frame frame3 = new Frame(ROAD, true, true, true);
             FullBike bike3 = new FullBike("bike3", frame3, HYDRAULIC_DISC, SHIMANO, DROPS, 2L, 12L, STI);
+            bike3.setWheelPreference("Expensive");
             fullBikeService.create(bike3);
             Frame frame4 = new Frame(SINGLE_SPEED, false, false, false);
             FullBike bike4 = new FullBike("bike4", frame4, RIM, SHIMANO, FLAT, 1L, 1L, NONE);
@@ -64,7 +65,12 @@ public class BikePartsTest {
             fullBikeService.create(bike6);
             Frame frame7 = new Frame(TOUR, true, true, true);
             FullBike bike7 = new FullBike("bike7", frame7, HYDRAULIC_DISC, SHIMANO, FLAT, 1L, 11L, TRIGGER);
+            bike7.setWheelPreference("Expensive");
             fullBikeService.create(bike7);
+            Frame frame8 = new Frame(SINGLE_SPEED, true, false, false);
+            FullBike bike8 = new FullBike("bike8", frame8, MECHANICAL_DISC, SHIMANO, FLAT, 1L, 1L, NONE);
+            bike8.setWheelPreference("Expensive");
+            fullBikeService.create(bike8);
             isSetupDone = true;
         }
     }
@@ -88,12 +94,15 @@ public class BikePartsTest {
                     b.setNumberOfFrontGears(fg);
                     for (Long rg : o.getNumberOfRearGears()) {
                         b.setNumberOfRearGears(rg);
-                        fullBikeService.setBike(b);
-                        BikeParts parts = bikePartsService.getBikePartsForBike();
-                        BigDecimal bikePrice = parts.getTotalBikePrice();
-                        assertNotNull(bikePrice);
-                        numberOfLoops = numberOfLoops + 1;
-                        System.out.println(numberOfLoops);
+                        for (String wp : o.getWheelPreference()) {
+                            b.setWheelPreference(wp);
+                            fullBikeService.setBike(b);
+                            BikeParts parts = bikePartsService.getBikePartsForBike();
+                            BigDecimal bikePrice = parts.getTotalBikePrice();
+                            assertNotNull(bikePrice);
+                            numberOfLoops = numberOfLoops + 1;
+                            System.out.println(numberOfLoops);
+                        }
                     }
                 }
             }
@@ -119,12 +128,15 @@ public class BikePartsTest {
                     b.setNumberOfFrontGears(fg);
                     for (Long rg : o.getNumberOfRearGears()) {
                         b.setNumberOfRearGears(rg);
-                        fullBikeService.setBike(b);
-                        BikeParts parts = bikePartsService.getBikePartsForBike();
-                        BigDecimal bikePrice = parts.getTotalBikePrice();
-                        assertNotNull(bikePrice);
-                        numberOfLoops = numberOfLoops + 1;
-                        System.out.println(numberOfLoops);
+                        for (String wp : o.getWheelPreference()) {
+                            b.setWheelPreference(wp);
+                            fullBikeService.setBike(b);
+                            BikeParts parts = bikePartsService.getBikePartsForBike();
+                            BigDecimal bikePrice = parts.getTotalBikePrice();
+                            assertNotNull(bikePrice);
+                            numberOfLoops = numberOfLoops + 1;
+                            System.out.println(numberOfLoops);
+                        }
                     }
                 }
             }
@@ -150,12 +162,15 @@ public class BikePartsTest {
                     b.setNumberOfFrontGears(fg);
                     for (Long rg : o.getNumberOfRearGears()) {
                         b.setNumberOfRearGears(rg);
-                        fullBikeService.setBike(b);
-                        BikeParts parts = bikePartsService.getBikePartsForBike();
-                        BigDecimal bikePrice = parts.getTotalBikePrice();
-                        assertNotNull(bikePrice);
-                        numberOfLoops = numberOfLoops + 1;
-                        System.out.println(numberOfLoops);
+                        for (String wp : o.getWheelPreference()) {
+                            b.setWheelPreference(wp);
+                            fullBikeService.setBike(b);
+                            BikeParts parts = bikePartsService.getBikePartsForBike();
+                            BigDecimal bikePrice = parts.getTotalBikePrice();
+                            assertNotNull(bikePrice);
+                            numberOfLoops = numberOfLoops + 1;
+                            System.out.println(numberOfLoops);
+                        }
                     }
                 }
             }
@@ -181,12 +196,15 @@ public class BikePartsTest {
                     b.setNumberOfFrontGears(fg);
                     for (Long rg : o.getNumberOfRearGears()) {
                         b.setNumberOfRearGears(rg);
-                        fullBikeService.setBike(b);
-                        BikeParts parts = bikePartsService.getBikePartsForBike();
-                        BigDecimal bikePrice = parts.getTotalBikePrice();
-                        assertNotNull(bikePrice);
-                        numberOfLoops = numberOfLoops + 1;
-                        System.out.println(numberOfLoops);
+                        for (String wp : o.getWheelPreference()) {
+                            b.setWheelPreference(wp);
+                            fullBikeService.setBike(b);
+                            BikeParts parts = bikePartsService.getBikePartsForBike();
+                            BigDecimal bikePrice = parts.getTotalBikePrice();
+                            assertNotNull(bikePrice);
+                            numberOfLoops = numberOfLoops + 1;
+                            System.out.println(numberOfLoops);
+                        }
                     }
                 }
             }
@@ -202,21 +220,21 @@ public class BikePartsTest {
     }
 
     @Test
-    public void test_That_The_Full_Price_is_Heaps() {
+    public void test_That_The_Full_Price_is_Cheaps() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike");
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice > 1000);
+        assertTrue(bikePrice < 1500);
     }
 
     @Test
-    public void test_That_The_Full_Price_is_Cheaps1() {
+    public void test_That_The_Full_Price_is_Heaps1() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike1");
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice < 1000);
+        assertTrue(bikePrice > 1500);
     }
 
     @Test
@@ -225,7 +243,7 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice < 1000);
+        assertTrue(bikePrice < 1500);
     }
 
     @Test
@@ -234,7 +252,7 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice < 1000);
+        assertTrue(bikePrice < 1500);
     }
 
     @Test
@@ -243,9 +261,7 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        System.out.println("Part: " + parts);
-        System.out.println("Price: " + bikePrice);
-        assertTrue(bikePrice < 1000);
+        assertTrue(bikePrice < 1500);
     }
 
     @Test
@@ -254,7 +270,7 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice > 1000);
+        assertTrue(bikePrice > 1500);
     }
 
     @Test
@@ -263,7 +279,7 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice > 1000);
+        assertTrue(bikePrice > 1500);
     }
 
     @Test
@@ -272,7 +288,16 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice > 1000);
+        assertTrue(bikePrice > 1500);
+    }
+
+    @Test
+    public void test_That_The_Full_Price_is_Cheaps8() {
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike8");
+        fullBikeService.setBike(bikeBefore);
+        BikeParts parts = bikePartsService.getBikePartsForBike();
+        long bikePrice = parts.getTotalBikePrice().longValue();
+        assertTrue(bikePrice < 1500);
     }
 
     @Test

@@ -68,8 +68,18 @@ public class OptionsService {
             getGearOptions(combinedData.getBike());
             getBarOptions(combinedData.getBike());
             getBrakeOptions(combinedData.getBike());
+            getWheelOptions();
         }
         return o;
+    }
+
+    private void getWheelOptions() {
+        List<String> wheelPreference = new ArrayList<>();
+        Options o = getOptions();
+        wheelPreference.add("Cheap");
+        wheelPreference.add("Expensive");
+        o.setWheelPreference(wheelPreference);
+        o.setShowWheelPreference(true);
     }
 
     public void getGearOptions(FullBike b) {
@@ -88,7 +98,6 @@ public class OptionsService {
                     rearGears.add(11L);
                     rearGears.add(10L);
                     rearGears.add(9L);
-                    rearGears.add(8L);
                     frontGears.add(2L);
                     frontGears.add(3L);
                 }
@@ -103,7 +112,6 @@ public class OptionsService {
                 }
             }
         } else {
-            rearGears.add(8L);
             rearGears.add(10L);
             rearGears.add(11L);
             frontGears.add(1L);

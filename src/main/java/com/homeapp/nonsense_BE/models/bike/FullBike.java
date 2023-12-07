@@ -44,6 +44,9 @@ public class FullBike {
     @Column
     private ShifterStyle shifterStyle;
 
+    @Column
+    private String wheelPreference = "Cheap";
+
     public FullBike() {
     }
 
@@ -126,6 +129,14 @@ public class FullBike {
         this.shifterStyle = shifterStyle;
     }
 
+    public String getWheelPreference() {
+        return wheelPreference;
+    }
+
+    public void setWheelPreference(String wheelPreference) {
+        this.wheelPreference = wheelPreference;
+    }
+
     @Override
     public String toString() {
         return "FullBike{" +
@@ -138,6 +149,7 @@ public class FullBike {
                 ", numberOfFrontGears=" + numberOfFrontGears +
                 ", numberOfRearGears=" + numberOfRearGears +
                 ", shifterStyle=" + shifterStyle +
+                ", wheelPreference=" + wheelPreference +
                 '}';
     }
 }

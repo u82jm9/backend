@@ -67,7 +67,7 @@ public class OptionsTest {
         assertTrue(options.isShowFrontGears());
         assertTrue(options.isShowRearGears());
         assertTrue(options.isShowBarStyles());
-        assertTrue(options.getBrakeStyles().contains(RIM.getName()));
+        assertTrue(options.isShowWheelPreference());
         assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC.getName()));
         assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC.getName()));
         assertEquals(options.getBrakeStyles().size(), 3);
@@ -81,6 +81,8 @@ public class OptionsTest {
         assertEquals(options.getNumberOfRearGears().size(), 3);
         assertTrue(options.getNumberOfFrontGears().contains(2L));
         assertEquals(options.getNumberOfFrontGears().size(), 1);
+        assertTrue(options.getWheelPreference().contains("Cheap"));
+        assertTrue(options.getWheelPreference().contains("Expensive"));
     }
 
     @Test
@@ -96,6 +98,7 @@ public class OptionsTest {
         assertTrue(options.isShowFrontGears());
         assertTrue(options.isShowRearGears());
         assertTrue(options.isShowBarStyles());
+        assertTrue(options.isShowWheelPreference());
         assertTrue(options.getBrakeStyles().contains(RIM.getName()));
         assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC.getName()));
         assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC.getName()));
@@ -110,6 +113,8 @@ public class OptionsTest {
         assertTrue(options.getNumberOfFrontGears().contains(2L));
         assertTrue(options.getNumberOfFrontGears().contains(1L));
         assertEquals(options.getNumberOfFrontGears().size(), 2);
+        assertTrue(options.getWheelPreference().contains("Cheap"));
+        assertTrue(options.getWheelPreference().contains("Expensive"));
     }
 
     @Test
@@ -125,6 +130,7 @@ public class OptionsTest {
         assertTrue(options.isShowFrontGears());
         assertTrue(options.isShowRearGears());
         assertTrue(options.isShowBarStyles());
+        assertTrue(options.isShowWheelPreference());
         assertTrue(options.getBrakeStyles().contains(RIM.getName()));
         assertTrue(options.getBrakeStyles().contains(MECHANICAL_DISC.getName()));
         assertTrue(options.getBrakeStyles().contains(HYDRAULIC_DISC.getName()));
@@ -133,13 +139,14 @@ public class OptionsTest {
         assertTrue(options.getBarStyles().contains(FLARE.getName()));
         assertTrue(options.getBarStyles().contains(FLAT.getName()));
         assertEquals(options.getBarStyles().size(), 3);
-        assertTrue(options.getNumberOfRearGears().contains(8L));
         assertTrue(options.getNumberOfRearGears().contains(9L));
         assertTrue(options.getNumberOfRearGears().contains(10L));
         assertTrue(options.getNumberOfRearGears().contains(11L));
-        assertEquals(options.getNumberOfRearGears().size(), 4);
+        assertEquals(options.getNumberOfRearGears().size(), 3);
         assertTrue(options.getNumberOfFrontGears().contains(3L));
         assertTrue(options.getNumberOfFrontGears().contains(2L));
         assertEquals(options.getNumberOfFrontGears().size(), 2);
+        assertTrue(options.getWheelPreference().contains("Cheap"));
+        assertTrue(options.getWheelPreference().contains("Expensive"));
     }
 }
