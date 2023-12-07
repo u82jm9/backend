@@ -133,11 +133,10 @@ public class OptionsTest {
         assertTrue(options.getBarStyles().contains(FLARE.getName()));
         assertTrue(options.getBarStyles().contains(FLAT.getName()));
         assertEquals(options.getBarStyles().size(), 3);
-        assertTrue(options.getNumberOfRearGears().contains(8L));
         assertTrue(options.getNumberOfRearGears().contains(9L));
         assertTrue(options.getNumberOfRearGears().contains(10L));
         assertTrue(options.getNumberOfRearGears().contains(11L));
-        assertEquals(options.getNumberOfRearGears().size(), 4);
+        assertEquals(options.getNumberOfRearGears().size(), 3);
         assertTrue(options.getNumberOfFrontGears().contains(3L));
         assertTrue(options.getNumberOfFrontGears().contains(2L));
         assertEquals(options.getNumberOfFrontGears().size(), 2);
