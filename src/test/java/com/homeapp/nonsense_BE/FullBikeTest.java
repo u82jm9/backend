@@ -49,6 +49,14 @@ public class FullBikeTest {
     }
 
     @Test
+    public void test_That_a_bike_can_be_deleted_from_DB() {
+        int bikesOnDB = fullBikeService.getAllFullBikes().size();
+        FullBike bike = fullBikeService.getBikeUsingName("bike1");
+        fullBikeService.deleteBike(bike.getFullBikeId());
+        assertTrue(fullBikeService.getAllFullBikes().size() < bikesOnDB);
+    }
+
+    @Test
     public void test_That_a_list_of_bikes_is_returned_from_DB() {
         assertTrue(fullBikeService.getAllFullBikes().size() > 0);
     }

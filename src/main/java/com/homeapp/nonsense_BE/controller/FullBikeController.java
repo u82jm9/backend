@@ -48,4 +48,11 @@ public class FullBikeController {
         LOGGER.info("Updating Design Bike, API");
         return new ResponseEntity<>(updatedBike, HttpStatus.ACCEPTED);
     }
+
+    @DeleteMapping("DeleteBike")
+    public ResponseEntity<HttpStatus> deleteBike(@RequestBody FullBike bike) {
+        fullBikeService.deleteBike(bike.getFullBikeId());
+        LOGGER.info("Deleting Bike from DB with id {}", bike.getFullBikeId());
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
 }

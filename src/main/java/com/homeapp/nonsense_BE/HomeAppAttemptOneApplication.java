@@ -17,10 +17,10 @@ import java.util.List;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.*;
+import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.OTHER;
+import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.NONE;
-import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
+import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 
 @SpringBootApplication
 public class HomeAppAttemptOneApplication implements CommandLineRunner {
@@ -44,8 +44,11 @@ public class HomeAppAttemptOneApplication implements CommandLineRunner {
         for (StickyNote sn : notesFromFile) {
             stickyNoteService.create(sn);
         }
+
         Frame frame1 = new Frame(GRAVEL, true, false, true);
-        fullBikeService.create(new FullBike("Gravel", frame1, HYDRAULIC_DISC, SRAM, FLARE, 1L, 11L, STI));
+        FullBike bike1 = new FullBike("Gravel", frame1, HYDRAULIC_DISC, SHIMANO, FLARE, 1L, 11L, STI);
+        bike1.setWheelPreference("Expensive");
+        fullBikeService.create(bike1);
 
         Frame frame2 = new Frame(ROAD, false, false, true);
         fullBikeService.create(new FullBike("Workhorse", frame2, RIM, SHIMANO, DROPS, 3L, 9L, STI));
@@ -55,5 +58,10 @@ public class HomeAppAttemptOneApplication implements CommandLineRunner {
 
         Frame frame4 = new Frame(SINGLE_SPEED, true, false, false);
         fullBikeService.create(new FullBike("City Cruiser", frame4, MECHANICAL_DISC, OTHER, FLAT, 1L, 1L, NONE));
+
+        Frame frame5 = new Frame(TOUR, true, true, true);
+        FullBike bike5 = new FullBike("Tourer", frame5, HYDRAULIC_DISC, SHIMANO, FLAT, 3L, 10L, TRIGGER);
+        bike5.setWheelPreference("Expensive");
+        fullBikeService.create(bike5);
     }
 }

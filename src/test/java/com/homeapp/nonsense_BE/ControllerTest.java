@@ -8,6 +8,7 @@ import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.RearGears;
 import com.homeapp.nonsense_BE.models.note.DTOnote;
 import com.homeapp.nonsense_BE.models.note.StickyNote;
+import com.homeapp.nonsense_BE.services.FullBikeService;
 import com.homeapp.nonsense_BE.services.StickyNoteService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.HYDRAULIC_DISC;
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.MECHANICAL_DISC;
+import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.GRAVEL;
+import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.ROAD;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SRAM;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.DROPS;
@@ -46,6 +47,8 @@ public class ControllerTest {
     @Autowired
     private StickyNoteController stickyNoteController;
     @Autowired
+    private FullBikeService fullBikeService;
+    @Autowired
     private StickyNoteService stickyNoteService;
     private MockMvc mockMvc;
     private MockHttpSession session;
@@ -64,6 +67,13 @@ public class ControllerTest {
             isFileSaved = true;
         }
         if (!isSetupDone) {
+            Frame frame = new Frame(GRAVEL, true, false, true);
+            FullBike bike = new FullBike("bike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
+            fullBikeService.create(bike);
+            Frame frame1 = new Frame(ROAD, false, true, true);
+            FullBike bike1 = new FullBike("bike1", frame1, RIM, SHIMANO, DROPS, 2L, 10L, STI);
+            fullBikeService.create(bike1);
+
             Map<String, Boolean> map3 = new HashMap<>();
             map3.put("This is the message for the third before all method", false);
             StickyNote note3 = new StickyNote("Third Before All Method", map3, false);
@@ -132,7 +142,7 @@ public class ControllerTest {
     public void test_That_a_Note_can_be_edited() throws Exception {
         Map<String, Boolean> map = new HashMap<>();
         map.put("Do it NOW!", false);
-        StickyNote note = new StickyNote(2,"Paint! Boo", map, false);
+        StickyNote note = new StickyNote(2, "Paint! Boo", map, false);
         this.mockMvc.perform(post(STICKY_NOTE_URL + "EditNote").session(session).contentType("application/json")
                         .content(objectMapper.writeValueAsString(note)))
                 .andExpect(status().isOk());
@@ -145,9 +155,11 @@ public class ControllerTest {
     }
 
     @Test
-    public void test_That_an_empty_Bikes_can_be_created() throws Exception {
-        this.mockMvc.perform(get(FULL_BIKE_URL + "StartNewBike"))
+    public void test_That_a_single_Bike_can_be_deleted() throws Exception {
+        FullBike bike = fullBikeService.getBikeUsingName("bike1");
+        this.mockMvc.perform(delete(FULL_BIKE_URL + "DeleteBike").session(session).contentType("application/json").content(objectMapper.writeValueAsString(bike)))
                 .andExpect(status().isAccepted());
+        isSetupDone = false;
     }
 
     @Test

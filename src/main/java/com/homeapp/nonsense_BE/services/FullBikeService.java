@@ -1,9 +1,5 @@
 package com.homeapp.nonsense_BE.services;
 
-import com.homeapp.nonsense_BE.models.bike.Enums.BrakeType;
-import com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle;
-import com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand;
-import com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType;
 import com.homeapp.nonsense_BE.models.bike.Frame;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.repository.FullBikeDao;
@@ -13,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -150,6 +144,10 @@ public class FullBikeService {
     public FullBike getBikeUsingName(String bikeName) {
         LOGGER.info("Getting single bike with bike name: " + bikeName);
         return getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList()).get(0);
+    }
+
+    public void deleteBike(long bikeId) {
+        fullBikeDao.deleteById(bikeId);
     }
 
     private void handleIOException(String message, IOException e) {

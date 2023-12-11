@@ -68,18 +68,20 @@ public class OptionsService {
             getGearOptions(combinedData.getBike());
             getBarOptions(combinedData.getBike());
             getBrakeOptions(combinedData.getBike());
-            getWheelOptions();
+            getWheelOptions(combinedData.getBike());
         }
         return o;
     }
 
-    private void getWheelOptions() {
+    private void getWheelOptions(FullBike b) {
         List<String> wheelPreference = new ArrayList<>();
         Options o = getOptions();
         wheelPreference.add("Cheap");
         wheelPreference.add("Expensive");
         o.setWheelPreference(wheelPreference);
-        o.setShowWheelPreference(true);
+        if(b.getWheelPreference()==null) {
+            o.setShowWheelPreference(true);
+        }
     }
 
     public void getGearOptions(FullBike b) {

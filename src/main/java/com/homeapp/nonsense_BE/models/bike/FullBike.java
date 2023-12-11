@@ -45,7 +45,7 @@ public class FullBike {
     private ShifterStyle shifterStyle;
 
     @Column
-    private String wheelPreference = "Cheap";
+    private String wheelPreference;
 
     public FullBike() {
     }

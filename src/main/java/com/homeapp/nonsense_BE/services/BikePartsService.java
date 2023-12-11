@@ -61,11 +61,11 @@ public class BikePartsService {
                     if (bike.getWheelPreference().equals("Cheap")) {
                         link = wiggleURL + "prime-baroudeur-disc-alloy-wheelset";
                     } else {
-                        link = wiggleURL + "prime-baroudeur-alloy-wheelset";
+                        link = wiggleURL + "prime-primavera-56-carbon-disc-wheelset";
                     }
                 } else {
                     if (bike.getWheelPreference().equals("Cheap")) {
-                        link = wiggleURL + "prime-primavera-56-carbon-disc-wheelset";
+                        link = wiggleURL + "prime-baroudeur-alloy-wheelset";
                     } else {
                         link = wiggleURL + "prime-primavera-50-carbon-rim-brake-wheelset";
                     }
