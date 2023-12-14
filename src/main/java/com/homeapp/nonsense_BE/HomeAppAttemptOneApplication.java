@@ -51,13 +51,19 @@ public class HomeAppAttemptOneApplication implements CommandLineRunner {
         fullBikeService.create(bike1);
 
         Frame frame2 = new Frame(ROAD, false, false, true);
-        fullBikeService.create(new FullBike("Workhorse", frame2, RIM, SHIMANO, DROPS, 3L, 9L, STI));
+        FullBike bike2 = new FullBike("Workhorse", frame2, RIM, SHIMANO, DROPS, 3L, 9L, STI);
+        bike2.setWheelPreference("Cheap");
+        fullBikeService.create(bike2);
 
         Frame frame3 = new Frame(SINGLE_SPEED, false, false, false);
-        fullBikeService.create(new FullBike("Fixie", frame3, RIM, OTHER, BULLHORNS, 1L, 1L, NONE));
+        FullBike bike3 = new FullBike("Fixie", frame3, RIM, OTHER, BULLHORNS, 1L, 1L, NONE);
+        bike3.setWheelPreference("Expensive");
+        fullBikeService.create(bike3);
 
         Frame frame4 = new Frame(SINGLE_SPEED, true, false, false);
-        fullBikeService.create(new FullBike("City Cruiser", frame4, MECHANICAL_DISC, OTHER, FLAT, 1L, 1L, NONE));
+        FullBike bike4 = new FullBike("City Cruiser", frame4, MECHANICAL_DISC, OTHER, FLAT, 1L, 1L, NONE);
+        bike4.setWheelPreference("Cheap");
+        fullBikeService.create(bike4);
 
         Frame frame5 = new Frame(TOUR, true, true, true);
         FullBike bike5 = new FullBike("Tourer", frame5, HYDRAULIC_DISC, SHIMANO, FLAT, 3L, 10L, TRIGGER);

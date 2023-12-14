@@ -18,6 +18,8 @@ public class BikeParts {
 
     private BigDecimal totalBikePrice;
 
+    private String totalPriceAsString = "";
+
     public BikeParts() {
         this.listOfParts = new ArrayList<>();
     }
@@ -34,6 +36,14 @@ public class BikeParts {
         this.listOfParts = listOfParts;
     }
 
+    public String getTotalPriceAsString() {
+        return totalPriceAsString;
+    }
+
+    public void setTotalPriceAsString(String totalPriceAsString) {
+        this.totalPriceAsString = totalPriceAsString;
+    }
+
     public BigDecimal getTotalBikePrice() {
         return totalBikePrice;
     }
@@ -48,6 +58,7 @@ public class BikeParts {
                 "bikePartsId=" + bikePartsId +
                 "listOfParts=" + listOfParts +
                 ", totalBikePrice=" + totalBikePrice +
+                ", totalPriceAsString=" + totalPriceAsString +
                 '}';
     }
 }

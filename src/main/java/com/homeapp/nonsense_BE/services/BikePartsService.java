@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.RIM;
@@ -184,9 +187,16 @@ public class BikePartsService {
         BigDecimal total = new BigDecimal(0);
         for (Part p : bikeParts.getListOfParts()) {
             BigDecimal bd = new BigDecimal(p.getPrice());
+            bd = bd.setScale(2, RoundingMode.CEILING);
             total = total.add(bd);
         }
         bikeParts.setTotalBikePrice(total);
+        bikeParts.setTotalPriceAsString(sortTotalPrice(total));
+    }
+
+    private String sortTotalPrice(BigDecimal t) {
+        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.UK);
+        return format.format(t);
     }
 
     private void handleException(String message, Exception e) {

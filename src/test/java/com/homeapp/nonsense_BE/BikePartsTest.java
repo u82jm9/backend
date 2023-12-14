@@ -42,6 +42,10 @@ public class BikePartsTest {
     public void setup() {
         if (!isSetupDone) {
             fullBikeService.deleteAllBikes();
+            Frame frame10 = new Frame(GRAVEL, true, false, true);
+            FullBike bike10 = new FullBike("Gravel", frame10, HYDRAULIC_DISC, SHIMANO, FLARE, 1L, 11L, STI);
+            bike10.setWheelPreference("Expensive");
+            fullBikeService.create(bike10);
             Frame frame = new Frame(GRAVEL, true, false, true);
             FullBike bike = new FullBike("bike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
             bike.setWheelPreference("Cheap");
@@ -277,6 +281,7 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
+        System.out.println(parts.getTotalPriceAsString());
         assertTrue(bikePrice > 1500);
     }
 
@@ -308,6 +313,15 @@ public class BikePartsTest {
             System.out.println(p.toString());
         }
         assertTrue(bikePrice < 1500);
+    }
+
+    @Test
+    public void test_That_Gravel_Bike_Has_Price_With_Two_decimals() {
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("Gravel");
+        fullBikeService.setBike(bikeBefore);
+        BikeParts parts = bikePartsService.getBikePartsForBike();
+        String bikePrice = parts.getTotalPriceAsString();
+        assertEquals("£2,085.90", bikePrice);
     }
 
     @Test
