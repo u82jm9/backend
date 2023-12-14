@@ -1,0 +1,55 @@
+16:12:35.019 [Thread-0] DEBUG org.springframework.boot.devtools.restart.classloader.RestartClassLoader - Created RestartClassLoader org.springframework.boot.devtools.restart.classloader.RestartClassLoader@cb78248
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.7.2)
+
+2023-11-20 16:12:35.351  INFO 1648 --- [  restartedMain] c.h.n.HomeAppAttemptOneApplication       : Starting HomeAppAttemptOneApplication using Java 18.0.2.1 on UK60TC3T3 with PID 1648 (C:\Users\JML42\git-workspace\personal_module\personal\nonsense-BE\target\classes started by JML42 in C:\Users\JML42\git-workspace\personal_module\personal\nonsense-BE)
+2023-11-20 16:12:35.356  INFO 1648 --- [  restartedMain] c.h.n.HomeAppAttemptOneApplication       : The following 1 profile is active: "h2"
+2023-11-20 16:12:35.418  INFO 1648 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2023-11-20 16:12:35.419  INFO 1648 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2023-11-20 16:12:35.949  INFO 1648 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-11-20 16:12:36.000  INFO 1648 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41 ms. Found 2 JPA repository interfaces.
+2023-11-20 16:12:36.724  INFO 1648 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8088 (http)
+2023-11-20 16:12:36.732  INFO 1648 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-11-20 16:12:36.733  INFO 1648 --- [  restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.65]
+2023-11-20 16:12:36.796  INFO 1648 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/demo]   : Initializing Spring embedded WebApplicationContext
+2023-11-20 16:12:36.796  INFO 1648 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1377 ms
+2023-11-20 16:12:36.827  INFO 1648 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-20 16:12:36.964  INFO 1648 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-11-20 16:12:36.975  INFO 1648 --- [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:bank'
+2023-11-20 16:12:37.208  INFO 1648 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-11-20 16:12:37.248  INFO 1648 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.10.Final
+2023-11-20 16:12:37.379  INFO 1648 --- [  restartedMain] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-11-20 16:12:37.469  INFO 1648 --- [  restartedMain] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2023-11-20 16:12:37.759  INFO 1648 --- [  restartedMain] org.hibernate.tuple.PojoInstantiator     : HHH000182: No default (no-argument) constructor for class: com.homeapp.nonsense_BE.models.bike.Part (class must be instantiated by Interceptor)
+2023-11-20 16:12:38.049  INFO 1648 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-11-20 16:12:38.054  INFO 1648 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-11-20 16:12:38.713  INFO 1648 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2023-11-20 16:12:38.757  INFO 1648 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8088 (http) with context path '/demo'
+2023-11-20 16:12:38.767  INFO 1648 --- [  restartedMain] c.h.n.HomeAppAttemptOneApplication       : Started HomeAppAttemptOneApplication in 3.738 seconds (JVM running for 4.126)
+2023-11-20 16:12:38.899  WARN 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Could not retrieve Sticky Note by title for: Morning Routine
+2023-11-20 16:12:38.900  INFO 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Adding Sticky Note with title: Morning Routine
+2023-11-20 16:12:38.940  WARN 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Could not retrieve Sticky Note by title for: Still to do...
+2023-11-20 16:12:38.940  INFO 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Adding Sticky Note with title: Still to do...
+2023-11-20 16:12:38.942  WARN 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Could not retrieve Sticky Note by title for: Doctor Call
+2023-11-20 16:12:38.942  INFO 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Adding Sticky Note with title: Doctor Call
+2023-11-20 16:12:38.944  WARN 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Could not retrieve Sticky Note by title for: Gardening Work Left
+2023-11-20 16:12:38.944  INFO 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Adding Sticky Note with title: Gardening Work Left
+2023-11-20 16:12:38.947  WARN 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Could not retrieve Sticky Note by title for: Nothing Useful
+2023-11-20 16:12:38.947  INFO 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Adding Sticky Note with title: Nothing Useful
+2023-11-20 16:12:38.948  WARN 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Could not retrieve Sticky Note by title for: Go for a run!
+2023-11-20 16:12:38.949  INFO 1648 --- [  restartedMain] c.h.n.services.StickyNoteService         : Adding Sticky Note with title: Go for a run!
+2023-11-20 16:12:38.951  INFO 1648 --- [  restartedMain] c.h.n.services.FullBikeService           : Adding new bike to DB!
+2023-11-20 16:12:38.958  INFO 1648 --- [  restartedMain] c.h.n.services.FullBikeService           : Adding new bike to DB!
+2023-11-20 16:12:38.960  INFO 1648 --- [  restartedMain] c.h.n.services.FullBikeService           : Adding new bike to DB!
+2023-11-20 16:12:38.963  INFO 1648 --- [  restartedMain] c.h.n.services.FullBikeService           : Adding new bike to DB!
+2023-11-20 16:20:08.380  INFO 1648 --- [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-11-20 16:20:08.381  INFO 1648 --- [ionShutdownHook] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+2023-11-20 16:20:08.773  WARN 1648 --- [ionShutdownHook] o.s.b.f.support.DisposableBeanAdapter    : Invocation of destroy method failed on bean with name 'inMemoryDatabaseShutdownExecutor': org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-214]
+2023-11-20 16:20:08.774  INFO 1648 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-11-20 16:20:08.778  INFO 1648 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
