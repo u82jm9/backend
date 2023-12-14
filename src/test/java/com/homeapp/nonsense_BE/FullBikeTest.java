@@ -32,6 +32,7 @@ public class FullBikeTest {
     @BeforeEach
     public void setup() {
         if (!isSetupDone) {
+            fullBikeService.deleteAllBikes();
             Frame frame = new Frame(GRAVEL, true, false, true);
             FullBike bike = new FullBike("bike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
             fullBikeService.create(bike);

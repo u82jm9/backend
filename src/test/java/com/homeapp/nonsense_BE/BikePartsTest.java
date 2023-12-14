@@ -41,6 +41,7 @@ public class BikePartsTest {
     @BeforeEach
     public void setup() {
         if (!isSetupDone) {
+            fullBikeService.deleteAllBikes();
             Frame frame = new Frame(GRAVEL, true, false, true);
             FullBike bike = new FullBike("bike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
             bike.setWheelPreference("Cheap");
@@ -74,7 +75,7 @@ public class BikePartsTest {
             bike7.setWheelPreference("Expensive");
             fullBikeService.create(bike7);
             Frame frame8 = new Frame(SINGLE_SPEED, true, false, false);
-            FullBike bike8 = new FullBike("bike8", frame8, MECHANICAL_DISC, SHIMANO, FLAT, 1L, 1L, NONE);
+            FullBike bike8 = new FullBike("bike8", frame8, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 1L, NONE);
             bike8.setWheelPreference("Expensive");
             fullBikeService.create(bike8);
             isSetupDone = true;
@@ -303,6 +304,9 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
+        for (Part p : parts.getListOfParts()) {
+            System.out.println(p.toString());
+        }
         assertTrue(bikePrice < 1500);
     }
 

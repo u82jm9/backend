@@ -147,7 +147,14 @@ public class FullBikeService {
     }
 
     public void deleteBike(long bikeId) {
+
+        LOGGER.info("Deleting Bike with ID: {}", bikeId);
         fullBikeDao.deleteById(bikeId);
+    }
+
+    public void deleteAllBikes() {
+        LOGGER.info("Deleting ALL BIKES on DataBase");
+        fullBikeDao.deleteAll();
     }
 
     private void handleIOException(String message, IOException e) {

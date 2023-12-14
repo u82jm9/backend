@@ -232,6 +232,7 @@ public class ShimanoGroupsetService {
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfRearGears()) {
+                case 1 -> link = wiggleURL + "shimano-dx-single-speed-sprocket";
                 case 9 -> link = wiggleURL + "shimano-sora-hg400-9-speed-cassette";
                 case 10 -> link = chainReactionURL + "shimano-tiagra-hg500-10-speed-road-cassette-5360107149";
                 case 11 -> link = chainReactionURL + "shimano-105-r7000-11-speed-cassette";
