@@ -28,7 +28,7 @@ public class StickyNoteTest {
     private static boolean isSetupDone = false;
 
     @BeforeEach
-    private void setup() {
+    public void setup() {
         if (!isSetupDone) {
             Map<String, Boolean> map1 = new HashMap<>();
             map1.put("This is the message for the before all method", false);
@@ -50,7 +50,7 @@ public class StickyNoteTest {
     }
 
     @AfterAll
-    private void clearup() {
+    public void clearup() {
         stickyNoteService.reloadNotesFromBackup();
     }
 

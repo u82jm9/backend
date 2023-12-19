@@ -87,7 +87,7 @@ public class ControllerTest {
     }
 
     @AfterAll
-    private void clearup() {
+    public void clearup() {
         stickyNoteService.reloadNotesFromBackup();
     }
 

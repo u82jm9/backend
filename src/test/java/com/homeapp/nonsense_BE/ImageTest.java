@@ -62,7 +62,7 @@ public class ImageTest {
     }
 
     @AfterAll
-    private void clearup() {
+    public void clearup() {
         fullBikeService.reloadBikesFromBackup();
     }
 

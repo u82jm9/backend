@@ -31,7 +31,6 @@ public class BikePartsTest {
 
     @Autowired
     private FullBikeService fullBikeService;
-
     @Autowired
     private BikePartsService bikePartsService;
     @Autowired
@@ -88,7 +87,7 @@ public class BikePartsTest {
     }
 
     @AfterAll
-    private void clearup() {
+    public void clearup() {
         fullBikeService.reloadBikesFromBackup();
     }
 
