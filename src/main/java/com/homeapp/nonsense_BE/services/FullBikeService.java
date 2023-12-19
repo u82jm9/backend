@@ -59,6 +59,7 @@ public class FullBikeService {
     public void reloadBikesFromBackup() {
         LOGGER.info("Reloading Bikes From Backup File");
         try {
+            deleteAllBikes();
             File file = new File(JSON_BIKES_FILE_BACKUP);
             List<FullBike> bikes = om.readValue(file, new TypeReference<>() {
             });

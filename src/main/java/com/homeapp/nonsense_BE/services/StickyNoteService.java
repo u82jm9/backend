@@ -42,6 +42,7 @@ public class StickyNoteService {
     public void reloadNotesFromBackup() {
         LOGGER.info("Reloading Notes From Backup File");
         try {
+            deleteAll();
             File file = new File(JSON_NOTES_FILE_BACKUP);
             List<StickyNote> notes = om.readValue(file, new TypeReference<>() {
             });
