@@ -203,7 +203,7 @@ public class ShimanoGroupsetService {
                 }
                 case 2 -> {
                     if (bike.getNumberOfRearGears() == 9) {
-                        link = chainReactionURL + "shimano-r3000-sora-9-speed-chainset";
+                        link = chainReactionURL + "shimano-claris-r2000-8-speed-double-chainset";
                     } else if (bike.getNumberOfRearGears() == 10) {
                         link = chainReactionURL + "shimano-tiagra-4700-10-speed-chainset";
                     } else if (bike.getNumberOfRearGears() == 11) {
@@ -214,7 +214,7 @@ public class ShimanoGroupsetService {
                 }
                 case 3 -> {
                     if (bike.getNumberOfRearGears() == 9) {
-                        link = chainReactionURL + "shimano-sora-r3030-9-speed-triple-chainset";
+                        link = wiggleURL + "shimano-sora-r3030-9-speed-triple-chainset";
                     } else {
                         link = chainReactionURL + "shimano-tiagra-4703-10sp-road-triple-chainset";
                         bike.setNumberOfRearGears(10);

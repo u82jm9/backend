@@ -116,6 +116,7 @@ public class BikePartsTest {
                             fullBikeService.setBike(b);
                             BikeParts parts = bikePartsService.getBikePartsForBike();
                             BigDecimal bikePrice = parts.getTotalBikePrice();
+                            assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
@@ -150,6 +151,7 @@ public class BikePartsTest {
                             fullBikeService.setBike(b);
                             BikeParts parts = bikePartsService.getBikePartsForBike();
                             BigDecimal bikePrice = parts.getTotalBikePrice();
+                            assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
@@ -184,6 +186,7 @@ public class BikePartsTest {
                             fullBikeService.setBike(b);
                             BikeParts parts = bikePartsService.getBikePartsForBike();
                             BigDecimal bikePrice = parts.getTotalBikePrice();
+                            assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
@@ -218,6 +221,7 @@ public class BikePartsTest {
                             fullBikeService.setBike(b);
                             BikeParts parts = bikePartsService.getBikePartsForBike();
                             BigDecimal bikePrice = parts.getTotalBikePrice();
+                            assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
