@@ -43,7 +43,7 @@
     "stickyNoteId": 5,
     "title": "Paint!",
     "messageMap": {
-      "Kitchen wall": false,
+      "Kitchen wall": true,
       "Bedroom wall.": false,
       "Window sill": false,
       "All Window Sills": false

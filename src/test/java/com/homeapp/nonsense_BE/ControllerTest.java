@@ -20,9 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
@@ -57,15 +55,9 @@ public class ControllerTest {
     final static String FULL_BIKE_URL = "/FullBike/";
     final static String OPTIONS_URL = "/Options/";
     private static boolean isSetupDone = false;
-    private static boolean isFileSaved = false;
-    private List<StickyNote> list = new ArrayList<>();
 
     @BeforeEach
     public void setup() {
-        if (!isFileSaved) {
-            list = stickyNoteService.retrieveAllNotes();
-            isFileSaved = true;
-        }
         if (!isSetupDone) {
             fullBikeService.deleteAllBikes();
             Frame frame = new Frame(GRAVEL, true, false, true);
@@ -96,7 +88,7 @@ public class ControllerTest {
 
     @AfterAll
     private void clearup() {
-        stickyNoteService.writeNotesToFile(list);
+        stickyNoteService.reloadNotesFromBackup();
     }
 
 
@@ -157,7 +149,7 @@ public class ControllerTest {
 
     @Test
     public void test_That_a_single_Bike_can_be_deleted() throws Exception {
-        FullBike bike = fullBikeService.getBikeUsingName("bike1");
+        FullBike bike = fullBikeService.getBikeUsingName("bike1").get();
         this.mockMvc.perform(delete(FULL_BIKE_URL + "DeleteBike").session(session).contentType("application/json").content(objectMapper.writeValueAsString(bike)))
                 .andExpect(status().isAccepted());
         isSetupDone = false;

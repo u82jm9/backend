@@ -3,6 +3,7 @@ package com.homeapp.nonsense_BE;
 import com.homeapp.nonsense_BE.models.bike.Frame;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.services.FullBikeService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,8 +18,7 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.BULLHORNS;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.DROPS;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.NONE;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -49,16 +49,21 @@ public class FullBikeTest {
         }
     }
 
+    @AfterAll
+    private void clearup() {
+        fullBikeService.reloadBikesFromBackup();
+    }
+
     @Test
-    public void test_That_a_bike_can_be_deleted_from_DB() {
+    public void test_That_a_bike_can_be_deleted() {
         int bikesOnDB = fullBikeService.getAllFullBikes().size();
-        FullBike bike = fullBikeService.getBikeUsingName("bike1");
+        FullBike bike = fullBikeService.getBikeUsingName("bike1").get();
         fullBikeService.deleteBike(bike.getFullBikeId());
         assertTrue(fullBikeService.getAllFullBikes().size() < bikesOnDB);
     }
 
     @Test
-    public void test_That_a_list_of_bikes_is_returned_from_DB() {
+    public void test_That_a_list_of_bikes_is_returned_from_File() {
         assertTrue(fullBikeService.getAllFullBikes().size() > 0);
     }
 
@@ -74,10 +79,18 @@ public class FullBikeTest {
 
     @Test
     public void test_That_a_Full_Bike_can_be_Updated() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
+        long gearsBefore = bikeBefore.getNumberOfRearGears();
         bikeBefore.setNumberOfRearGears(9);
         fullBikeService.updateBike(bikeBefore);
-        FullBike bikeAfter = fullBikeService.getBikeUsingName("bike");
-        assertNotSame(bikeAfter, bikeBefore);
+        long gearsAfter = fullBikeService.getBikeUsingName("bike").get().getNumberOfRearGears();
+        assertNotEquals(gearsBefore, gearsAfter);
+    }
+
+    @Test
+    public void test_that_all_bikes_can_be_deleted() {
+        fullBikeService.deleteAllBikes();
+        isSetupDone = false;
+        assertEquals(0, fullBikeService.getAllFullBikes().size());
     }
 }

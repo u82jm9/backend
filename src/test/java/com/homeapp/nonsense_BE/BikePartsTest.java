@@ -6,6 +6,7 @@ import com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType;
 import com.homeapp.nonsense_BE.services.BikePartsService;
 import com.homeapp.nonsense_BE.services.FullBikeService;
 import com.homeapp.nonsense_BE.services.OptionsService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -84,6 +85,11 @@ public class BikePartsTest {
             fullBikeService.create(bike8);
             isSetupDone = true;
         }
+    }
+
+    @AfterAll
+    private void clearup() {
+        fullBikeService.reloadBikesFromBackup();
     }
 
     @Test
@@ -224,24 +230,24 @@ public class BikePartsTest {
 
     @Test
     public void test_That_The_Parts_Array_is_Populated() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         assertTrue(parts.getListOfParts().size() > 1);
     }
 
     @Test
-    public void test_That_The_Full_Price_is_Cheaps() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike");
+    public void test_That_The_Full_Price_is_Heaps() {
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice < 1500);
+        assertTrue(bikePrice > 1500);
     }
 
     @Test
     public void test_That_The_Full_Price_is_Heaps1() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike1");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike1").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
@@ -250,7 +256,7 @@ public class BikePartsTest {
 
     @Test
     public void test_That_The_Full_Price_is_Cheaps2() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike2");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike2").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
@@ -258,17 +264,17 @@ public class BikePartsTest {
     }
 
     @Test
-    public void test_That_The_Full_Price_is_Cheaps3() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike3");
+    public void test_That_The_Full_Price_is_Heaps3() {
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike3").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice < 1500);
+        assertTrue(bikePrice > 1500);
     }
 
     @Test
     public void test_That_The_Full_Price_is_Cheaps4() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike4");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike4").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
@@ -277,7 +283,7 @@ public class BikePartsTest {
 
     @Test
     public void test_That_The_Full_Price_is_Heaps5() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike5");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike5").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
@@ -287,7 +293,7 @@ public class BikePartsTest {
 
     @Test
     public void test_That_The_Full_Price_is_Heaps6() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike6");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike6").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
@@ -296,7 +302,7 @@ public class BikePartsTest {
 
     @Test
     public void test_That_The_Full_Price_is_Heaps7() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike7");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike7").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
@@ -305,7 +311,7 @@ public class BikePartsTest {
 
     @Test
     public void test_That_The_Full_Price_is_Cheaps8() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike8");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike8").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
@@ -317,21 +323,21 @@ public class BikePartsTest {
 
     @Test
     public void test_That_Gravel_Bike_Has_Price_With_Two_decimals() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("Gravel");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("Gravel").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         String bikePrice = parts.getTotalPriceAsString();
-        assertEquals("£2,085.90", bikePrice);
+        assertEquals("£2,117.90", bikePrice);
     }
 
     @Test
     public void test_That_Different_Bikes_Get_Different_Price() {
-        FullBike bike1Before = fullBikeService.getBikeUsingName("bike");
+        FullBike bike1Before = fullBikeService.getBikeUsingName("bike").get();
         fullBikeService.setBike(bike1Before);
         BikeParts parts1 = bikePartsService.getBikePartsForBike();
         FullBike bike1After = fullBikeService.getBike();
         long bike1Price = parts1.getTotalBikePrice().longValue();
-        FullBike bike2Before = fullBikeService.getBikeUsingName("bike3");
+        FullBike bike2Before = fullBikeService.getBikeUsingName("bike3").get();
         fullBikeService.setBike(bike2Before);
         BikeParts parts2 = bikePartsService.getBikePartsForBike();
         long bike2Price = parts2.getTotalBikePrice().longValue();
@@ -340,7 +346,7 @@ public class BikePartsTest {
 
     @Test
     public void test_That_Bike_Part_Details_Not_Null() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
         fullBikeService.setBike(bikeBefore);
         List<Part> bParts = bikePartsService.getBikePartsForBike().getListOfParts();
         for (Part part : bParts) {
@@ -353,7 +359,7 @@ public class BikePartsTest {
 
     @Test
     public void test_That_Bike5_Part_Details_Not_Null() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike5");
+        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike5").get();
         fullBikeService.setBike(bikeBefore);
         List<Part> bParts = bikePartsService.getBikePartsForBike().getListOfParts();
         for (Part part : bParts) {

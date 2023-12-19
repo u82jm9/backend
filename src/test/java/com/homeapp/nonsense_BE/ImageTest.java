@@ -5,10 +5,13 @@ import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Image;
 import com.homeapp.nonsense_BE.services.FullBikeService;
 import com.homeapp.nonsense_BE.services.ImageService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -20,6 +23,8 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class ImageTest {
     private static boolean isSetupDone = false;
 
@@ -56,29 +61,34 @@ public class ImageTest {
         }
     }
 
+    @AfterAll
+    private void clearup() {
+        fullBikeService.reloadBikesFromBackup();
+    }
+
     @Test
     public void test_That_List_of_Images_is_Returned() {
-        FullBike bike = fullBikeService.getBikeUsingName("bike1");
+        FullBike bike = fullBikeService.getBikeUsingName("bike1").get();
         assertEquals(imageService.getImages(bike).size(), 10);
     }
 
     @Test
     public void test_That_One_By_Bike_Gets_Less_Images() {
-        FullBike bike = fullBikeService.getBikeUsingName("bike");
-        FullBike bike1 = fullBikeService.getBikeUsingName("bike1");
+        FullBike bike = fullBikeService.getBikeUsingName("bike").get();
+        FullBike bike1 = fullBikeService.getBikeUsingName("bike1").get();
         assertTrue(imageService.getImages(bike).size() < imageService.getImages(bike1).size());
     }
 
     @Test
     public void test_That_Different_Bikes_get_different_lists() {
-        List<Image> images1 = imageService.getImages(fullBikeService.getBikeUsingName("bike1"));
-        List<Image> images2 = imageService.getImages(fullBikeService.getBikeUsingName("bike2"));
+        List<Image> images1 = imageService.getImages(fullBikeService.getBikeUsingName("bike1").get());
+        List<Image> images2 = imageService.getImages(fullBikeService.getBikeUsingName("bike2").get());
         assertNotEquals(images1, images2);
     }
 
     @Test
     public void test_That_Images_Are_Not_Null() {
-        FullBike bike = fullBikeService.getBikeUsingName("bike1");
+        FullBike bike = fullBikeService.getBikeUsingName("bike1").get();
         List<Image> images = imageService.getImages(bike);
         for (Image image : images) {
             assertNotNull(image.getComponent());

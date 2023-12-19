@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +26,9 @@ public class StickyNoteTest {
     private StickyNoteService stickyNoteService;
 
     private static boolean isSetupDone = false;
-    private static boolean isFileSaved = false;
-    private List<StickyNote> list = new ArrayList<>();
 
     @BeforeEach
     private void setup() {
-        if (!isFileSaved) {
-            list = stickyNoteService.retrieveAllNotes();
-            isFileSaved = true;
-        }
         if (!isSetupDone) {
             Map<String, Boolean> map1 = new HashMap<>();
             map1.put("This is the message for the before all method", false);
@@ -58,7 +51,7 @@ public class StickyNoteTest {
 
     @AfterAll
     private void clearup() {
-        stickyNoteService.writeNotesToFile(list);
+        stickyNoteService.reloadNotesFromBackup();
     }
 
     @Test
@@ -85,14 +78,15 @@ public class StickyNoteTest {
     @Test
     public void test_That_A_StickNote_Can_Be_Edited() {
         StickyNote noteBefore = stickyNoteService.retrieveById(2L);
+        Map<String, Boolean> mapBefore = noteBefore.getMessageMap();
         Map<String, Boolean> map = new HashMap<>();
         map.put("Test Message", false);
         map.put("Test Message2", false);
         map.put("Test Messagee", true);
         noteBefore.setMessageMap(map);
         stickyNoteService.editStickyNote(noteBefore);
-        StickyNote noteAfter = stickyNoteService.retrieveById(2L);
-        assertNotEquals(noteAfter, noteBefore);
+        Map<String, Boolean> mapAfter = stickyNoteService.retrieveById(2L).getMessageMap();
+        assertNotEquals(mapAfter, mapBefore);
     }
 
     @Test
