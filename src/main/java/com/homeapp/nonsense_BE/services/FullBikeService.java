@@ -1,14 +1,16 @@
 package com.homeapp.nonsense_BE.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.nonsense_BE.models.bike.Frame;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
-import com.homeapp.nonsense_BE.repository.FullBikeDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,12 +26,14 @@ public class FullBikeService {
     private static final Logger LOGGER = LogManager.getLogger(FullBikeService.class);
     private static FullBikeService instance;
     private FullBike bike;
-
-    @Autowired
-    private FullBikeDao fullBikeDao;
+    private static final ObjectMapper om = new ObjectMapper();
+    private static final String JSON_BIKES_FILE = "src/main/resources/bikes.json";
+    private List<FullBike> bikeList;
 
     private FullBikeService() {
+
         this.bike = new FullBike();
+        this.bikeList = readBikesFile();
     }
 
     public static FullBikeService getInstance() {
@@ -37,6 +41,31 @@ public class FullBikeService {
             instance = new FullBikeService();
         }
         return instance;
+    }
+
+    private List<FullBike> readBikesFile() {
+        LOGGER.info("Reading Bikes From File");
+        try {
+            File file = new File(JSON_BIKES_FILE);
+            return om.readValue(file, new TypeReference<>() {
+            });
+        } catch (IOException e) {
+            LOGGER.error("Error reading bikes from file: {}", e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public void writeBikesToFile(List<FullBike> list) {
+        try {
+            om.writeValue(new File(JSON_BIKES_FILE), list);
+            bikeList = list;
+        } catch (IOException e) {
+            LOGGER.error("Error writing bikes to file: {}", e.getMessage());
+        }
+    }
+
+    private List<FullBike> getBikeList() {
+        return bikeList;
     }
 
     public FullBike getBike() {
@@ -48,14 +77,17 @@ public class FullBikeService {
     }
 
     public List<FullBike> getAllFullBikes() {
-        List<FullBike> bikeList = fullBikeDao.findAll();
+        List<FullBike> bikeList = getBikeList();
         LOGGER.info("Getting list of all bikes, number returned: " + bikeList.size());
         return bikeList;
     }
 
     public void create(FullBike bike) {
         LOGGER.info(("Adding new bike to DB!"));
-        fullBikeDao.save(bike);
+        long newId = bikeList.size() + 1;
+        bike.setFullBikeId(newId);
+        bikeList.add(bike);
+        writeBikesToFile(bikeList);
     }
 
     public FullBike updateBike(FullBike bike) {
@@ -64,8 +96,22 @@ public class FullBikeService {
         checkBikeShifters(bike);
         checkFrameStyle(bike);
         checkBrakeCompatibility(bike);
-        fullBikeDao.save(bike);
-        return getBike();
+        if (getBikeFromFile(bike.getBikeName()) != null) {
+            removeBikeFromFile(bike.getBikeName());
+        }
+        bikeList.removeIf(i -> i.getBikeName().equals(bike.getBikeName()));
+        bikeList.add(bike);
+        writeBikesToFile(bikeList);
+        return bike;
+    }
+
+    private void removeBikeFromFile(String bikeName) {
+        bikeList.removeIf(i -> i.getBikeName().equals(bikeName));
+        writeBikesToFile(bikeList);
+    }
+
+    private FullBike getBikeFromFile(String bikeName) {
+        return bikeList.stream().filter(i -> i.getBikeName().equals(bikeName)).toList().get(0);
     }
 
     private void checkBrakeCompatibility(FullBike bike) {
@@ -114,11 +160,9 @@ public class FullBikeService {
 
     public FullBike startNewBike() {
         LOGGER.info("Starting new bike, service method.");
-        FullBike bike;
-        List<FullBike> bikesOnDB = getBikesByName("Your Custom Bike");
-        if (bikesOnDB.size() > 0) {
+        FullBike bike = getBikeUsingName("Your Custom Bike");
+        if (bike == null) {
             LOGGER.info("Bike with that name already exists on DB.");
-            bike = bikesOnDB.get(0);
         } else {
             Frame frame = new Frame();
             frame.setFrameStyle(NONE_SELECTED);
@@ -136,25 +180,20 @@ public class FullBikeService {
         return bike;
     }
 
-    private List<FullBike> getBikesByName(String bikeName) {
-        LOGGER.info("Getting List of Bikes with bike name: " + bikeName);
-        return getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList());
-    }
-
     public FullBike getBikeUsingName(String bikeName) {
         LOGGER.info("Getting single bike with bike name: " + bikeName);
-        return getAllFullBikes().stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList()).get(0);
+        return bikeList.stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList()).get(0);
     }
 
     public void deleteBike(long bikeId) {
-
         LOGGER.info("Deleting Bike with ID: {}", bikeId);
-        fullBikeDao.deleteById(bikeId);
+        bikeList.removeIf(i -> i.getFullBikeId() == (bikeId));
+        writeBikesToFile(bikeList);
     }
 
     public void deleteAllBikes() {
         LOGGER.info("Deleting ALL BIKES on DataBase");
-        fullBikeDao.deleteAll();
+        writeBikesToFile(new ArrayList<>());
     }
 
     private void handleIOException(String message, IOException e) {

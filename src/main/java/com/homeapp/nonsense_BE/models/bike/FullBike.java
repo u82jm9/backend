@@ -50,7 +50,7 @@ public class FullBike {
     public FullBike() {
     }
 
-    public FullBike(String bikeName, Frame frame,  BrakeType brakeType, GroupsetBrand groupsetBrand, HandleBarType handleBarType, long numberOfFrontGears, long numberOfRearGears, ShifterStyle shifterStyle) {
+    public FullBike(String bikeName, Frame frame, BrakeType brakeType, GroupsetBrand groupsetBrand, HandleBarType handleBarType, long numberOfFrontGears, long numberOfRearGears, ShifterStyle shifterStyle) {
         this.frame = frame;
         this.bikeName = bikeName;
         this.brakeType = brakeType;
@@ -59,6 +59,10 @@ public class FullBike {
         this.numberOfFrontGears = numberOfFrontGears;
         this.numberOfRearGears = numberOfRearGears;
         this.shifterStyle = shifterStyle;
+    }
+
+    public void setFullBikeId(long fullBikeId) {
+        this.fullBikeId = fullBikeId;
     }
 
     public GroupsetBrand getGroupsetBrand() {

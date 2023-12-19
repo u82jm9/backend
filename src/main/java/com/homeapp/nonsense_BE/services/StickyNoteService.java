@@ -20,24 +20,28 @@ public class StickyNoteService {
     private static final Logger LOGGER = LogManager.getLogger(StickyNoteService.class);
     private static final ObjectMapper om = new ObjectMapper();
     private static final String JSON_NOTES_FILE = "src/main/resources/notes.json";
+    private List<StickyNote> notesList;
+
+    private StickyNoteService() {
+        this.notesList = readNotesFile();
+    }
 
     private List<StickyNote> readNotesFile() {
-        List<StickyNote> list = new ArrayList<>();
+        LOGGER.info("Reading Sticky Notes From File");
         try {
             File file = new File(JSON_NOTES_FILE);
-            ObjectMapper om = new ObjectMapper();
-            list = om.readValue(file, new TypeReference<>() {
+            return om.readValue(file, new TypeReference<>() {
             });
-            return list;
         } catch (IOException e) {
-            LOGGER.error("Error reading notes to file: {}", e.getMessage());
+            LOGGER.error("Error reading notes from file: {}", e.getMessage());
         }
-        return list;
+        return new ArrayList<>();
     }
 
     public void writeNotesToFile(List<StickyNote> list) {
         try {
             om.writeValue(new File(JSON_NOTES_FILE), list);
+            notesList = list;
         } catch (IOException e) {
             LOGGER.error("Error writing notes to file: {}", e.getMessage());
         }
@@ -58,7 +62,6 @@ public class StickyNoteService {
     }
 
     public void create(StickyNote note) {
-        List<StickyNote> notesList = readNotesFile();
         if (checkNoteTitle(note.getTitle())) {
             LOGGER.warn("Sticky note with this title already exists, not creating a new one!");
         } else {
@@ -71,26 +74,21 @@ public class StickyNoteService {
     }
 
     private boolean checkNoteTitle(String title) {
-        List<StickyNote> notesList = readNotesFile();
         return notesList.stream().anyMatch(n -> n.getTitle().equals(title));
     }
 
     private boolean checkNoteId(Long id) {
-        List<StickyNote> notesList = readNotesFile();
         return notesList.stream().anyMatch(n -> n.getStickyNoteId() == id);
     }
 
     public List<StickyNote> retrieveAllNotes() {
-        List<StickyNote> list;
-        list = readNotesFile();
-        LOGGER.info("Number of notes found: {}", list.size());
-        list.sort((o1, o2) -> Boolean.compare(o1.isComplete(), o2.isComplete()));
-        return list;
+        LOGGER.info("Number of notes found: {}", notesList.size());
+        notesList.sort((o1, o2) -> Boolean.compare(o1.isComplete(), o2.isComplete()));
+        return notesList;
     }
 
     public StickyNote retrieveByTitle(String title) {
-        List<StickyNote> list = readNotesFile();
-        StickyNote noteFromFile = list.stream().filter(note -> note.getTitle().equals(title)).toList().get(0);
+        StickyNote noteFromFile = notesList.stream().filter(note -> note.getTitle().equals(title)).toList().get(0);
         if (checkNoteTitle(title)) {
             LOGGER.info("Retrieving by Title, Sticky Note with Title: {}", title);
             return noteFromFile;
@@ -101,8 +99,7 @@ public class StickyNoteService {
     }
 
     public StickyNote retrieveById(Long id) {
-        List<StickyNote> list = readNotesFile();
-        StickyNote noteFromFile = list.stream().filter(note -> note.getStickyNoteId() == id).toList().get(0);
+        StickyNote noteFromFile = notesList.stream().filter(note -> note.getStickyNoteId() == id).toList().get(0);
         if (checkNoteId(id)) {
             LOGGER.info("Retrieving by ID, Sticky Note with ID: {}", id);
             return noteFromFile;
@@ -118,16 +115,14 @@ public class StickyNoteService {
         noteFromFile.setTitle(note.getTitle());
         noteFromFile.setMessageMap(note.getMessageMap());
         noteFromFile = updateNoteComplete(note);
-        List<StickyNote> list = readNotesFile();
-        list.removeIf(n -> n.getTitle().equals(note.getTitle()));
-        list.add(noteFromFile);
-        writeNotesToFile(list);
+        notesList.removeIf(n -> n.getTitle().equals(note.getTitle()));
+        notesList.add(noteFromFile);
+        writeNotesToFile(notesList);
     }
 
     public void deleteNote(StickyNote note) {
-        List<StickyNote> list = readNotesFile();
-        list.removeIf(n -> n.getStickyNoteId() == note.getStickyNoteId());
-        writeNotesToFile(list);
+        notesList.removeIf(n -> n.getStickyNoteId() == note.getStickyNoteId());
+        writeNotesToFile(notesList);
     }
 
     public void deleteAll() {
