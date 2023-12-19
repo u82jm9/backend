@@ -20,6 +20,7 @@ public class StickyNoteService {
     private static final Logger LOGGER = LogManager.getLogger(StickyNoteService.class);
     private static final ObjectMapper om = new ObjectMapper();
     private static final String JSON_NOTES_FILE = "src/main/resources/notes.json";
+    private static final String JSON_NOTES_FILE_BACKUP = "src/main/resources/notes_backup.json";
     private List<StickyNote> notesList;
 
     private StickyNoteService() {
@@ -36,6 +37,18 @@ public class StickyNoteService {
             LOGGER.error("Error reading notes from file: {}", e.getMessage());
         }
         return new ArrayList<>();
+    }
+
+    public void reloadNotesFromBackup() {
+        LOGGER.info("Reloading Notes From Backup File");
+        try {
+            File file = new File(JSON_NOTES_FILE_BACKUP);
+            List<StickyNote> notes = om.readValue(file, new TypeReference<>() {
+            });
+            writeNotesToFile(notes);
+        } catch (IOException e) {
+            LOGGER.error("Error reading bikes from file: {}", e.getMessage());
+        }
     }
 
     public void writeNotesToFile(List<StickyNote> list) {

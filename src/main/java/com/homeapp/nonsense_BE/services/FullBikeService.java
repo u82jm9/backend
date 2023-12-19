@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
@@ -28,6 +28,7 @@ public class FullBikeService {
     private FullBike bike;
     private static final ObjectMapper om = new ObjectMapper();
     private static final String JSON_BIKES_FILE = "src/main/resources/bikes.json";
+    private static final String JSON_BIKES_FILE_BACKUP = "src/main/resources/bikes_backup.json";
     private List<FullBike> bikeList;
 
     private FullBikeService() {
@@ -55,7 +56,20 @@ public class FullBikeService {
         return new ArrayList<>();
     }
 
+    public void reloadBikesFromBackup() {
+        LOGGER.info("Reloading Bikes From Backup File");
+        try {
+            File file = new File(JSON_BIKES_FILE_BACKUP);
+            List<FullBike> bikes = om.readValue(file, new TypeReference<>() {
+            });
+            writeBikesToFile(bikes);
+        } catch (IOException e) {
+            LOGGER.error("Error reading bikes from file: {}", e.getMessage());
+        }
+    }
+
     public void writeBikesToFile(List<FullBike> list) {
+        LOGGER.info("Writing Bikes Back to File");
         try {
             om.writeValue(new File(JSON_BIKES_FILE), list);
             bikeList = list;
@@ -91,15 +105,14 @@ public class FullBikeService {
     }
 
     public FullBike updateBike(FullBike bike) {
-        LOGGER.info("Updating bike in DB!");
+        LOGGER.info("Updating bike on File!");
         setBike(bike);
         checkBikeShifters(bike);
         checkFrameStyle(bike);
         checkBrakeCompatibility(bike);
-        if (getBikeFromFile(bike.getBikeName()) != null) {
+        if (getBikeUsingName(bike.getBikeName()).isPresent()) {
             removeBikeFromFile(bike.getBikeName());
         }
-        bikeList.removeIf(i -> i.getBikeName().equals(bike.getBikeName()));
         bikeList.add(bike);
         writeBikesToFile(bikeList);
         return bike;
@@ -108,10 +121,6 @@ public class FullBikeService {
     private void removeBikeFromFile(String bikeName) {
         bikeList.removeIf(i -> i.getBikeName().equals(bikeName));
         writeBikesToFile(bikeList);
-    }
-
-    private FullBike getBikeFromFile(String bikeName) {
-        return bikeList.stream().filter(i -> i.getBikeName().equals(bikeName)).toList().get(0);
     }
 
     private void checkBrakeCompatibility(FullBike bike) {
@@ -160,9 +169,10 @@ public class FullBikeService {
 
     public FullBike startNewBike() {
         LOGGER.info("Starting new bike, service method.");
-        FullBike bike = getBikeUsingName("Your Custom Bike");
-        if (bike == null) {
+        Optional<FullBike> b = getBikeUsingName("Your Custom Bike");
+        if (b.isPresent()) {
             LOGGER.info("Bike with that name already exists on DB.");
+            return b.get();
         } else {
             Frame frame = new Frame();
             frame.setFrameStyle(NONE_SELECTED);
@@ -176,14 +186,17 @@ public class FullBikeService {
             bike.setNumberOfFrontGears(0);
             bike.setNumberOfRearGears(0);
             create(bike);
+            return bike;
         }
-        return bike;
     }
 
-    public FullBike getBikeUsingName(String bikeName) {
+    public Optional<FullBike> getBikeUsingName(String bikeName) {
         LOGGER.info("Getting single bike with bike name: " + bikeName);
-        return bikeList.stream().filter(item -> item.getBikeName().equals(bikeName)).collect(Collectors.toList()).get(0);
+        return bikeList.stream()
+                .filter(item -> item.getBikeName().equals(bikeName))
+                .findFirst();
     }
+
 
     public void deleteBike(long bikeId) {
         LOGGER.info("Deleting Bike with ID: {}", bikeId);
@@ -192,7 +205,7 @@ public class FullBikeService {
     }
 
     public void deleteAllBikes() {
-        LOGGER.info("Deleting ALL BIKES on DataBase");
+        LOGGER.info("Deleting ALL BIKES on File");
         writeBikesToFile(new ArrayList<>());
     }
 
