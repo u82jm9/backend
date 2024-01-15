@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.RIM;
@@ -60,6 +61,7 @@ public class BikePartsService {
             bike = fullBikeService.getBike();
             LOGGER.info("Method for getting Bike Wheels from Web");
             if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
+                // Wheels which require Gears are from Wiggle
                 if (!bike.getBrakeType().equals(RIM)) {
                     if (bike.getWheelPreference().equals("Cheap")) {
                         link = wiggleURL + "prime-baroudeur-disc-alloy-wheelset";
@@ -75,6 +77,7 @@ public class BikePartsService {
                 }
                 shimanoGroupsetService.setBikePartsFromLink(link, "Wheel Set");
             } else {
+                // Wheels for Single Speed are from Halo
                 if (bike.getWheelPreference().equals("Cheap")) {
                     link = haloURL + "shop/wheels/aerorage-track-700c-wheels/";
                 } else {
@@ -83,25 +86,29 @@ public class BikePartsService {
                 String wheelPrice;
                 String wheelName;
                 Document doc = Jsoup.connect(link).get();
-                Element e = doc.select("div.productDetails").get(0);
-                wheelName = e.select("h1").first().text();
-                if (e.select("div.priceSummary").select("ins").first() != null) {
-                    wheelPrice = e.select("div.priceSummary").select("ins").select("span").first().text().replace("£", "").split(" ")[0];
+                Optional<Element> e = Optional.of(doc.select("div.productDetails").get(0));
+                if (e.isEmpty()) {
+                    shimanoGroupsetService.handleError("Wheels", "GetWheels", link);
                 } else {
-                    wheelPrice = e.select("div.priceSummary").select("span").first().text().replace("£", "").split(" ")[0];
+                    Element e1 = e.get();
+                    wheelName = e1.select("h1").first().text();
+                    if (e1.select("div.priceSummary").select("ins").first() != null) {
+                        wheelPrice = e1.select("div.priceSummary").select("ins").select("span").first().text().replace("£", "").split(" ")[0];
+                    } else {
+                        wheelPrice = e1.select("div.priceSummary").select("span").first().text().replace("£", "").split(" ")[0];
+                    }
+                    e1.select("div.priceSummary").select("ins").first();
+                    if (!wheelPrice.contains(".")) {
+                        wheelPrice = wheelPrice + ".00";
+                    }
+                    LOGGER.info("Found Product: " + wheelName);
+                    LOGGER.info("For Price: " + wheelPrice);
+                    LOGGER.info("Link: " + link);
+                    bikeParts.getListOfParts().add(new Part("Wheel Set", wheelName, wheelPrice, link));
                 }
-                e = e.select("div.priceSummary").select("ins").first();
-                System.out.println(e);
-                if (!wheelPrice.contains(".")) {
-                    wheelPrice = wheelPrice + ".00";
-                }
-                LOGGER.info("Found Product: " + wheelName);
-                LOGGER.info("For Price: " + wheelPrice);
-                LOGGER.info("Link: " + link);
-                bikeParts.getListOfParts().add(new Part("Wheel Set", wheelName, wheelPrice, link));
             }
         } catch (IOException e) {
-            handleException("Get Wheels", e);
+            shimanoGroupsetService.handleIOException("Wheels", "Get Wheels", e);
         }
     }
 
@@ -124,7 +131,7 @@ public class BikePartsService {
             }
             shimanoGroupsetService.setBikePartsFromLink(link, "Bar");
         } catch (Exception e) {
-            handleException("Get HandleBar Parts", e);
+            shimanoGroupsetService.handleIOException("HandleBars", "Get HandleBar Parts", e);
         }
     }
 
@@ -133,8 +140,9 @@ public class BikePartsService {
         try {
             bike = fullBikeService.getBike();
             LOGGER.info("Jsoup Method for Getting Frame Parts");
-            String frameName;
-            String framePrice;
+            String frameName = "";
+            String framePrice = "";
+            Optional<Element> e = Optional.empty();
             Document doc;
             switch (bike.getFrame().getFrameStyle()) {
                 case ROAD -> {
@@ -160,26 +168,35 @@ public class BikePartsService {
             }
             doc = Jsoup.connect(link).get();
             if (link.contains("dolan-bikes")) {
-                frameName = doc.select("div.productBuy > div.productPanel").first().select("h1").first().text();
-                framePrice = doc.select("div.productBuy > div.productPanel").first().select("div.price").select("span.price").first().text();
+                e = Optional.of(doc.select("div.productBuy > div.productPanel").first());
+                if (e.isEmpty()) {
+                    shimanoGroupsetService.handleError("Frame", "Get Dolan Frame", link);
+                } else {
+                    frameName = e.get().select("h1").first().text();
+                    framePrice = e.get().select("div.price").select("span.price").first().text();
+                }
             } else if (link.contains("genesisbikes")) {
-                frameName = doc.select("h1.page-title span").first().text();
-                framePrice = doc.select("div.price-box.price-final_price span.price").first().text();
-            } else {
-                frameName = "";
-                framePrice = "";
+                e = Optional.of(doc.select("div.product-info-main-header").first());
+                if (e.isEmpty()) {
+                    shimanoGroupsetService.handleError("Frame", "Get Dolan Frame", link);
+                } else {
+                    frameName = e.get().select("h1.page-title").text();
+                    framePrice = e.get().select("div.product-info-price > div.price-final_price").first().select("span").text();
+                }
             }
-            framePrice = framePrice.replaceAll("[^\\d.]", "");
-            framePrice = framePrice.split("\\.")[0] + "." + framePrice.split("\\.")[1].substring(0, 2);
-            if (!framePrice.contains(".")) {
-                framePrice = framePrice + ".00";
+            if (e.isPresent()) {
+                framePrice = framePrice.replaceAll("[^\\d.]", "");
+                framePrice = framePrice.split("\\.")[0] + "." + framePrice.split("\\.")[1].substring(0, 2);
+                if (!framePrice.contains(".")) {
+                    framePrice = framePrice + ".00";
+                }
+                bikeParts.getListOfParts().add(new Part("Frame", frameName, framePrice, link));
+                LOGGER.info("Found Frame: {}", frameName);
+                LOGGER.info("For price: {}", framePrice);
+                LOGGER.info("Frame link: {}", link);
             }
-            bikeParts.getListOfParts().add(new Part("Frame", frameName, framePrice, link));
-            LOGGER.info("Found Frame: {}", frameName);
-            LOGGER.info("For price: {}", framePrice);
-            LOGGER.info("Frame link: {}", link);
         } catch (IOException e) {
-            handleException("Get Frame Parts", e);
+            shimanoGroupsetService.handleIOException("Frame", "Get Frame Parts", e);
         }
     }
 
@@ -197,9 +214,5 @@ public class BikePartsService {
     private String sortTotalPrice(BigDecimal t) {
         NumberFormat format = NumberFormat.getCurrencyInstance(Locale.UK);
         return format.format(t);
-    }
-
-    private void handleException(String message, Exception e) {
-        LOGGER.error("An IOException occurred from: {}!\n{}", message, e.getMessage());
     }
 }

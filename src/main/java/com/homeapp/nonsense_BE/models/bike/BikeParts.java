@@ -20,6 +20,9 @@ public class BikeParts {
 
     private String totalPriceAsString = "";
 
+    @OneToMany
+    private List<Error> errorMessages = new ArrayList<>();
+
     public BikeParts() {
         this.listOfParts = new ArrayList<>();
     }
@@ -52,6 +55,14 @@ public class BikeParts {
         this.totalBikePrice = totalBikePrice;
     }
 
+    public List<Error> getErrorMessages() {
+        return errorMessages;
+    }
+
+    public void setErrorMessages(List<Error> errorMessages) {
+        this.errorMessages = errorMessages;
+    }
+
     @Override
     public String toString() {
         return "BikeParts{" +
@@ -59,6 +70,7 @@ public class BikeParts {
                 "listOfParts=" + listOfParts +
                 ", totalBikePrice=" + totalBikePrice +
                 ", totalPriceAsString=" + totalPriceAsString +
+                ", errorMessages=" + errorMessages +
                 '}';
     }
 }

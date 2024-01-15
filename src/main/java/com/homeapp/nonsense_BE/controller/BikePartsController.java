@@ -28,6 +28,11 @@ public class BikePartsController {
         LOGGER.info("Get Bike Parts, API");
         fullBikeService.setBike(bike);
         BikeParts bikeParts = bikePartsService.getBikePartsForBike();
-        return new ResponseEntity<>(bikeParts, HttpStatus.ACCEPTED);
+        if (bikeParts.getErrorMessages().size() == 0) {
+            return new ResponseEntity<>(bikeParts, HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(bikeParts, HttpStatus.OK);
+
+        }
     }
 }

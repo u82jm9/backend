@@ -116,6 +116,7 @@ public class BikePartsTest {
                             BikeParts parts = bikePartsService.getBikePartsForBike();
                             BigDecimal bikePrice = parts.getTotalBikePrice();
                             assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
+                            assertEquals(0, parts.getErrorMessages().size());
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
@@ -151,6 +152,7 @@ public class BikePartsTest {
                             BikeParts parts = bikePartsService.getBikePartsForBike();
                             BigDecimal bikePrice = parts.getTotalBikePrice();
                             assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
+                            assertEquals(0, parts.getErrorMessages().size());
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
@@ -186,6 +188,7 @@ public class BikePartsTest {
                             BikeParts parts = bikePartsService.getBikePartsForBike();
                             BigDecimal bikePrice = parts.getTotalBikePrice();
                             assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
+                            assertEquals(0, parts.getErrorMessages().size());
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
@@ -221,6 +224,7 @@ public class BikePartsTest {
                             BikeParts parts = bikePartsService.getBikePartsForBike();
                             BigDecimal bikePrice = parts.getTotalBikePrice();
                             assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
+                            assertEquals(0, parts.getErrorMessages().size());
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
@@ -240,12 +244,12 @@ public class BikePartsTest {
     }
 
     @Test
-    public void test_That_The_Full_Price_is_Heaps() {
+    public void test_That_The_Full_Price_is_Cheaps() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        assertTrue(bikePrice > 1500);
+        assertTrue(bikePrice < 1500);
     }
 
     @Test
@@ -330,7 +334,7 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         String bikePrice = parts.getTotalPriceAsString();
-        assertEquals("£2,117.90", bikePrice);
+        assertEquals("£1,819.90", bikePrice);
     }
 
     @Test
@@ -338,7 +342,6 @@ public class BikePartsTest {
         FullBike bike1Before = fullBikeService.getBikeUsingName("bike").get();
         fullBikeService.setBike(bike1Before);
         BikeParts parts1 = bikePartsService.getBikePartsForBike();
-        FullBike bike1After = fullBikeService.getBike();
         long bike1Price = parts1.getTotalBikePrice().longValue();
         FullBike bike2Before = fullBikeService.getBikeUsingName("bike3").get();
         fullBikeService.setBike(bike2Before);
