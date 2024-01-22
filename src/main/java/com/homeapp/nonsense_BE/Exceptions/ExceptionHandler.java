@@ -21,23 +21,23 @@ public class ExceptionHandler {
     }
 
     public void handleError(String component, String method, String link) {
+        LOGGER.log("error", "An Error occurred from: " + method + "\nConnecting to link: " + link + "\nFor bike Component: " + component);
         List<Error> tempList = bikeParts.getErrorMessages();
         tempList.add(new Error(component, method, link));
         bikeParts.setErrorMessages(tempList);
-        LOGGER.log("error", "An Error occurred from: " + method + "\nConnecting to link: " + link + "\nFor bike Component: " + component);
     }
 
     public void handleIOException(String component, String method, IOException e) {
+        LOGGER.log("error", "An IOException occurred from: " + method + "\nConnecting to link: " + e.getMessage() + "\nFor bike Component: " + component);
         List<Error> tempList = bikeParts.getErrorMessages();
         tempList.add(new Error(component, method, e.getMessage()));
         bikeParts.setErrorMessages(tempList);
-        LOGGER.log("error", "An IOException occurred from: " + method + "\nConnecting to link: " + e.getMessage() + "\nFor bike Component: " + component);
     }
 
     public void handleException(String component, String method, Exception e) {
+        LOGGER.log("error", "An Exception occurred from: " + method + "\nConnecting to link: " + e.getMessage() + "\nFor bike Component: " + component);
         List<Error> tempList = bikeParts.getErrorMessages();
         tempList.add(new Error(component, method, e.getMessage()));
         bikeParts.setErrorMessages(tempList);
-        LOGGER.log("error", "An Exception occurred from: " + method + "\nConnecting to link: " + e.getMessage() + "\nFor bike Component: " + component);
     }
 }

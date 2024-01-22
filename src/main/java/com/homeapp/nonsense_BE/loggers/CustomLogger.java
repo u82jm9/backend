@@ -25,14 +25,17 @@ public class CustomLogger {
     }
 
     private TreeSet<String> readLogsFile() {
-
         try {
             File file = new File(getFileName());
             if (!file.exists()) {
                 file.createNewFile();
             }
-            return om.readValue(file, new TypeReference<>() {
+            if (file.length() == 0) {
+                return new TreeSet<>();
+            }
+            logs = om.readValue(file, new TypeReference<>() {
             });
+            return logs;
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -71,7 +74,7 @@ public class CustomLogger {
     private void logToFile(String message) {
         try {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
-            TreeSet<String> logs = readLogsFile();
+            logs = readLogsFile();
             logs.add(message);
             om.writeValue(new File(getFileName()), logs);
         } catch (IOException e) {

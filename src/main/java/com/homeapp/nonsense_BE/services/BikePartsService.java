@@ -9,7 +9,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -42,11 +41,12 @@ public class BikePartsService {
     private final ExceptionHandler exceptionHandler;
 
     @Autowired
-    public BikePartsService(CustomLogger LOGGER, @Lazy FullBikeService fullBikeService, @Lazy ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
+    public BikePartsService(CustomLogger LOGGER, FullBikeService fullBikeService, ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
         this.LOGGER = LOGGER;
         this.fullBikeService = fullBikeService;
         this.shimanoGroupsetService = shimanoGroupsetService;
         this.exceptionHandler = exceptionHandler;
+        this.bikeParts = new BikeParts();
     }
 
     public BikeParts getBikePartsForBike() {
@@ -76,7 +76,7 @@ public class BikePartsService {
                     }
                 } else {
                     if (bike.getWheelPreference().equals("Cheap")) {
-                        link = wiggleURL + "prime-baroudeur-alloy-wheelset";
+                        link = wiggleURL + "prime-baroudeur-tubeless-bundle";
                     } else {
                         link = wiggleURL + "prime-primavera-50-carbon-rim-brake-wheelset";
                     }

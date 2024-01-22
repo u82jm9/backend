@@ -334,7 +334,7 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         String bikePrice = parts.getTotalPriceAsString();
-        assertEquals("£1,819.90", bikePrice);
+        assertEquals("£1,791.90", bikePrice);
     }
 
     @Test
