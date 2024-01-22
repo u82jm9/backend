@@ -2,10 +2,11 @@ package com.homeapp.nonsense_BE.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
+import com.homeapp.nonsense_BE.loggers.CustomLogger;
 import com.homeapp.nonsense_BE.models.bike.Frame;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -23,41 +24,47 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 @Service
 public class FullBikeService {
 
-    private static final Logger LOGGER = LogManager.getLogger(FullBikeService.class);
     private static FullBikeService instance;
     private FullBike bike;
     private static final ObjectMapper om = new ObjectMapper();
     private static final String JSON_BIKES_FILE = "src/main/resources/bikes.json";
     private static final String JSON_BIKES_FILE_BACKUP = "src/main/resources/bikes_backup.json";
     private List<FullBike> bikeList;
+    private final CustomLogger LOGGER;
+    private final ShimanoGroupsetService shimanoGroupsetService;
+    private final ExceptionHandler exceptionHandler;
 
-    private FullBikeService() {
-
+    @Autowired
+    public FullBikeService(CustomLogger LOGGER, ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
+        this.LOGGER = LOGGER;
+        this.shimanoGroupsetService = shimanoGroupsetService;
+        this.exceptionHandler = exceptionHandler;
         this.bike = new FullBike();
         this.bikeList = readBikesFile();
     }
 
-    public static FullBikeService getInstance() {
+    public static FullBikeService getInstance(CustomLogger LOGGER, ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
         if (instance == null) {
-            instance = new FullBikeService();
+            instance = new FullBikeService(LOGGER, shimanoGroupsetService, exceptionHandler);
         }
         return instance;
     }
 
     private List<FullBike> readBikesFile() {
-        LOGGER.info("Reading Bikes From File");
+        LOGGER.log("info", "Reading Bikes From File");
         try {
             File file = new File(JSON_BIKES_FILE);
             return om.readValue(file, new TypeReference<>() {
             });
         } catch (IOException e) {
-            LOGGER.error("Error reading bikes from file: {}", e.getMessage());
+            LOGGER.log("error", "Error reading bikes from file: " + e.getMessage());
+            exceptionHandler.handleIOException("Bike Service", "Read bikes from File", e);
         }
         return new ArrayList<>();
     }
 
     public void reloadBikesFromBackup() {
-        LOGGER.info("Reloading Bikes From Backup File");
+        LOGGER.log("info", "Reloading Bikes From Backup File");
         try {
             deleteAllBikes();
             File file = new File(JSON_BIKES_FILE_BACKUP);
@@ -65,17 +72,19 @@ public class FullBikeService {
             });
             writeBikesToFile(bikes);
         } catch (IOException e) {
-            LOGGER.error("Error reading bikes from file: {}", e.getMessage());
+            LOGGER.log("error", "Error reading bikes from Back up file: " + e.getMessage());
+            exceptionHandler.handleIOException("Bike Service", "Read bikes from Back up File", e);
         }
     }
 
     public void writeBikesToFile(List<FullBike> list) {
-        LOGGER.info("Writing Bikes Back to File");
+        LOGGER.log("info", "Writing Bikes Back to File");
         try {
             om.writeValue(new File(JSON_BIKES_FILE), list);
             bikeList = list;
         } catch (IOException e) {
-            LOGGER.error("Error writing bikes to file: {}", e.getMessage());
+            LOGGER.log("error", "Error Writing bikes to file: " + e.getMessage());
+            exceptionHandler.handleIOException("Bike Service", "Write bikes to File", e);
         }
     }
 
@@ -93,12 +102,12 @@ public class FullBikeService {
 
     public List<FullBike> getAllFullBikes() {
         List<FullBike> bikeList = getBikeList();
-        LOGGER.info("Getting list of all bikes, number returned: " + bikeList.size());
+        LOGGER.log("info", "Getting list of all bikes, number returned: " + bikeList.size());
         return bikeList;
     }
 
     public void create(FullBike bike) {
-        LOGGER.info(("Adding new bike to DB!"));
+        LOGGER.log("info", ("Adding new bike to DB!"));
         long newId = bikeList.size() + 1;
         bike.setFullBikeId(newId);
         bikeList.add(bike);
@@ -106,7 +115,7 @@ public class FullBikeService {
     }
 
     public FullBike updateBike(FullBike bike) {
-        LOGGER.info("Updating bike on File!");
+        LOGGER.log("info", "Updating bike on File!");
         setBike(bike);
         checkBikeShifters(bike);
         checkFrameStyle(bike);
@@ -169,10 +178,10 @@ public class FullBikeService {
     }
 
     public FullBike startNewBike() {
-        LOGGER.info("Starting new bike, service method.");
+        LOGGER.log("info", "Starting new bike, service method.");
         Optional<FullBike> b = getBikeUsingName("Your Custom Bike");
         if (b.isPresent()) {
-            LOGGER.info("Bike with that name already exists on DB.");
+            LOGGER.log("info", "Bike with that name already exists on DB.");
             return b.get();
         } else {
             Frame frame = new Frame();
@@ -192,25 +201,20 @@ public class FullBikeService {
     }
 
     public Optional<FullBike> getBikeUsingName(String bikeName) {
-        LOGGER.info("Getting single bike with bike name: " + bikeName);
+        LOGGER.log("info", "Getting single bike with bike name: " + bikeName);
         return bikeList.stream()
                 .filter(item -> item.getBikeName().equals(bikeName))
                 .findFirst();
     }
 
-
     public void deleteBike(long bikeId) {
-        LOGGER.info("Deleting Bike with ID: {}", bikeId);
+        LOGGER.log("info", "Deleting Bike with ID: " + bikeId);
         bikeList.removeIf(i -> i.getFullBikeId() == (bikeId));
         writeBikesToFile(bikeList);
     }
 
     public void deleteAllBikes() {
-        LOGGER.info("Deleting ALL BIKES on File");
+        LOGGER.log("info", "Deleting ALL BIKES on File");
         writeBikesToFile(new ArrayList<>());
-    }
-
-    private void handleIOException(String message, IOException e) {
-        LOGGER.error("An IOException occurred from: " + message + "! " + e.getMessage());
     }
 }

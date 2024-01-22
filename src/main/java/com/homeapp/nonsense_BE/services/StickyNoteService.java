@@ -2,9 +2,10 @@ package com.homeapp.nonsense_BE.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
+import com.homeapp.nonsense_BE.loggers.CustomLogger;
 import com.homeapp.nonsense_BE.models.note.StickyNote;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -17,30 +18,35 @@ import java.util.Map;
 @Service
 public class StickyNoteService {
 
-    private static final Logger LOGGER = LogManager.getLogger(StickyNoteService.class);
     private static final ObjectMapper om = new ObjectMapper();
     private static final String JSON_NOTES_FILE = "src/main/resources/notes.json";
     private static final String JSON_NOTES_FILE_BACKUP = "src/main/resources/notes_backup.json";
     private List<StickyNote> notesList;
+    private final CustomLogger LOGGER;
+    private final ExceptionHandler exceptionHandler;
 
-    private StickyNoteService() {
+    @Autowired
+    public StickyNoteService(CustomLogger LOGGER, ExceptionHandler exceptionHandler) {
+        this.LOGGER = LOGGER;
+        this.exceptionHandler = exceptionHandler;
         this.notesList = readNotesFile();
     }
 
     private List<StickyNote> readNotesFile() {
-        LOGGER.info("Reading Sticky Notes From File");
+        LOGGER.log("info", "Reading Sticky Notes From File");
         try {
             File file = new File(JSON_NOTES_FILE);
             return om.readValue(file, new TypeReference<>() {
             });
         } catch (IOException e) {
-            LOGGER.error("Error reading notes from file: {}", e.getMessage());
+            LOGGER.log("error", "Error reading Notes from file: " + e.getMessage());
+            exceptionHandler.handleIOException("Note Service", "Read notes from File", e);
         }
         return new ArrayList<>();
     }
 
     public void reloadNotesFromBackup() {
-        LOGGER.info("Reloading Notes From Backup File");
+        LOGGER.log("info", "Reloading Notes From Backup File");
         try {
             deleteAll();
             File file = new File(JSON_NOTES_FILE_BACKUP);
@@ -48,7 +54,8 @@ public class StickyNoteService {
             });
             writeNotesToFile(notes);
         } catch (IOException e) {
-            LOGGER.error("Error reading bikes from file: {}", e.getMessage());
+            LOGGER.log("error", "Error reading notes from Back up file: " + e.getMessage());
+            exceptionHandler.handleIOException("Note Service", "Read notes from Back up File", e);
         }
     }
 
@@ -57,7 +64,8 @@ public class StickyNoteService {
             om.writeValue(new File(JSON_NOTES_FILE), list);
             notesList = list;
         } catch (IOException e) {
-            LOGGER.error("Error writing notes to file: {}", e.getMessage());
+            LOGGER.log("error", "Error Writing notes to file: " + e.getMessage());
+            exceptionHandler.handleIOException("Note Service", "Write notes to File", e);
         }
     }
 
@@ -77,9 +85,9 @@ public class StickyNoteService {
 
     public void create(StickyNote note) {
         if (checkNoteTitle(note.getTitle())) {
-            LOGGER.warn("Sticky note with this title already exists, not creating a new one!");
+            LOGGER.log("warn", "Sticky note with this title already exists, not creating a new one!");
         } else {
-            LOGGER.info("Adding Sticky Note with title: {}", note.getTitle());
+            LOGGER.log("info", "Adding Sticky Note with title: " + note.getTitle());
             long newId = notesList.size() + 1;
             note.setStickyNoteId(newId);
             notesList.add(note);
@@ -96,7 +104,7 @@ public class StickyNoteService {
     }
 
     public List<StickyNote> retrieveAllNotes() {
-        LOGGER.info("Number of notes found: {}", notesList.size());
+        LOGGER.log("info", "Number of notes found: " + notesList.size());
         notesList.sort((o1, o2) -> Boolean.compare(o1.isComplete(), o2.isComplete()));
         return notesList;
     }
@@ -104,10 +112,10 @@ public class StickyNoteService {
     public StickyNote retrieveByTitle(String title) {
         StickyNote noteFromFile = notesList.stream().filter(note -> note.getTitle().equals(title)).toList().get(0);
         if (checkNoteTitle(title)) {
-            LOGGER.info("Retrieving by Title, Sticky Note with Title: {}", title);
+            LOGGER.log("info", "Retrieving by Title, Sticky Note with Title: " + title);
             return noteFromFile;
         } else {
-            LOGGER.warn("Could not retrieve Sticky Note by title for: {}", title);
+            LOGGER.log("error", "Could not retrieve Sticky Note by title for: " + title);
             return null;
         }
     }
@@ -115,16 +123,16 @@ public class StickyNoteService {
     public StickyNote retrieveById(Long id) {
         StickyNote noteFromFile = notesList.stream().filter(note -> note.getStickyNoteId() == id).toList().get(0);
         if (checkNoteId(id)) {
-            LOGGER.info("Retrieving by ID, Sticky Note with ID: {}", id);
+            LOGGER.log("info", "Retrieving by ID, Sticky Note with ID: " + id);
             return noteFromFile;
         } else {
-            LOGGER.warn("Could not retrieve Sticky Note by ID for: {}", id);
+            LOGGER.log("error", "Could not retrieve Sticky Note by ID for: " + id);
             return null;
         }
     }
 
     public void editStickyNote(StickyNote note) {
-        LOGGER.warn("Editing Sticky Note: {}", note.getTitle());
+        LOGGER.log("error", "Editing Sticky Note: " + note.getTitle());
         StickyNote noteFromFile = retrieveById(note.getStickyNoteId());
         noteFromFile.setTitle(note.getTitle());
         noteFromFile.setMessageMap(note.getMessageMap());
@@ -149,7 +157,7 @@ public class StickyNoteService {
         } else {
             note.setComplete(true);
         }
-        LOGGER.info("Setting note complete: {}", note.isComplete());
+        LOGGER.log("info", "Setting note complete: " + note.isComplete());
         return note;
     }
 }

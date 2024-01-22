@@ -1,9 +1,9 @@
 package com.homeapp.nonsense_BE.services;
 
+import com.homeapp.nonsense_BE.loggers.CustomLogger;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Image;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,12 +15,16 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.FLAT;
 
 @Service
 public class ImageService {
+    private final CustomLogger LOGGER;
 
-    private static final Logger LOGGER = LogManager.getLogger(ImageService.class);
+    @Autowired
+    public ImageService(CustomLogger LOGGER) {
+        this.LOGGER = LOGGER;
+    }
 
     public List<Image> getImages(FullBike b) {
         List<Image> imageList = new ArrayList<>();
-        LOGGER.info("Getting Images for Bike: {}", b);
+        LOGGER.log("info", "Getting Images for Bike: " + b);
         imageList.add(chooseFrameImage(b));
         imageList.add(chooseBarImage(b));
         imageList.add(chooseBrakeImage(b));
@@ -42,7 +46,7 @@ public class ImageService {
             imageList.add(chooseFrontDerailleurImage(b));
         }
         imageList.add(chooseWheelImage(b));
-        LOGGER.info("Returning List: \n{}", imageList);
+        LOGGER.log("info", "Returning List: \n" + imageList);
         return imageList;
     }
 

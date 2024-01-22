@@ -1,14 +1,15 @@
 package com.homeapp.nonsense_BE.services;
 
+import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
+import com.homeapp.nonsense_BE.loggers.CustomLogger;
 import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,6 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 @Scope("singleton")
 public class BikePartsService {
 
-    private static final Logger LOGGER = LogManager.getLogger(BikePartsService.class);
     private static final String chainReactionURL = "https://www.chainreactioncycles.com/p/";
     private static final String wiggleURL = "https://www.wiggle.com/p/";
     private static final String haloURL = "https://www.halowheels.com/";
@@ -36,12 +36,18 @@ public class BikePartsService {
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
     private static FullBike bike;
     private BikeParts bikeParts;
+    private final CustomLogger LOGGER;
+    private final FullBikeService fullBikeService;
+    private final ShimanoGroupsetService shimanoGroupsetService;
+    private final ExceptionHandler exceptionHandler;
 
     @Autowired
-    FullBikeService fullBikeService;
-
-    @Autowired
-    private ShimanoGroupsetService shimanoGroupsetService;
+    public BikePartsService(CustomLogger LOGGER, @Lazy FullBikeService fullBikeService, @Lazy ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
+        this.LOGGER = LOGGER;
+        this.fullBikeService = fullBikeService;
+        this.shimanoGroupsetService = shimanoGroupsetService;
+        this.exceptionHandler = exceptionHandler;
+    }
 
     public BikeParts getBikePartsForBike() {
         bikeParts = new BikeParts();
@@ -59,7 +65,7 @@ public class BikePartsService {
         String link = "";
         try {
             bike = fullBikeService.getBike();
-            LOGGER.info("Method for getting Bike Wheels from Web");
+            LOGGER.log("info", "Method for getting Bike Wheels from Web");
             if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
                 // Wheels which require Gears are from Wiggle
                 if (!bike.getBrakeType().equals(RIM)) {
@@ -88,7 +94,7 @@ public class BikePartsService {
                 Document doc = Jsoup.connect(link).get();
                 Optional<Element> e = Optional.of(doc.select("div.productDetails").get(0));
                 if (e.isEmpty()) {
-                    shimanoGroupsetService.handleError("Wheels", "GetWheels", link);
+                    exceptionHandler.handleError("Wheels", "GetWheels", link);
                 } else {
                     Element e1 = e.get();
                     wheelName = e1.select("h1").first().text();
@@ -101,14 +107,14 @@ public class BikePartsService {
                     if (!wheelPrice.contains(".")) {
                         wheelPrice = wheelPrice + ".00";
                     }
-                    LOGGER.info("Found Product: " + wheelName);
-                    LOGGER.info("For Price: " + wheelPrice);
-                    LOGGER.info("Link: " + link);
+                    LOGGER.log("info", "Found Product: " + wheelName);
+                    LOGGER.log("info", "For Price: " + wheelPrice);
+                    LOGGER.log("info", "Link: " + link);
                     bikeParts.getListOfParts().add(new Part("Wheel Set", wheelName, wheelPrice, link));
                 }
             }
         } catch (IOException e) {
-            shimanoGroupsetService.handleIOException("Wheels", "Get Wheels", e);
+            exceptionHandler.handleIOException("Wheels", "Get Wheels", e);
         }
     }
 
@@ -122,7 +128,7 @@ public class BikePartsService {
         String link = "";
         try {
             bike = fullBikeService.getBike();
-            LOGGER.info("Method for Getting Handlebar Parts from web");
+            LOGGER.log("info", "Method for Getting Handlebar Parts from web");
             switch (bike.getHandleBarType()) {
                 case DROPS -> link = chainReactionURL + "prime-primavera-x-light-pro-carbon-handlebar";
                 case FLAT -> link = chainReactionURL + "nukeproof-horizon-v2-alloy-riser-handlebar-35mm";
@@ -131,7 +137,7 @@ public class BikePartsService {
             }
             shimanoGroupsetService.setBikePartsFromLink(link, "Bar");
         } catch (Exception e) {
-            shimanoGroupsetService.handleIOException("HandleBars", "Get HandleBar Parts", e);
+            exceptionHandler.handleException("HandleBars", "Get HandleBar Parts", e);
         }
     }
 
@@ -139,7 +145,7 @@ public class BikePartsService {
         String link = "";
         try {
             bike = fullBikeService.getBike();
-            LOGGER.info("Jsoup Method for Getting Frame Parts");
+            LOGGER.log("info", "Jsoup Method for Getting Frame Parts");
             String frameName = "";
             String framePrice = "";
             Optional<Element> e = Optional.empty();
@@ -170,7 +176,7 @@ public class BikePartsService {
             if (link.contains("dolan-bikes")) {
                 e = Optional.of(doc.select("div.productBuy > div.productPanel").first());
                 if (e.isEmpty()) {
-                    shimanoGroupsetService.handleError("Frame", "Get Dolan Frame", link);
+                    exceptionHandler.handleError("Frame", "Get Dolan Frame", link);
                 } else {
                     frameName = e.get().select("h1").first().text();
                     framePrice = e.get().select("div.price").select("span.price").first().text();
@@ -178,7 +184,7 @@ public class BikePartsService {
             } else if (link.contains("genesisbikes")) {
                 e = Optional.of(doc.select("div.product-info-main-header").first());
                 if (e.isEmpty()) {
-                    shimanoGroupsetService.handleError("Frame", "Get Dolan Frame", link);
+                    exceptionHandler.handleError("Frame", "Get Dolan Frame", link);
                 } else {
                     frameName = e.get().select("h1.page-title").text();
                     framePrice = e.get().select("div.product-info-price > div.price-final_price").first().select("span").text();
@@ -191,12 +197,12 @@ public class BikePartsService {
                     framePrice = framePrice + ".00";
                 }
                 bikeParts.getListOfParts().add(new Part("Frame", frameName, framePrice, link));
-                LOGGER.info("Found Frame: {}", frameName);
-                LOGGER.info("For price: {}", framePrice);
-                LOGGER.info("Frame link: {}", link);
+                LOGGER.log("info", "Found Frame: " + frameName);
+                LOGGER.log("info", "For price: " + framePrice);
+                LOGGER.log("info", "Frame link: " + link);
             }
         } catch (IOException e) {
-            shimanoGroupsetService.handleIOException("Frame", "Get Frame Parts", e);
+            exceptionHandler.handleIOException("Frame", "Get Frame Parts", e);
         }
     }
 

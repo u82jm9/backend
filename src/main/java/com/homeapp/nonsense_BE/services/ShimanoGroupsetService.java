@@ -1,19 +1,18 @@
 package com.homeapp.nonsense_BE.services;
 
+import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
+import com.homeapp.nonsense_BE.loggers.CustomLogger;
 import com.homeapp.nonsense_BE.models.bike.BikeParts;
-import com.homeapp.nonsense_BE.models.bike.Error;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -22,15 +21,21 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
 
 @Service
 public class ShimanoGroupsetService {
-
-    private static final Logger LOGGER = LogManager.getLogger(ShimanoGroupsetService.class);
     private static final String chainReactionURL = "https://www.chainreactioncycles.com/p/";
     private static final String wiggleURL = "https://www.wiggle.com/p/";
     private static FullBike bike;
     private BikeParts bikeParts;
+    private final CustomLogger LOGGER;
+    private final FullBikeService fullBikeService;
+    private final ExceptionHandler exceptionHandler;
+
 
     @Autowired
-    FullBikeService fullBikeService;
+    public ShimanoGroupsetService(CustomLogger LOGGER, @Lazy FullBikeService fullBikeService, ExceptionHandler exceptionHandler) {
+        this.LOGGER = LOGGER;
+        this.fullBikeService = fullBikeService;
+        this.exceptionHandler = exceptionHandler;
+    }
 
     public void getShimanoGroupset(BikeParts parts) {
         bikeParts = parts;
@@ -68,7 +73,7 @@ public class ShimanoGroupsetService {
                 setBikePartsFromLink(link, component);
             }
         } catch (IOException e) {
-            handleIOException(component, "Get Brake Levers", e);
+            exceptionHandler.handleIOException(component, "Get Brake Levers", e);
         }
     }
 
@@ -103,7 +108,7 @@ public class ShimanoGroupsetService {
 
             }
         } catch (IOException e) {
-            handleIOException(component, "Get Brake calipers", e);
+            exceptionHandler.handleIOException(component, "Get Brake calipers", e);
         }
     }
 
@@ -141,13 +146,13 @@ public class ShimanoGroupsetService {
                     } else {
                         link = wiggleURL + "shimano-tiagra-4700-3x10-speed-lever-set";
                         bike.setNumberOfRearGears(10);
-                        LOGGER.warn("3 by Shimano Gears are restricted to a maximum of 10 at the back");
+                        LOGGER.log("warn", "3 by Shimano Gears are restricted to a maximum of 10 at the back");
                     }
                 }
             }
             setBikePartsFromLink(link, component);
         } catch (IOException e) {
-            handleIOException(component, "Get STI Shifters", e);
+            exceptionHandler.handleIOException(component, "Get STI Shifters", e);
         }
     }
 
@@ -172,7 +177,7 @@ public class ShimanoGroupsetService {
             setBikePartsFromLink(link, "Left " + component);
         } catch (
                 IOException e) {
-            handleIOException(component, "Get Hydraulic Shifters", e);
+            exceptionHandler.handleIOException(component, "Get Hydraulic Shifters", e);
         }
     }
 
@@ -190,7 +195,7 @@ public class ShimanoGroupsetService {
                 setBikePartsFromLink(link, component);
             }
         } catch (IOException e) {
-            handleIOException(component, "Get Trigger shifters", e);
+            exceptionHandler.handleIOException(component, "Get Trigger shifters", e);
         }
     }
 
@@ -231,7 +236,7 @@ public class ShimanoGroupsetService {
             }
             setBikePartsFromLink(link, component);
         } catch (IOException e) {
-            handleIOException(component, "Get Chainring", e);
+            exceptionHandler.handleIOException(component, "Get Chainring", e);
         }
     }
 
@@ -253,7 +258,7 @@ public class ShimanoGroupsetService {
                 setBikePartsFromLink(link, component);
             }
         } catch (IOException e) {
-            handleIOException(component, "Get Cassette", e);
+            exceptionHandler.handleIOException(component, "Get Cassette", e);
         }
     }
 
@@ -271,7 +276,7 @@ public class ShimanoGroupsetService {
             }
             setBikePartsFromLink(link, component);
         } catch (IOException e) {
-            handleIOException(component, "Get Chain", e);
+            exceptionHandler.handleIOException(component, "Get Chain", e);
         }
     }
 
@@ -292,7 +297,7 @@ public class ShimanoGroupsetService {
                 setBikePartsFromLink(link, component);
             }
         } catch (IOException e) {
-            handleIOException(component, "Get Rear Derailleur", e);
+            exceptionHandler.handleIOException(component, "Get Rear Derailleur", e);
         }
     }
 
@@ -304,7 +309,7 @@ public class ShimanoGroupsetService {
             switch ((int) bike.getNumberOfFrontGears()) {
                 case 1 -> {
                     link = wiggleURL + "deda-dog-fang-chain-catcher";
-                    LOGGER.info("Front Derailleur not required, providing chain catcher");
+                    LOGGER.log("info", "Front Derailleur not required, providing chain catcher");
                 }
                 case 2 -> {
                     if (bike.getNumberOfRearGears() == 9) {
@@ -327,19 +332,19 @@ public class ShimanoGroupsetService {
             }
             setBikePartsFromLink(link, component);
         } catch (IOException e) {
-            handleIOException(component, "Get Front Derailleur", e);
+            exceptionHandler.handleIOException(component, "Get Front Derailleur", e);
         }
     }
 
     public void setBikePartsFromLink(String link, String component) throws IOException {
         try {
             bike = fullBikeService.getBike();
-            LOGGER.info("Connecting to link: {}", link);
-            LOGGER.info("For Component: {}", component);
+            LOGGER.log("info", "Connecting to link: " + link);
+            LOGGER.log("info", "For Component: " + component);
             Document doc = Jsoup.connect(link).get();
             Optional<Element> e = Optional.of(doc.select("div.ProductDetail_container__FX6xF").get(0));
             if (e.isEmpty()) {
-                handleError(component, "SetBikePartsFromLink", link);
+                exceptionHandler.handleError(component, "SetBikePartsFromLink", link);
             } else {
                 String name = e.get().select("h1").first().text();
                 String price = e.get().select("div.ProductPrice_productPrice__Fg1nA")
@@ -347,34 +352,13 @@ public class ShimanoGroupsetService {
                 if (!price.contains(".")) {
                     price = price + ".00";
                 }
-                LOGGER.info("Found Product: " + name);
-                LOGGER.info("For Price: " + price);
-                LOGGER.info("Link: " + link);
+                LOGGER.log("info", "Found Product: " + name);
+                LOGGER.log("info", "For Price: " + price);
+                LOGGER.log("info", "Link: " + link);
                 bikeParts.getListOfParts().add(new Part(component, name, price, link));
             }
         } catch (IOException e) {
-            handleIOException(component, "SetBikePartsFromLink", e);
+            exceptionHandler.handleIOException(component, "SetBikePartsFromLink", e);
         }
-    }
-
-    public void handleError(String component, String method, String link) {
-        List<Error> tempList = bikeParts.getErrorMessages();
-        tempList.add(new Error(component, method, link));
-        bikeParts.setErrorMessages(tempList);
-        LOGGER.error("An Error occurred from: {}!\nConnecting to link: {}\nFor bike Component: {}", method, link, component);
-    }
-
-    public void handleIOException(String component, String method, IOException e) {
-        List<Error> tempList = bikeParts.getErrorMessages();
-        tempList.add(new Error(component, method, e.getMessage()));
-        bikeParts.setErrorMessages(tempList);
-        LOGGER.error("An IOException occurred from: {}!\nConnecting to link: {}\nFor bike Component: {}", method, e.getMessage(), component);
-    }
-
-    public void handleIOException(String component, String method, Exception e) {
-        List<Error> tempList = bikeParts.getErrorMessages();
-        tempList.add(new Error(component, method, e.getMessage()));
-        bikeParts.setErrorMessages(tempList);
-        LOGGER.error("An Exception occurred from: {}!\nConnecting to link: {}\nFor bike Component: {}", method, e.getMessage(), component);
     }
 }
