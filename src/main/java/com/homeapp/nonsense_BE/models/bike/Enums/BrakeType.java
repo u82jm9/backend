@@ -4,7 +4,7 @@ public enum BrakeType {
 
     MECHANICAL_DISC("Mechanical Disc"), HYDRAULIC_DISC("Hydraulic Disc"), RIM("Rim"), NOT_REQUIRED("Not Required"), NO_SELECTION("No Selection");
 
-    private String name;
+    private final String name;
 
     private BrakeType(String name) {
         this.name = name;

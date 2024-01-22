@@ -4,7 +4,7 @@ public enum GroupsetBrand {
 
     CAMPAGNOLO("Campagnolo"), SRAM("SRAM"), SHIMANO("Shimano"), OTHER("Other");
 
-    private String name;
+    private final String name;
 
     private GroupsetBrand(String name) {
         this.name = name;

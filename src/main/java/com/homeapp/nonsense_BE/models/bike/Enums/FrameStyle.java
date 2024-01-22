@@ -4,7 +4,7 @@ public enum FrameStyle {
 
     SINGLE_SPEED("Single Speed"), ROAD("Road"), GRAVEL("Gravel"), TOUR("Tour"), NONE_SELECTED("None Selected");
 
-    private String name;
+    private final String name;
 
     private FrameStyle(String name) {
         this.name = name;

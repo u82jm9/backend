@@ -4,7 +4,7 @@ public enum ShifterStyle {
 
     STI("STI"), TRIGGER("Trigger"), NONE("None");
 
-    private String name;
+    private final String name;
 
     private ShifterStyle(String name) {
         this.name = name;
