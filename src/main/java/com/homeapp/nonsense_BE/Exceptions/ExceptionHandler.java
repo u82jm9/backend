@@ -20,10 +20,10 @@ public class ExceptionHandler {
     }
 
     public void handleIOException(String component, String method, IOException e) {
-        errorLogger.log("An IOException occurred from: " + method + "!!Connecting to link: " + e.getMessage() + "!!For bike Component: " + component);
+        errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
     }
 
     public void handleException(String component, String method, Exception e) {
-        errorLogger.log("An Exception occurred from: " + method + "!!Connecting to link: " + e.getMessage() + "!!For bike Component: " + component);
+        errorLogger.log("An Exception occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
     }
 }

@@ -1,4 +1,4 @@
-package com.homeapp.nonsense_BE.loggers;
+package expired.loggers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -145,7 +145,7 @@ public class CustomLogger {
     private void logToFile(String message) {
         try {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
-            this.logs.add(message);
+            logs.add(message);
             om.writeValue(new File(getFileName()), logs);
         } catch (IOException e) {
             System.err.println(e);
@@ -155,7 +155,7 @@ public class CustomLogger {
     private void logInfoMessage(String message) {
         try {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
-            this.infoLogs.add(message);
+            logs.add(message);
             om.writeValue(new File(getInfoFileName()), infoLogs);
         } catch (IOException e) {
             System.err.println(e);
@@ -166,7 +166,7 @@ public class CustomLogger {
         System.err.println("\n" + message + "\n");
         try {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
-            this.errorLogs.add(message);
+            logs.add(message);
             om.writeValue(new File(getErrorFileName()), errorLogs);
         } catch (IOException e) {
             System.err.println(e);
@@ -176,7 +176,7 @@ public class CustomLogger {
     private void logWarnMessage(String message) {
         try {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
-            this.warnLogs.add(message);
+            logs.add(message);
             om.writeValue(new File(getWarnFileName()), warnLogs);
         } catch (IOException e) {
             System.err.println(e);

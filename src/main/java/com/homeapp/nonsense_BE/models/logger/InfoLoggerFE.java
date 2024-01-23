@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
 
 public class InfoLoggerFE extends BaseLogger {
@@ -53,7 +55,8 @@ public class InfoLoggerFE extends BaseLogger {
     public void log(String message) {
         synchronized (this) {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
-            logs.add(message);
+            List<String> m = Arrays.stream(message.split("!!")).toList();
+            logs.addAll(m);
             logToFile();
         }
     }
