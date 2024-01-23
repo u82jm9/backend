@@ -209,8 +209,7 @@ public class ShimanoGroupsetService {
             switch ((int) bike.getNumberOfRearGears()) {
                 case 10 -> link = wiggleURL + "shimano-deore-m6000-10-speed-trigger-shifter";
                 case 11 -> link = wiggleURL + "shimano-xt-m8000-11-speed-trigger-shifter";
-                default -> {
-                }
+                default -> link = chainReactionURL + "shimano-altus-m2010-9-speed-shifter";
             }
             if (!link.isEmpty()) {
                 setBikePartsFromLink(link, component, method);
