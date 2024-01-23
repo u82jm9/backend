@@ -43,7 +43,7 @@ public class ImageService {
         }
         imageList.add(chooseWheelImage(b));
         warnLogger.log("Bike: " + b);
-        warnLogger.log("Returning List: \n" + imageList);
+        warnLogger.log("Returning List: " + imageList);
         return imageList;
     }
 

@@ -9,11 +9,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.TreeSet;
 
-public class ErrorLogger extends BaseLogger {
+public class WarnLoggerFE extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
-    public ErrorLogger() {
+    public WarnLoggerFE() {
         this.logs = readLogsFile();
     }
 
@@ -37,7 +37,7 @@ public class ErrorLogger extends BaseLogger {
 
     @Override
     protected String getFileName() {
-        return "src/main/logs/" + LocalDate.now().format(FILE_NAME_FORMATTER) + "_ERROR.json";
+        return "src/main/logs/" + LocalDate.now().format(FILE_NAME_FORMATTER) + "_WARN.json";
     }
 
     @Override
@@ -54,7 +54,6 @@ public class ErrorLogger extends BaseLogger {
         synchronized (this) {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
             logs.add(message);
-            System.err.println(message);
             logToFile();
         }
     }

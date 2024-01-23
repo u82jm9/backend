@@ -45,7 +45,7 @@ public class FullBikeController {
     public ResponseEntity<HttpStatus> addFullBike(@RequestBody FullBike bike) {
         infoLogger.log("Adding new full bike, API");
         fullBikeService.create(bike);
-        warnLogger.log("Adding new full bike, API.\nBike: " + bike);
+        warnLogger.log("Adding new full bike, API.Bike: " + bike);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
