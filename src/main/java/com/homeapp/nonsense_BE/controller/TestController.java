@@ -1,6 +1,6 @@
 package com.homeapp.nonsense_BE.controller;
 
-import com.homeapp.nonsense_BE.loggers.CustomLogger;
+import com.homeapp.nonsense_BE.models.logger.InfoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("Test/")
 @CrossOrigin(origins = "http://localhost:3000")
 public class TestController {
-    private final CustomLogger LOGGER;
+    private final InfoLogger infoLogger = new InfoLogger();
 
     @Autowired
-    public TestController(CustomLogger LOGGER) {
-        this.LOGGER = LOGGER;
+    public TestController() {
     }
 
     @GetMapping("IsThisThingOn")
     public ResponseEntity<Boolean> isThisThingOn() {
-        LOGGER.log("info", "Back-end is ON!");
+        infoLogger.log("Back-end is ON!");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

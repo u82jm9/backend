@@ -1,10 +1,11 @@
 package com.homeapp.nonsense_BE.services;
 
 import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
-import com.homeapp.nonsense_BE.loggers.CustomLogger;
 import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
+import com.homeapp.nonsense_BE.models.logger.InfoLogger;
+import com.homeapp.nonsense_BE.models.logger.WarnLogger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,19 +26,20 @@ public class ShimanoGroupsetService {
     private static final String wiggleURL = "https://www.wiggle.com/p/";
     private static FullBike bike;
     private BikeParts bikeParts;
-    private final CustomLogger LOGGER;
+    private final InfoLogger infoLogger = new InfoLogger();
+    private final WarnLogger warnLogger = new WarnLogger();
     private final FullBikeService fullBikeService;
     private final ExceptionHandler exceptionHandler;
 
 
     @Autowired
-    public ShimanoGroupsetService(CustomLogger LOGGER, @Lazy FullBikeService fullBikeService, ExceptionHandler exceptionHandler) {
-        this.LOGGER = LOGGER;
+    public ShimanoGroupsetService(@Lazy FullBikeService fullBikeService, ExceptionHandler exceptionHandler) {
         this.fullBikeService = fullBikeService;
         this.exceptionHandler = exceptionHandler;
     }
 
     public void getShimanoGroupset(BikeParts parts) {
+        infoLogger.log("Getting Parts for Shimano Groupset.");
         bikeParts = parts;
         bike = fullBikeService.getBike();
         if (!bike.getShifterStyle().equals(STI)) {
@@ -62,6 +64,7 @@ public class ShimanoGroupsetService {
     private void getBrakeLevers() {
         String link = "";
         String component = "Brake-Levers";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
@@ -80,6 +83,7 @@ public class ShimanoGroupsetService {
     private void getBrakeCalipers() {
         String link = "";
         String component = "Brake-Caliper";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             switch (bike.getBrakeType()) {
@@ -115,6 +119,7 @@ public class ShimanoGroupsetService {
     private void getMechanicalSTIShifters() {
         String link = "";
         String component = "STI-Shifter";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfFrontGears()) {
@@ -146,7 +151,7 @@ public class ShimanoGroupsetService {
                     } else {
                         link = wiggleURL + "shimano-tiagra-4700-3x10-speed-lever-set";
                         bike.setNumberOfRearGears(10);
-                        LOGGER.log("warn", "3 by Shimano Gears are restricted to a maximum of 10 at the back");
+                        warnLogger.log("3 by Shimano Gears are restricted to a maximum of 10 at the back");
                     }
                 }
             }
@@ -159,6 +164,7 @@ public class ShimanoGroupsetService {
     private void getHydraulicSTIShifters() {
         String link = "";
         String component = "Hydraulic-Shifter";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             if (bike.getNumberOfRearGears() == 10) {
@@ -184,6 +190,7 @@ public class ShimanoGroupsetService {
     private void getLeverShifters() {
         String link = "";
         String component = "Trigger-Shifter";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             switch ((int) bike.getNumberOfRearGears()) {
                 case 10 -> link = wiggleURL + "shimano-deore-m6000-10-speed-trigger-shifter";
@@ -202,6 +209,7 @@ public class ShimanoGroupsetService {
     private void getChainring() {
         String link = "";
         String component = "Chainring";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfFrontGears()) {
@@ -243,6 +251,7 @@ public class ShimanoGroupsetService {
     private void getCassette() {
         String link = "";
         String component = "Cassette";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfRearGears()) {
@@ -265,6 +274,7 @@ public class ShimanoGroupsetService {
     private void getChain() {
         String link = "";
         String component = "Chain";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfRearGears()) {
@@ -283,6 +293,7 @@ public class ShimanoGroupsetService {
     private void getRearDerailleur() {
         String link = "";
         String component = "Rear-Derailleur";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfRearGears()) {
@@ -304,12 +315,13 @@ public class ShimanoGroupsetService {
     private void getFrontDerailleur() {
         String link = "";
         String component = "Front-Derailleur";
+        infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfFrontGears()) {
                 case 1 -> {
                     link = wiggleURL + "deda-dog-fang-chain-catcher";
-                    LOGGER.log("info", "Front Derailleur not required, providing chain catcher");
+                    warnLogger.log("Front Derailleur not required, providing chain catcher");
                 }
                 case 2 -> {
                     if (bike.getNumberOfRearGears() == 9) {
@@ -339,8 +351,8 @@ public class ShimanoGroupsetService {
     public void setBikePartsFromLink(String link, String component) throws IOException {
         try {
             bike = fullBikeService.getBike();
-            LOGGER.log("info", "Connecting to link: " + link);
-            LOGGER.log("info", "For Component: " + component);
+            infoLogger.log("Connecting to link: " + link);
+            infoLogger.log("For Component: " + component);
             Document doc = Jsoup.connect(link).get();
             Optional<Element> e = Optional.of(doc.select("div.ProductDetail_container__FX6xF").get(0));
             if (e.isEmpty()) {
@@ -352,9 +364,9 @@ public class ShimanoGroupsetService {
                 if (!price.contains(".")) {
                     price = price + ".00";
                 }
-                LOGGER.log("info", "Found Product: " + name);
-                LOGGER.log("info", "For Price: " + price);
-                LOGGER.log("info", "Link: " + link);
+                warnLogger.log("Found Product: " + name);
+                warnLogger.log("For Price: " + price);
+                warnLogger.log("Link: " + link);
                 bikeParts.getListOfParts().add(new Part(component, name, price, link));
             }
         } catch (IOException e) {

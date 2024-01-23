@@ -1,10 +1,11 @@
 package com.homeapp.nonsense_BE.services;
 
 import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
-import com.homeapp.nonsense_BE.loggers.CustomLogger;
 import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
+import com.homeapp.nonsense_BE.models.logger.InfoLogger;
+import com.homeapp.nonsense_BE.models.logger.WarnLogger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -35,14 +36,14 @@ public class BikePartsService {
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
     private static FullBike bike;
     private BikeParts bikeParts;
-    private final CustomLogger LOGGER;
+    private final InfoLogger infoLogger = new InfoLogger();
+    private final WarnLogger warnLogger = new WarnLogger();
     private final FullBikeService fullBikeService;
     private final ShimanoGroupsetService shimanoGroupsetService;
     private final ExceptionHandler exceptionHandler;
 
     @Autowired
-    public BikePartsService(CustomLogger LOGGER, FullBikeService fullBikeService, ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
-        this.LOGGER = LOGGER;
+    public BikePartsService(FullBikeService fullBikeService, ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
         this.fullBikeService = fullBikeService;
         this.shimanoGroupsetService = shimanoGroupsetService;
         this.exceptionHandler = exceptionHandler;
@@ -65,7 +66,7 @@ public class BikePartsService {
         String link = "";
         try {
             bike = fullBikeService.getBike();
-            LOGGER.log("info", "Method for getting Bike Wheels from Web");
+            infoLogger.log("Method for getting Bike Wheels from Web");
             if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
                 // Wheels which require Gears are from Wiggle
                 if (!bike.getBrakeType().equals(RIM)) {
@@ -107,9 +108,9 @@ public class BikePartsService {
                     if (!wheelPrice.contains(".")) {
                         wheelPrice = wheelPrice + ".00";
                     }
-                    LOGGER.log("info", "Found Product: " + wheelName);
-                    LOGGER.log("info", "For Price: " + wheelPrice);
-                    LOGGER.log("info", "Link: " + link);
+                    warnLogger.log("Found Product: " + wheelName);
+                    warnLogger.log("For Price: " + wheelPrice);
+                    warnLogger.log("Link: " + link);
                     bikeParts.getListOfParts().add(new Part("Wheel Set", wheelName, wheelPrice, link));
                 }
             }
@@ -128,7 +129,7 @@ public class BikePartsService {
         String link = "";
         try {
             bike = fullBikeService.getBike();
-            LOGGER.log("info", "Method for Getting Handlebar Parts from web");
+            infoLogger.log("Method for Getting Handlebar Parts from web");
             switch (bike.getHandleBarType()) {
                 case DROPS -> link = chainReactionURL + "prime-primavera-x-light-pro-carbon-handlebar";
                 case FLAT -> link = chainReactionURL + "nukeproof-horizon-v2-alloy-riser-handlebar-35mm";
@@ -145,7 +146,7 @@ public class BikePartsService {
         String link = "";
         try {
             bike = fullBikeService.getBike();
-            LOGGER.log("info", "Jsoup Method for Getting Frame Parts");
+            infoLogger.log("Jsoup Method for Getting Frame Parts");
             String frameName = "";
             String framePrice = "";
             Optional<Element> e = Optional.empty();
@@ -197,9 +198,9 @@ public class BikePartsService {
                     framePrice = framePrice + ".00";
                 }
                 bikeParts.getListOfParts().add(new Part("Frame", frameName, framePrice, link));
-                LOGGER.log("info", "Found Frame: " + frameName);
-                LOGGER.log("info", "For price: " + framePrice);
-                LOGGER.log("info", "Frame link: " + link);
+                warnLogger.log("Found Frame: " + frameName);
+                warnLogger.log("For price: " + framePrice);
+                warnLogger.log("Frame link: " + link);
             }
         } catch (IOException e) {
             exceptionHandler.handleIOException("Frame", "Get Frame Parts", e);

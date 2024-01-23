@@ -1,6 +1,7 @@
 package com.homeapp.nonsense_BE.controller;
 
-import com.homeapp.nonsense_BE.loggers.CustomLogger;
+import com.homeapp.nonsense_BE.models.logger.InfoLogger;
+import com.homeapp.nonsense_BE.models.logger.WarnLogger;
 import com.homeapp.nonsense_BE.models.note.DTOnote;
 import com.homeapp.nonsense_BE.models.note.StickyNote;
 import com.homeapp.nonsense_BE.services.StickyNoteService;
@@ -16,32 +17,32 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class StickyNoteController {
 
-    private final CustomLogger LOGGER;
+    private final InfoLogger infoLogger = new InfoLogger();
+    private final WarnLogger warnLogger = new WarnLogger();
     private final StickyNoteService stickyNoteService;
 
     @Autowired
-    public StickyNoteController(CustomLogger LOGGER, StickyNoteService stickyNoteService) {
-        this.LOGGER = LOGGER;
+    public StickyNoteController(StickyNoteService stickyNoteService) {
         this.stickyNoteService = stickyNoteService;
     }
 
     @GetMapping("GetAll")
     public ResponseEntity<List<StickyNote>> getStickyNotes() {
-        LOGGER.log("info", "Getting all Sticky Notes, GetAll API");
+        infoLogger.log("Getting all Sticky Notes, GetAll API");
         List<StickyNote> list = stickyNoteService.retrieveAllNotes();
         return new ResponseEntity<>(list, HttpStatus.ACCEPTED);
     }
 
     @PostMapping("AddNote")
     public ResponseEntity<HttpStatus> addStickyNote(@RequestBody DTOnote note) {
-        LOGGER.log("info", "Adding new Sticky Note, AddNote API");
+        infoLogger.log("Adding new Sticky Note, API");
         stickyNoteService.create(note.getNoteTitle(), note.getNoteMessage(), note.getNoteComplete());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("DeleteNote/{id}")
     public ResponseEntity<HttpStatus> deleteStickyNote(@PathVariable(value = "id") Long stickyNoteId) {
-        LOGGER.log("info", "Deleting Sticky Note, Delete Note API");
+        infoLogger.log("Deleting Sticky Note, API");
         StickyNote note = stickyNoteService.retrieveById(stickyNoteId);
         stickyNoteService.deleteNote(note);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -49,15 +50,17 @@ public class StickyNoteController {
 
     @DeleteMapping("DeleteAllNotes")
     public ResponseEntity<HttpStatus> deleteAllNotes() {
-        LOGGER.log("info", "Deleting ALL Sticky Notes, Delete Note API");
+        infoLogger.log("Deleting ALL Sticky Notes, Delete Note API");
         stickyNoteService.deleteAll();
+        warnLogger.log("Deleting ALL Sticky Notes, Delete Note API");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("EditNote")
     public ResponseEntity<HttpStatus> editStickyNote(@RequestBody StickyNote note) {
-        LOGGER.log("info", "Editing Sticky Note, Edit Note API");
+        infoLogger.log("Editing Sticky Note, API");
         stickyNoteService.editStickyNote(note);
+        warnLogger.log("Editing note: " + note);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
