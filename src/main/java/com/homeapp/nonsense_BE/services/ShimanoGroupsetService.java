@@ -395,7 +395,7 @@ public class ShimanoGroupsetService {
             bike = fullBikeService.getBike();
             infoLogger.log("Connecting to link: " + link);
             infoLogger.log("For Component: " + component);
-            Document doc = Jsoup.connect(link).timeout(3000).get();
+            Document doc = Jsoup.connect(link).timeout(5000).get();
             Optional<Element> e = Optional.ofNullable(doc.select("div.ProductDetail_container__FX6xF").get(0));
             if (e.isEmpty()) {
                 bikeParts.getErrorMessages().add(new Error(component, method, link));

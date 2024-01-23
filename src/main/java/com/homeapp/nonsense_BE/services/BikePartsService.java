@@ -95,7 +95,7 @@ public class BikePartsService {
                 }
                 String wheelPrice;
                 String wheelName;
-                Document doc = Jsoup.connect(link).timeout(3000).get();
+                Document doc = Jsoup.connect(link).timeout(5000).get();
                 Optional<Element> e = Optional.of(doc.select("div.productDetails").get(0));
                 if (e.isEmpty()) {
                     bikeParts.getErrorMessages().add(new Error(component, method, link));
@@ -183,7 +183,7 @@ public class BikePartsService {
                     link = dolanURL + "dolan-pre-cursa-aluminium-frameset/";
                 }
             }
-            doc = Jsoup.connect(link).timeout(3000).get();
+            doc = Jsoup.connect(link).timeout(5000).get();
             if (link.contains("dolan-bikes")) {
                 e = Optional.of(doc.select("div.productBuy > div.productPanel").first());
                 if (e.isEmpty()) {
