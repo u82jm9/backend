@@ -2,6 +2,7 @@ package com.homeapp.nonsense_BE.services;
 
 import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
 import com.homeapp.nonsense_BE.models.bike.BikeParts;
+import com.homeapp.nonsense_BE.models.bike.Error;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
 import com.homeapp.nonsense_BE.models.logger.InfoLogger;
@@ -64,25 +65,28 @@ public class ShimanoGroupsetService {
     private void getBrakeLevers() {
         String link = "";
         String component = "Brake-Levers";
+        String method = "etBrakeLevers";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
             if (bike.getBrakeType().equals(HYDRAULIC_DISC)) {
                 link = wiggleURL + "shimano-grx-812-sub-brake-lever";
-                setBikePartsFromLink(link, "Left " + component);
-                setBikePartsFromLink(link, "Right " + component);
+                setBikePartsFromLink(link, "Left " + component, method);
+                setBikePartsFromLink(link, "Right " + component, method);
             } else {
                 link = wiggleURL + "shimano-deore-t610-v-brake-levers";
-                setBikePartsFromLink(link, component);
+                setBikePartsFromLink(link, component, method);
             }
         } catch (IOException e) {
-            exceptionHandler.handleIOException(component, "Get Brake Levers", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
     private void getBrakeCalipers() {
         String link = "";
         String component = "Brake-Caliper";
+        String method = "getBrakeCalipers";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -107,11 +111,13 @@ public class ShimanoGroupsetService {
                 }
             }
             if (!link.isEmpty()) {
-                setBikePartsFromLink(link, "Front " + component);
-                setBikePartsFromLink(link, "Rear " + component);
-
+                setBikePartsFromLink(link, "Front " + component, method);
+                setBikePartsFromLink(link, "Rear " + component, method);
+            } else {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
             }
         } catch (IOException e) {
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
             exceptionHandler.handleIOException(component, "Get Brake calipers", e);
         }
     }
@@ -119,6 +125,7 @@ public class ShimanoGroupsetService {
     private void getMechanicalSTIShifters() {
         String link = "";
         String component = "STI-Shifter";
+        String method = "getMechanicalSTIShifters";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -155,15 +162,21 @@ public class ShimanoGroupsetService {
                     }
                 }
             }
-            setBikePartsFromLink(link, component);
+            if (!link.isEmpty()) {
+                setBikePartsFromLink(link, component, method);
+            } else {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
+            }
         } catch (IOException e) {
-            exceptionHandler.handleIOException(component, "Get STI Shifters", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
     private void getHydraulicSTIShifters() {
         String link = "";
         String component = "Hydraulic-Shifter";
+        String method = "getHydraulicSTIShifters";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -176,20 +189,21 @@ public class ShimanoGroupsetService {
             } else {
                 link = wiggleURL + "clarks-m2-hydraulic-disc-brake-with-rotor";
             }
-            setBikePartsFromLink(link, "Right " + component);
+            setBikePartsFromLink(link, "Right " + component, method);
             if (bike.getNumberOfFrontGears() == 1) {
                 link = chainReactionURL + "shimano-grx-820-hydraulic-drop-bar-brake-lever";
             }
-            setBikePartsFromLink(link, "Left " + component);
-        } catch (
-                IOException e) {
-            exceptionHandler.handleIOException(component, "Get Hydraulic Shifters", e);
+            setBikePartsFromLink(link, "Left " + component, method);
+        } catch (IOException e) {
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
     private void getLeverShifters() {
         String link = "";
         String component = "Trigger-Shifter";
+        String method = "getLeverShifters";
         infoLogger.log("Getting Parts for: " + component);
         try {
             switch ((int) bike.getNumberOfRearGears()) {
@@ -199,16 +213,20 @@ public class ShimanoGroupsetService {
                 }
             }
             if (!link.isEmpty()) {
-                setBikePartsFromLink(link, component);
+                setBikePartsFromLink(link, component, method);
+            } else {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
             }
         } catch (IOException e) {
-            exceptionHandler.handleIOException(component, "Get Trigger shifters", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
     private void getChainring() {
         String link = "";
         String component = "Chainring";
+        String method = "getChainring";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -242,15 +260,21 @@ public class ShimanoGroupsetService {
                     }
                 }
             }
-            setBikePartsFromLink(link, component);
+            if (!link.isEmpty()) {
+                setBikePartsFromLink(link, component, method);
+            } else {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
+            }
         } catch (IOException e) {
-            exceptionHandler.handleIOException(component, "Get Chainring", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
     private void getCassette() {
         String link = "";
         String component = "Cassette";
+        String method = "getCassette";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -264,16 +288,20 @@ public class ShimanoGroupsetService {
                 }
             }
             if (!link.isEmpty()) {
-                setBikePartsFromLink(link, component);
+                setBikePartsFromLink(link, component, method);
+            } else {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
             }
         } catch (IOException e) {
-            exceptionHandler.handleIOException(component, "Get Cassette", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
     private void getChain() {
         String link = "";
         String component = "Chain";
+        String method = "getChain";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -284,15 +312,21 @@ public class ShimanoGroupsetService {
                 case 12 -> link = wiggleURL + "shimano-slx-m7100-12-speed-chain";
                 default -> link = chainReactionURL + "shimano-nexus-single-speed-chain";
             }
-            setBikePartsFromLink(link, component);
+            if (!link.isEmpty()) {
+                setBikePartsFromLink(link, component, method);
+            } else {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
+            }
         } catch (IOException e) {
-            exceptionHandler.handleIOException(component, "Get Chain", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
     private void getRearDerailleur() {
         String link = "";
         String component = "Rear-Derailleur";
+        String method = "getRearDerailleur";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -305,16 +339,20 @@ public class ShimanoGroupsetService {
                 }
             }
             if (!link.isEmpty()) {
-                setBikePartsFromLink(link, component);
+                setBikePartsFromLink(link, component, method);
+            } else {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
             }
         } catch (IOException e) {
-            exceptionHandler.handleIOException(component, "Get Rear Derailleur", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
     private void getFrontDerailleur() {
         String link = "";
         String component = "Front-Derailleur";
+        String method = "getFrontDerailleur";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -342,20 +380,26 @@ public class ShimanoGroupsetService {
                     }
                 }
             }
-            setBikePartsFromLink(link, component);
+            if (!link.isEmpty()) {
+                setBikePartsFromLink(link, component, method);
+            } else {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
+            }
         } catch (IOException e) {
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
             exceptionHandler.handleIOException(component, "Get Front Derailleur", e);
         }
     }
 
-    public void setBikePartsFromLink(String link, String component) throws IOException {
+    public void setBikePartsFromLink(String link, String component, String method) throws IOException {
         try {
             bike = fullBikeService.getBike();
             infoLogger.log("Connecting to link: " + link);
             infoLogger.log("For Component: " + component);
             Document doc = Jsoup.connect(link).get();
-            Optional<Element> e = Optional.of(doc.select("div.ProductDetail_container__FX6xF").get(0));
+            Optional<Element> e = Optional.ofNullable(doc.select("div.ProductDetail_container__FX6xF").get(0));
             if (e.isEmpty()) {
+                bikeParts.getErrorMessages().add(new Error(component, method, link));
                 exceptionHandler.handleError(component, "SetBikePartsFromLink", link);
             } else {
                 String name = e.get().select("h1").first().text();
@@ -370,6 +414,7 @@ public class ShimanoGroupsetService {
                 bikeParts.getListOfParts().add(new Part(component, name, price, link));
             }
         } catch (IOException e) {
+            bikeParts.getErrorMessages().add(new Error(component, method, link));
             exceptionHandler.handleIOException(component, "SetBikePartsFromLink", e);
         }
     }

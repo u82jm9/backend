@@ -2,6 +2,7 @@ package com.homeapp.nonsense_BE.services;
 
 import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
 import com.homeapp.nonsense_BE.models.bike.BikeParts;
+import com.homeapp.nonsense_BE.models.bike.Error;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
 import com.homeapp.nonsense_BE.models.logger.InfoLogger;
@@ -64,6 +65,8 @@ public class BikePartsService {
 
     private void getWheels() {
         String link = "";
+        String component = "Wheels";
+        String method = "Get Wheels";
         try {
             bike = fullBikeService.getBike();
             infoLogger.log("Method for getting Bike Wheels from Web");
@@ -82,7 +85,7 @@ public class BikePartsService {
                         link = wiggleURL + "prime-primavera-50-carbon-rim-brake-wheelset";
                     }
                 }
-                shimanoGroupsetService.setBikePartsFromLink(link, "Wheel Set");
+                shimanoGroupsetService.setBikePartsFromLink(link, component, method);
             } else {
                 // Wheels for Single Speed are from Halo
                 if (bike.getWheelPreference().equals("Cheap")) {
@@ -95,7 +98,8 @@ public class BikePartsService {
                 Document doc = Jsoup.connect(link).get();
                 Optional<Element> e = Optional.of(doc.select("div.productDetails").get(0));
                 if (e.isEmpty()) {
-                    exceptionHandler.handleError("Wheels", "GetWheels", link);
+                    bikeParts.getErrorMessages().add(new Error(component, method, link));
+                    exceptionHandler.handleError(component, method, link);
                 } else {
                     Element e1 = e.get();
                     wheelName = e1.select("h1").first().text();
@@ -115,7 +119,8 @@ public class BikePartsService {
                 }
             }
         } catch (IOException e) {
-            exceptionHandler.handleIOException("Wheels", "Get Wheels", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 
@@ -127,6 +132,8 @@ public class BikePartsService {
 
     private void getHandlebarParts() {
         String link = "";
+        String component = "HandleBars";
+        String method = "GetHandleBarParts";
         try {
             bike = fullBikeService.getBike();
             infoLogger.log("Method for Getting Handlebar Parts from web");
@@ -136,14 +143,17 @@ public class BikePartsService {
                 case BULLHORNS -> link = chainReactionURL + "cinelli-bullhorn-road-handlebar";
                 case FLARE -> link = chainReactionURL + "ritchey-comp-venturemax-handlebar";
             }
-            shimanoGroupsetService.setBikePartsFromLink(link, "Bar");
+            shimanoGroupsetService.setBikePartsFromLink(link, component, method);
         } catch (Exception e) {
-            exceptionHandler.handleException("HandleBars", "Get HandleBar Parts", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleException(component, method, e);
         }
     }
 
     private void getFrameParts() {
         String link = "";
+        String component = "Frame";
+        String method = "GetFrameParts";
         try {
             bike = fullBikeService.getBike();
             infoLogger.log("Jsoup Method for Getting Frame Parts");
@@ -185,7 +195,8 @@ public class BikePartsService {
             } else if (link.contains("genesisbikes")) {
                 e = Optional.of(doc.select("div.product-info-main-header").first());
                 if (e.isEmpty()) {
-                    exceptionHandler.handleError("Frame", "Get Dolan Frame", link);
+                    bikeParts.getErrorMessages().add(new Error(component, method, link));
+                    exceptionHandler.handleError(component, method, link);
                 } else {
                     frameName = e.get().select("h1.page-title").text();
                     framePrice = e.get().select("div.product-info-price > div.price-final_price").first().select("span").text();
@@ -203,7 +214,8 @@ public class BikePartsService {
                 warnLogger.log("Frame link: " + link);
             }
         } catch (IOException e) {
-            exceptionHandler.handleIOException("Frame", "Get Frame Parts", e);
+            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
+            exceptionHandler.handleIOException(component, method, e);
         }
     }
 

@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,8 +25,11 @@ public abstract class BaseLogger {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(getFileName(), true));
             for (String log : logsToWrite) {
-                bw.write(log);
-                bw.newLine();
+                List<String> lines = Arrays.stream(log.split("!!")).toList();
+                for (String l : lines) {
+                    bw.write(l);
+                    bw.newLine();
+                }
             }
             logsToWrite.clear();
         } catch (IOException e) {
