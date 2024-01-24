@@ -26,7 +26,7 @@ public class TestController {
     }
 
     @PutMapping("LogThis")
-    public ResponseEntity<HttpStatus> logThis(String log) {
+    public ResponseEntity<HttpStatus> logThis(@RequestBody String log) {
         String level = log.split("!!")[0].toUpperCase();
         String message = log.split("!!")[1];
         switch (level) {
