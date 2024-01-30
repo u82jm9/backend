@@ -11,10 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+/**
+ * The Info logger for FE. Used primarily to record the actions being taken through the project.
+ */
 public class InfoLoggerFE extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
+    /**
+     * Instantiates a new FE Info Logger.
+     */
     public InfoLoggerFE() {
         this.logs = readLogsFile();
     }

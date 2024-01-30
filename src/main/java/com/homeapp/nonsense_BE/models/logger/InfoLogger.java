@@ -11,10 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+/**
+ * The Info logger. Used primarily to record the actions being taken through the project.
+ */
 public class InfoLogger extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
+    /**
+     * Instantiates a new Info logger.
+     */
     public InfoLogger() {
         this.logs = readLogsFile();
     }

@@ -11,10 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+/**
+ * The Error logger for FE logs.
+ */
 public class ErrorLoggerFE extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
+    /**
+     * Instantiates a new FE Error Logger.
+     */
     public ErrorLoggerFE() {
         this.logs = readLogsFile();
     }

@@ -11,10 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+/**
+ * The Warn logger. Used primarily to record the objects being updated throughout the project.
+ */
 public class WarnLogger extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
+    /**
+     * Instantiates a new Warn logger.
+     */
     public WarnLogger() {
         this.logs = readLogsFile();
     }

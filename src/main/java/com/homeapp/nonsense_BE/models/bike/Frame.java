@@ -5,6 +5,9 @@ import com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * The Frame object. Used to simplify the Full Bike object to allow for more design options.
+ */
 @Entity
 @Table(name = ("Frame"))
 public class Frame {
@@ -33,9 +36,20 @@ public class Frame {
     @Column
     private boolean requiresRearGearCable;
 
+    /**
+     * Instantiates a new Frame.
+     */
     public Frame() {
     }
 
+    /**
+     * Instantiates a new Frame.
+     *
+     * @param frameStyle             the frame style
+     * @param discBrakeCompatible    the disc brake compatible
+     * @param requiresFrontGearCable the requires front gear cable
+     * @param requiresRearGearCable  the requires rear gear cable
+     */
     public Frame(FrameStyle frameStyle, boolean discBrakeCompatible, boolean requiresFrontGearCable, boolean requiresRearGearCable) {
         this.frameStyle = frameStyle;
         this.discBrakeCompatible = discBrakeCompatible;
@@ -56,54 +70,119 @@ public class Frame {
         return Objects.hash(frameId, size, tireClearance, frameStyle, discBrakeCompatible, requiresFrontGearCable, requiresRearGearCable);
     }
 
+    /**
+     * Gets frame id.
+     *
+     * @return the frame id
+     */
     public long getFrameId() {
         return frameId;
     }
 
+    /**
+     * Gets size.
+     *
+     * @return the size
+     */
     public long getSize() {
         return size;
     }
 
+    /**
+     * Sets size.
+     *
+     * @param size the size
+     */
     public void setSize(long size) {
         this.size = size;
     }
 
+    /**
+     * Gets tire clearance.
+     *
+     * @return the tire clearance
+     */
     public long getTireClearance() {
         return tireClearance;
     }
 
+    /**
+     * Sets tire clearance.
+     *
+     * @param tireClearance the tire clearance
+     */
     public void setTireClearance(long tireClearance) {
         this.tireClearance = tireClearance;
     }
 
+    /**
+     * Gets frame style.
+     *
+     * @return the frame style
+     */
     public FrameStyle getFrameStyle() {
         return frameStyle;
     }
 
+    /**
+     * Sets frame style.
+     *
+     * @param frameStyle the frame style
+     */
     public void setFrameStyle(FrameStyle frameStyle) {
         this.frameStyle = frameStyle;
     }
 
+    /**
+     * Is disc brake compatible boolean.
+     *
+     * @return the boolean
+     */
     public boolean isDiscBrakeCompatible() {
         return discBrakeCompatible;
     }
 
+    /**
+     * Sets disc brake compatible.
+     *
+     * @param discBrakeCompatible the disc brake compatible
+     */
     public void setDiscBrakeCompatible(boolean discBrakeCompatible) {
         this.discBrakeCompatible = discBrakeCompatible;
     }
 
+    /**
+     * Is requires front gear cable boolean.
+     *
+     * @return the boolean
+     */
     public boolean isRequiresFrontGearCable() {
         return requiresFrontGearCable;
     }
 
+    /**
+     * Sets requires front gear cable.
+     *
+     * @param requiresFrontGearCable the requires front gear cable
+     */
     public void setRequiresFrontGearCable(boolean requiresFrontGearCable) {
         this.requiresFrontGearCable = requiresFrontGearCable;
     }
 
+    /**
+     * Is requires rear gear cable boolean.
+     *
+     * @return the boolean
+     */
     public boolean isRequiresRearGearCable() {
         return requiresRearGearCable;
     }
 
+    /**
+     * Sets requires rear gear cable.
+     *
+     * @param requiresRearGearCable the requires rear gear cable
+     */
     public void setRequiresRearGearCable(boolean requiresRearGearCable) {
         this.requiresRearGearCable = requiresRearGearCable;
     }

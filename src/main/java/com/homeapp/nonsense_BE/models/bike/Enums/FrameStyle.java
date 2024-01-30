@@ -1,8 +1,30 @@
 package com.homeapp.nonsense_BE.models.bike.Enums;
 
+/**
+ * The enum for Frame styles.
+ */
 public enum FrameStyle {
 
-    SINGLE_SPEED("Single Speed"), ROAD("Road"), GRAVEL("Gravel"), TOUR("Tour"), NONE_SELECTED("None Selected");
+    /**
+     * The Single speed.
+     */
+    SINGLE_SPEED("Single Speed"),
+    /**
+     * Road frame style.
+     */
+    ROAD("Road"),
+    /**
+     * Gravel frame style.
+     */
+    GRAVEL("Gravel"),
+    /**
+     * Tour frame style.
+     */
+    TOUR("Tour"),
+    /**
+     * The None selected.
+     */
+    NONE_SELECTED("None Selected");
 
     private final String name;
 
@@ -10,10 +32,21 @@ public enum FrameStyle {
         this.name = name;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * From name frame style.
+     *
+     * @param name the name
+     * @return the frame style
+     */
     public static FrameStyle fromName(String name) {
         return switch (name) {
             case "Single Speed" -> SINGLE_SPEED;

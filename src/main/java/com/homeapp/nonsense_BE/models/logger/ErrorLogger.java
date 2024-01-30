@@ -11,10 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+/**
+ * The Error logger.
+ */
 public class ErrorLogger extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
+    /**
+     * Instantiates a new Error logger. Error logger puts message to log file and also prints it to the console.
+     */
     public ErrorLogger() {
         this.logs = readLogsFile();
     }

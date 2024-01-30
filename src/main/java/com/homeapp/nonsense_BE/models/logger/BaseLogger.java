@@ -3,19 +3,51 @@ package com.homeapp.nonsense_BE.models.logger;
 import java.time.format.DateTimeFormatter;
 import java.util.TreeSet;
 
+/**
+ * The Abstract Base logger.
+ * Used to ensure all Loggers have the same methods, through class extension.
+ */
 public abstract class BaseLogger {
+    /**
+     * The Logs stamp formatter. Used at the start of each log to record the time the log was written.
+     */
     static final DateTimeFormatter LOGS_STAMP_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+    /**
+     * The File name formatter. Used to create a String for the date, which becomes part of the Log file name.
+     */
     static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
+    /**
+     * Instantiates a new Base logger.
+     * Each time a logger is Instantiated it runs the readLogsFile and overrides the TreeSet logs.
+     */
     public BaseLogger() {
     }
 
+    /**
+     * Read logs file and returns a tree set.
+     *
+     * @return the tree set
+     */
     protected abstract TreeSet<String> readLogsFile();
 
+    /**
+     * Gets file name.
+     *
+     * @return the file name
+     */
     protected abstract String getFileName();
 
+    /**
+     * Log to file, writes log message out to the correct file
+     */
     protected abstract void logToFile();
 
 
+    /**
+     * Log the passed in String
+     *
+     * @param message the message
+     */
     protected abstract void log(String message);
 }

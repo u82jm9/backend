@@ -1,8 +1,30 @@
 package com.homeapp.nonsense_BE.models.bike.Enums;
 
+/**
+ * The enum for Brake Types.
+ */
 public enum BrakeType {
 
-    MECHANICAL_DISC("Mechanical Disc"), HYDRAULIC_DISC("Hydraulic Disc"), RIM("Rim"), NOT_REQUIRED("Not Required"), NO_SELECTION("No Selection");
+    /**
+     * The Mechanical disc.
+     */
+    MECHANICAL_DISC("Mechanical Disc"),
+    /**
+     * The Hydraulic disc.
+     */
+    HYDRAULIC_DISC("Hydraulic Disc"),
+    /**
+     * Rim brake type.
+     */
+    RIM("Rim"),
+    /**
+     * The Not required.
+     */
+    NOT_REQUIRED("Not Required"),
+    /**
+     * The No selection.
+     */
+    NO_SELECTION("No Selection");
 
     private final String name;
 
@@ -10,10 +32,21 @@ public enum BrakeType {
         this.name = name;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * From name brake type.
+     *
+     * @param name the name
+     * @return the brake type
+     */
     public static BrakeType fromName(String name) {
         return switch (name) {
             case "Hydraulic Disc" -> HYDRAULIC_DISC;

@@ -1,8 +1,26 @@
 package com.homeapp.nonsense_BE.models.bike.Enums;
 
+/**
+ * The enum for Groupset brands.
+ */
 public enum GroupsetBrand {
 
-    CAMPAGNOLO("Campagnolo"), SRAM("SRAM"), SHIMANO("Shimano"), OTHER("Other");
+    /**
+     * Campagnolo groupset brand.
+     */
+    CAMPAGNOLO("Campagnolo"),
+    /**
+     * Sram groupset brand.
+     */
+    SRAM("SRAM"),
+    /**
+     * Shimano groupset brand.
+     */
+    SHIMANO("Shimano"),
+    /**
+     * Other groupset brand.
+     */
+    OTHER("Other");
 
     private final String name;
 
@@ -10,10 +28,21 @@ public enum GroupsetBrand {
         this.name = name;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * From name groupset brand.
+     *
+     * @param name the name
+     * @return the groupset brand
+     */
     public static GroupsetBrand fromName(String name) {
         return switch (name) {
             case "SRAM" -> SRAM;

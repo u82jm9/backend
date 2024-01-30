@@ -1,8 +1,30 @@
 package com.homeapp.nonsense_BE.models.bike.Enums;
 
+/**
+ * The enum for Handle Bar types.
+ */
 public enum HandleBarType {
 
-    DROPS("Drops"), FLAT("Flat"), BULLHORNS("Bullhorns"), FLARE("Flare"), NOT_SELECTED("Not Selected");
+    /**
+     * Drops handle bar type.
+     */
+    DROPS("Drops"),
+    /**
+     * Flat handle bar type.
+     */
+    FLAT("Flat"),
+    /**
+     * Bullhorns handle bar type.
+     */
+    BULLHORNS("Bullhorns"),
+    /**
+     * Flare handle bar type.
+     */
+    FLARE("Flare"),
+    /**
+     * The Not selected.
+     */
+    NOT_SELECTED("Not Selected");
 
     private final String name;
 
@@ -10,10 +32,21 @@ public enum HandleBarType {
         this.name = name;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * From name handle bar type.
+     *
+     * @param name the name
+     * @return the handle bar type
+     */
     public static HandleBarType fromName(String name) {
         return switch (name) {
             case "Drops" -> DROPS;

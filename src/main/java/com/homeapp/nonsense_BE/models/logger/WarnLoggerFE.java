@@ -11,10 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+/**
+ * The type Warn Logger for FE. Used primarily to record the objects being updated throughout the project.
+ */
 public class WarnLoggerFE extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
+    /**
+     * Instantiates a new FE Warn Logger.
+     */
     public WarnLoggerFE() {
         this.logs = readLogsFile();
     }
