@@ -2,6 +2,7 @@ package com.homeapp.nonsense_BE.models.logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.TreeSet;
 /**
  * The Info logger. Used primarily to record the actions being taken through the project.
  */
+@Service
 public class InfoLogger extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;

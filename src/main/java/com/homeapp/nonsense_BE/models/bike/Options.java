@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * The Options object. This is used to control the options available to the user on the FE.
+ * This strategy hopefully means that an INVALID bike is never designed.
  */
 public class Options {
 

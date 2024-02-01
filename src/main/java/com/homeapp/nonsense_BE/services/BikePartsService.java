@@ -1,10 +1,10 @@
 package com.homeapp.nonsense_BE.services;
 
-import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
 import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.Error;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
+import com.homeapp.nonsense_BE.models.logger.ErrorLogger;
 import com.homeapp.nonsense_BE.models.logger.InfoLogger;
 import com.homeapp.nonsense_BE.models.logger.WarnLogger;
 import org.jsoup.Jsoup;
@@ -26,6 +26,10 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.RIM;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.SINGLE_SPEED;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 
+/**
+ * The Bike Parts Service.
+ * Houses all methods relating to getting Bike Parts for a given design Bike.
+ */
 @Service
 @Scope("singleton")
 public class BikePartsService {
@@ -39,18 +43,32 @@ public class BikePartsService {
     private BikeParts bikeParts;
     private final InfoLogger infoLogger = new InfoLogger();
     private final WarnLogger warnLogger = new WarnLogger();
+    private final ErrorLogger errorLogger = new ErrorLogger();
     private final FullBikeService fullBikeService;
     private final ShimanoGroupsetService shimanoGroupsetService;
-    private final ExceptionHandler exceptionHandler;
 
+    /**
+     * Instantiates a new Bike parts service.
+     * This instantiation is Autowired to allow this Service class to use methods from the other Service classes and the Exception Handler.
+     *
+     * @param fullBikeService        the Full Bike Service
+     * @param shimanoGroupsetService the Shimano Groupset Service
+     */
     @Autowired
-    public BikePartsService(FullBikeService fullBikeService, ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
+    public BikePartsService(FullBikeService fullBikeService, ShimanoGroupsetService shimanoGroupsetService) {
         this.fullBikeService = fullBikeService;
         this.shimanoGroupsetService = shimanoGroupsetService;
-        this.exceptionHandler = exceptionHandler;
         this.bikeParts = new BikeParts();
     }
 
+    /**
+     * Gets bike parts for bike, each call of this method uses a new BikeParts object, so has no influence from previous calls.
+     * Bike parts Object is set to this instance. Each update to the Bike Parts object is done on this instance.
+     * Method uses the bike that is currently on the instance of the Full Bike Service.
+     * Sets of each individual get part methods, in parallel to save time, then combines the results into a single return Object.
+     *
+     * @return the Bike Parts Object
+     */
     public BikeParts getBikePartsForBike() {
         bikeParts = new BikeParts();
         bike = fullBikeService.getBike();
@@ -80,9 +98,9 @@ public class BikePartsService {
                     }
                 } else {
                     if (bike.getWheelPreference().equals("Cheap")) {
-                        link = wiggleURL + "prime-baroudeur-tubeless-bundle";
+                        link = wiggleURL + "fulcrum-racing-4-c17-road-wheelset";
                     } else {
-                        link = wiggleURL + "prime-primavera-50-carbon-rim-brake-wheelset";
+                        link = wiggleURL + "reynolds-aero-65-black-label-carbon-wheelset";
                     }
                 }
                 shimanoGroupsetService.setBikePartsFromLink(link, component, method);
@@ -99,7 +117,7 @@ public class BikePartsService {
                 Optional<Element> e = Optional.of(doc.select("div.productDetails").get(0));
                 if (e.isEmpty()) {
                     bikeParts.getErrorMessages().add(new Error(component, method, link));
-                    exceptionHandler.handleError(component, method, link);
+                    errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
                 } else {
                     Element e1 = e.get();
                     wheelName = e1.select("h1").first().text();
@@ -120,7 +138,7 @@ public class BikePartsService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -146,7 +164,7 @@ public class BikePartsService {
             shimanoGroupsetService.setBikePartsFromLink(link, component, method);
         } catch (Exception e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleException(component, method, e);
+            errorLogger.log("An Exception occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -187,7 +205,7 @@ public class BikePartsService {
             if (link.contains("dolan-bikes")) {
                 e = Optional.of(doc.select("div.productBuy > div.productPanel").first());
                 if (e.isEmpty()) {
-                    exceptionHandler.handleError("Frame", "Get Dolan Frame", link);
+                    errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
                 } else {
                     frameName = e.get().select("h1").first().text();
                     framePrice = e.get().select("div.price").select("span.price").first().text();
@@ -196,7 +214,7 @@ public class BikePartsService {
                 e = Optional.of(doc.select("div.product-info-main-header").first());
                 if (e.isEmpty()) {
                     bikeParts.getErrorMessages().add(new Error(component, method, link));
-                    exceptionHandler.handleError(component, method, link);
+                    errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
                 } else {
                     frameName = e.get().select("h1.page-title").text();
                     framePrice = e.get().select("div.product-info-price > div.price-final_price").first().select("span").text();
@@ -215,23 +233,24 @@ public class BikePartsService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
+    /**
+     * Takes the price of each part on the bike parts instance object and sums them to create a total price.
+     * Restructures the big decimal value into a String for displaying on FE.
+     */
     private void calculateTotalPrice() {
         BigDecimal total = new BigDecimal(0);
         for (Part p : bikeParts.getListOfParts()) {
+            p.setPrice(p.getPrice().replace(",", ""));
             BigDecimal bd = new BigDecimal(p.getPrice());
             bd = bd.setScale(2, RoundingMode.CEILING);
             total = total.add(bd);
         }
         bikeParts.setTotalBikePrice(total);
-        bikeParts.setTotalPriceAsString(sortTotalPrice(total));
-    }
+        bikeParts.setTotalPriceAsString(NumberFormat.getCurrencyInstance(Locale.UK).format(total));
 
-    private String sortTotalPrice(BigDecimal t) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.UK);
-        return format.format(t);
     }
 }

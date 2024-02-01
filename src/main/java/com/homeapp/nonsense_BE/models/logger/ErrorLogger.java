@@ -2,6 +2,7 @@ package com.homeapp.nonsense_BE.models.logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.TreeSet;
 /**
  * The Error logger.
  */
+@Service
 public class ErrorLogger extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
@@ -59,11 +61,13 @@ public class ErrorLogger extends BaseLogger {
 
     @Override
     public void log(String message) {
+        StringBuilder sb = new StringBuilder();
         synchronized (this) {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
-            List<String> m = Arrays.stream(message.split("!!")).toList();
+            List<String> m = Arrays.stream(message.split("!!")).toList().stream()
+                    .map(s -> "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + s.trim()).toList();
             logs.addAll(m);
-            System.err.println(message);
+            System.err.println(m);
             logToFile();
         }
     }

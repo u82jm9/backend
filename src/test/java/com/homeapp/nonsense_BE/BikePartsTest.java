@@ -24,6 +24,9 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The type Bike parts test.
+ */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
@@ -38,6 +41,9 @@ public class BikePartsTest {
 
     private static boolean isSetupDone = false;
 
+    /**
+     * Sets .
+     */
     @BeforeEach
     public void setup() {
         if (!isSetupDone) {
@@ -86,11 +92,17 @@ public class BikePartsTest {
         }
     }
 
+    /**
+     * Clearup.
+     */
     @AfterAll
     public void clearup() {
         fullBikeService.reloadBikesFromBackup();
     }
 
+    /**
+     * Test that all single speed options work.
+     */
     @Test
     public void test_That_All_SINGLE_SPEED_Options_Work() {
         int numberOfLoops = 1;
@@ -126,6 +138,9 @@ public class BikePartsTest {
         }
     }
 
+    /**
+     * Test that all road options work.
+     */
     @Test
     public void test_That_All_ROAD_Options_Work() {
         int numberOfLoops = 1;
@@ -161,6 +176,9 @@ public class BikePartsTest {
         }
     }
 
+    /**
+     * Test that all gravel options work.
+     */
     @Test
     public void test_That_All_GRAVEL_Options_Work() {
         int numberOfLoops = 1;
@@ -196,6 +214,9 @@ public class BikePartsTest {
         }
     }
 
+    /**
+     * Test that all tour options work.
+     */
     @Test
     public void test_That_All_TOUR_Options_Work() {
         int numberOfLoops = 1;
@@ -231,6 +252,9 @@ public class BikePartsTest {
         }
     }
 
+    /**
+     * Test that the parts array is populated.
+     */
     @Test
     public void test_That_The_Parts_Array_is_Populated() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
@@ -239,6 +263,9 @@ public class BikePartsTest {
         assertTrue(parts.getListOfParts().size() > 1);
     }
 
+    /**
+     * Test that the full price is cheaps.
+     */
     @Test
     public void test_That_The_Full_Price_is_Cheaps() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
@@ -248,6 +275,9 @@ public class BikePartsTest {
         assertTrue(bikePrice < 1500);
     }
 
+    /**
+     * Test that the full price is heaps 1.
+     */
     @Test
     public void test_That_The_Full_Price_is_Heaps1() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike1").get();
@@ -257,6 +287,9 @@ public class BikePartsTest {
         assertTrue(bikePrice > 1500);
     }
 
+    /**
+     * Test that the full price is cheaps 2.
+     */
     @Test
     public void test_That_The_Full_Price_is_Cheaps2() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike2").get();
@@ -266,6 +299,9 @@ public class BikePartsTest {
         assertTrue(bikePrice < 1500);
     }
 
+    /**
+     * Test that the full price is heaps 3.
+     */
     @Test
     public void test_That_The_Full_Price_is_Heaps3() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike3").get();
@@ -275,6 +311,9 @@ public class BikePartsTest {
         assertTrue(bikePrice > 1500);
     }
 
+    /**
+     * Test that the full price is cheaps 4.
+     */
     @Test
     public void test_That_The_Full_Price_is_Cheaps4() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike4").get();
@@ -284,6 +323,9 @@ public class BikePartsTest {
         assertTrue(bikePrice < 1500);
     }
 
+    /**
+     * Test that the full price is heaps 5.
+     */
     @Test
     public void test_That_The_Full_Price_is_Heaps5() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike5").get();
@@ -294,6 +336,9 @@ public class BikePartsTest {
         assertTrue(bikePrice > 1500);
     }
 
+    /**
+     * Test that the full price is heaps 6.
+     */
     @Test
     public void test_That_The_Full_Price_is_Heaps6() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike6").get();
@@ -303,6 +348,9 @@ public class BikePartsTest {
         assertTrue(bikePrice > 1500);
     }
 
+    /**
+     * Test that the full price is heaps 7.
+     */
     @Test
     public void test_That_The_Full_Price_is_Heaps7() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike7").get();
@@ -312,6 +360,9 @@ public class BikePartsTest {
         assertTrue(bikePrice > 1500);
     }
 
+    /**
+     * Test that the full price is heaps 8.
+     */
     @Test
     public void test_That_The_Full_Price_is_Heaps8() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike8").get();
@@ -321,6 +372,9 @@ public class BikePartsTest {
         assertTrue(bikePrice > 1500);
     }
 
+    /**
+     * Test that gravel bike has price with two decimals.
+     */
     @Test
     public void test_That_Gravel_Bike_Has_Price_With_Two_decimals() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("Gravel").get();
@@ -330,6 +384,9 @@ public class BikePartsTest {
         assertEquals("£1,776.90", bikePrice);
     }
 
+    /**
+     * Test that different bikes get different price.
+     */
     @Test
     public void test_That_Different_Bikes_Get_Different_Price() {
         FullBike bike1Before = fullBikeService.getBikeUsingName("bike").get();
@@ -343,6 +400,9 @@ public class BikePartsTest {
         assertNotSame(bike1Price, bike2Price);
     }
 
+    /**
+     * Test that bike part details not null.
+     */
     @Test
     public void test_That_Bike_Part_Details_Not_Null() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
@@ -356,6 +416,9 @@ public class BikePartsTest {
         }
     }
 
+    /**
+     * Test that bike 5 part details not null.
+     */
     @Test
     public void test_That_Bike5_Part_Details_Not_Null() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike5").get();

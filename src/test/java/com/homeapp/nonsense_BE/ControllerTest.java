@@ -33,6 +33,9 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * The type Controller test.
+ */
 @AutoConfigureMockMvc
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -50,12 +53,27 @@ public class ControllerTest {
     private StickyNoteService stickyNoteService;
     private MockMvc mockMvc;
     private MockHttpSession session;
+    /**
+     * The constant TEST_API_URL.
+     */
     final static String TEST_API_URL = "/Test/";
+    /**
+     * The constant STICKY_NOTE_URL.
+     */
     final static String STICKY_NOTE_URL = "/StickyNotes/";
+    /**
+     * The constant FULL_BIKE_URL.
+     */
     final static String FULL_BIKE_URL = "/FullBike/";
+    /**
+     * The constant OPTIONS_URL.
+     */
     final static String OPTIONS_URL = "/Options/";
     private static boolean isSetupDone = false;
 
+    /**
+     * Sets .
+     */
     @BeforeEach
     public void setup() {
         if (!isSetupDone) {
@@ -80,30 +98,51 @@ public class ControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(SharedHttpSessionConfigurer.sharedHttpSession()).build();
     }
 
+    /**
+     * Close.
+     */
     @AfterEach
     public void close() {
         this.session = null;
         this.mockMvc = null;
     }
 
+    /**
+     * Clearup.
+     */
     @AfterAll
     public void clearup() {
         stickyNoteService.reloadNotesFromBackup();
     }
 
 
+    /**
+     * Test that options is returned with brands.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_Options_is_returned_with_Brands() throws Exception {
         this.mockMvc.perform(get(OPTIONS_URL + "StartNewBike"))
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Test that the front can check back end is on.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_the_front_can_check_back_end_is_on() throws Exception {
         this.mockMvc.perform(get(TEST_API_URL + "IsThisThingOn"))
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Test that a note can be created.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_a_note_can_be_created() throws Exception {
         DTOnote DTOnote = new DTOnote("Controller test", "Test Message", false);
@@ -111,12 +150,22 @@ public class ControllerTest {
                 .content(objectMapper.writeValueAsString(DTOnote))).andExpect(status().isCreated());
     }
 
+    /**
+     * Test that a list of notes can be returned.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_a_list_of_Notes_can_be_returned() throws Exception {
         this.mockMvc.perform(get(STICKY_NOTE_URL + "GetAll"))
                 .andExpect(status().isAccepted());
     }
 
+    /**
+     * Test that a single note can be deleted.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_a_single_Note_can_be_deleted() throws Exception {
         this.mockMvc.perform(delete(STICKY_NOTE_URL + "DeleteNote/2"))
@@ -124,6 +173,11 @@ public class ControllerTest {
         isSetupDone = false;
     }
 
+    /**
+     * Test that all notes can be deleted.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_all_Notes_can_be_deleted() throws Exception {
         this.mockMvc.perform(delete(STICKY_NOTE_URL + "DeleteAllNotes"))
@@ -131,6 +185,11 @@ public class ControllerTest {
         isSetupDone = false;
     }
 
+    /**
+     * Test that a note can be edited.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_a_Note_can_be_edited() throws Exception {
         Map<String, Boolean> map = new HashMap<>();
@@ -141,12 +200,22 @@ public class ControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Test that a list of full bikes can be returned.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_a_list_of_Full_Bikes_can_be_returned() throws Exception {
         this.mockMvc.perform(get(FULL_BIKE_URL + "GetAll"))
                 .andExpect(status().isAccepted());
     }
 
+    /**
+     * Test that a single bike can be deleted.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_a_single_Bike_can_be_deleted() throws Exception {
         FullBike bike = fullBikeService.getBikeUsingName("bike1").get();
@@ -155,6 +224,11 @@ public class ControllerTest {
         isSetupDone = false;
     }
 
+    /**
+     * Test that an empty bike can be created.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_an_empty_bike_can_be_created() throws Exception {
         FullBike bike = new FullBike();
@@ -162,6 +236,11 @@ public class ControllerTest {
                 .content(objectMapper.writeValueAsString(bike))).andExpect(status().isCreated());
     }
 
+    /**
+     * Test that an in flight bike can be updated.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_an_in_flight_bike_can_be_updated() throws Exception {
         Frame frame = new Frame(GRAVEL, true, false, true);
@@ -171,6 +250,11 @@ public class ControllerTest {
                 .content(objectMapper.writeValueAsString(bike))).andExpect(status().isAccepted());
     }
 
+    /**
+     * Test that a fully defined bike can be created.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void test_That_a_fully_defined_bike_can_be_created() throws Exception {
         Frame frame = new Frame(GRAVEL, false, true, true);

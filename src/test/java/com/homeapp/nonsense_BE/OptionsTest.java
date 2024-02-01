@@ -14,6 +14,9 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The type Options test.
+ */
 @SpringBootTest
 public class OptionsTest {
 
@@ -22,6 +25,9 @@ public class OptionsTest {
     @Autowired
     private FullBikeService fullBikeService;
 
+    /**
+     * Test that start new bike returns correctly.
+     */
     @Test
     public void test_That_Start_New_Bike_Returns_Correctly() {
         Options options = optionsService.startNewBike();
@@ -31,6 +37,9 @@ public class OptionsTest {
         assertEquals(options.getGroupsetBrand().size(), 1);
     }
 
+    /**
+     * Test that single speed gets no gear options.
+     */
     @Test
     public void test_That_Single_Speed_Gets_No_Gear_Options() {
         Options o = optionsService.startNewBike();
@@ -54,6 +63,9 @@ public class OptionsTest {
         assertEquals(options.getBarStyles().size(), 3);
     }
 
+    /**
+     * Test that road gets right options.
+     */
     @Test
     public void test_That_Road_Gets_Right_Options() {
         Options o = optionsService.startNewBike();
@@ -85,6 +97,9 @@ public class OptionsTest {
         assertTrue(options.getWheelPreference().contains("Expensive"));
     }
 
+    /**
+     * Test that gravel gets right options.
+     */
     @Test
     public void test_That_Gravel_Gets_Right_Options() {
         Options o = optionsService.startNewBike();
@@ -117,6 +132,9 @@ public class OptionsTest {
         assertTrue(options.getWheelPreference().contains("Expensive"));
     }
 
+    /**
+     * Test that tour gets right options.
+     */
     @Test
     public void test_That_Tour_Gets_Right_Options() {
         Options o = optionsService.startNewBike();

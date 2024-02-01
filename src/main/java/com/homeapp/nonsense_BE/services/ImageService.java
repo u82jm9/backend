@@ -8,22 +8,34 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.RIM;
 import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.SINGLE_SPEED;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.FLAT;
 
+/**
+ * The Image Service Class.
+ */
 @Service
 public class ImageService {
     private final InfoLogger infoLogger = new InfoLogger();
     private final WarnLogger warnLogger = new WarnLogger();
 
+    /**
+     * Gets images for passed-in bike.
+     * Method runs the get Image calls in parallel to improve performance.
+     * Each component has a separate method for setting the correct Image information, to keep the logic in this method to a minimum.
+     *
+     * @param b the Full Bike
+     * @return the list of images
+     */
     public List<Image> getImages(FullBike b) {
         List<Image> imageList = new ArrayList<>();
         infoLogger.log("Getting Images for Bike!");
-        imageList.add(chooseFrameImage(b));
-        imageList.add(chooseBarImage(b));
-        imageList.add(chooseBrakeImage(b));
+        CompletableFuture<Void> frameImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseFrameImage(b)));
+        CompletableFuture<Void> barImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseBarImage(b)));
+        CompletableFuture<Void> brakeImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseBrakeImage(b)));
         if (b.getHandleBarType().equals(FLAT) || b.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
             if (b.getNumberOfRearGears() > 1) {
                 imageList.add(chooseTriggerShiftersImage(b));
@@ -32,8 +44,8 @@ public class ImageService {
         } else {
             imageList.add(chooseSTIShiftersImage(b));
         }
-        imageList.add(chooseChainImage(b));
-        imageList.add(chooseCassetteImage(b));
+        CompletableFuture<Void> chainImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseChainImage(b)));
+        CompletableFuture<Void> cassetteImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseCassetteImage(b)));
         if (b.getNumberOfRearGears() > 1) {
             imageList.add(chooseRearDerailleurImage(b));
         }
@@ -41,7 +53,8 @@ public class ImageService {
         if (b.getNumberOfFrontGears() > 1) {
             imageList.add(chooseFrontDerailleurImage(b));
         }
-        imageList.add(chooseWheelImage(b));
+        CompletableFuture<Void> wheelImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseWheelImage(b)));
+        CompletableFuture.allOf(frameImageFuture, barImageFuture, brakeImageFuture, chainImageFuture, cassetteImageFuture, wheelImageFuture).join();
         warnLogger.log("Bike: " + b);
         warnLogger.log("Returning List: " + imageList);
         return imageList;

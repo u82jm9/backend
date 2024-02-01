@@ -20,6 +20,9 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.NONE;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The type Full bike test.
+ */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
@@ -29,6 +32,9 @@ public class FullBikeTest {
     @Autowired
     private FullBikeService fullBikeService;
 
+    /**
+     * Sets .
+     */
     @BeforeEach
     public void setup() {
         if (!isSetupDone) {
@@ -49,11 +55,17 @@ public class FullBikeTest {
         }
     }
 
+    /**
+     * Clearup.
+     */
     @AfterAll
     public void clearup() {
         fullBikeService.reloadBikesFromBackup();
     }
 
+    /**
+     * Test that a bike can be deleted.
+     */
     @Test
     public void test_That_a_bike_can_be_deleted() {
         int bikesOnDB = fullBikeService.getAllFullBikes().size();
@@ -62,11 +74,17 @@ public class FullBikeTest {
         assertTrue(fullBikeService.getAllFullBikes().size() < bikesOnDB);
     }
 
+    /**
+     * Test that a list of bikes is returned from file.
+     */
     @Test
     public void test_That_a_list_of_bikes_is_returned_from_File() {
         assertTrue(fullBikeService.getAllFullBikes().size() > 0);
     }
 
+    /**
+     * Test that a full bike can be created.
+     */
     @Test
     public void test_That_a_Full_Bike_can_be_Created() {
         int numberOfBikesBefore = fullBikeService.getAllFullBikes().size();
@@ -77,6 +95,9 @@ public class FullBikeTest {
         assertTrue(numberOfBikesAfter > numberOfBikesBefore);
     }
 
+    /**
+     * Test that a full bike can be updated.
+     */
     @Test
     public void test_That_a_Full_Bike_can_be_Updated() {
         FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
@@ -87,6 +108,9 @@ public class FullBikeTest {
         assertNotEquals(gearsBefore, gearsAfter);
     }
 
+    /**
+     * Test that all bikes can be deleted.
+     */
     @Test
     public void test_that_all_bikes_can_be_deleted() {
         fullBikeService.deleteAllBikes();

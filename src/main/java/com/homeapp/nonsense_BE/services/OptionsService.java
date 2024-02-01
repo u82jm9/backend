@@ -16,6 +16,11 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
 
+/**
+ * The Options Service class.
+ * Used to control the available Options on the FE.
+ * To only return things that can safely be selected.
+ */
 @Service
 public class OptionsService {
 
@@ -24,26 +29,39 @@ public class OptionsService {
     private final InfoLogger infoLogger = new InfoLogger();
     private final WarnLogger warnLogger = new WarnLogger();
 
+    /**
+     * Instantiates a new Options Service.
+     * Sets a new Options object to the Instance.
+     */
     @Autowired
     public OptionsService() {
         this.options = new Options();
     }
 
-    public static OptionsService getInstance() {
-        if (instance == null) {
-            instance = new OptionsService();
-        }
-        return instance;
-    }
-
+    /**
+     * Gets options from the instance.
+     *
+     * @return the options
+     */
     public Options getOptions() {
         return options;
     }
 
+    /**
+     * Sets options passed-in to instance.
+     *
+     * @param options the options
+     */
     public void setOptions(Options options) {
         this.options = options;
     }
 
+    /**
+     * Start new bike options.
+     * Returns all the options required for when designing a new bike.
+     *
+     * @return the options
+     */
     public Options startNewBike() {
         infoLogger.log("Getting Options for a new Bike!");
         Options o = new Options();
@@ -64,6 +82,14 @@ public class OptionsService {
         return o;
     }
 
+    /**
+     * Update Options.
+     * Takes in the combined Bike and Options object.
+     * Uses the combination to ensure the Options returned are correct for the next steps available based on the design bike.
+     *
+     * @param combinedData the combined data, a Full Bike and Options
+     * @return the options
+     */
     public Options updateOptions(CombinedData combinedData) {
         infoLogger.log("Updating Options available for Bike");
         Options o = combinedData.getOptions();
@@ -90,7 +116,7 @@ public class OptionsService {
         }
     }
 
-    public void getGearOptions(FullBike b) {
+    private void getGearOptions(FullBike b) {
         infoLogger.log("Getting Gear Options");
         List<Long> rearGears = new ArrayList<>();
         List<Long> frontGears = new ArrayList<>();
@@ -141,7 +167,7 @@ public class OptionsService {
         }
     }
 
-    public void getBarOptions(FullBike b) {
+    private void getBarOptions(FullBike b) {
         infoLogger.log("Getting Bar Options");
         List<String> bars = new ArrayList<>();
         Options o = getOptions();
@@ -167,7 +193,7 @@ public class OptionsService {
         o.setBarStyles(bars);
     }
 
-    public void getBrakeOptions(FullBike b) {
+    private void getBrakeOptions(FullBike b) {
         infoLogger.log("Getting Brake Options");
         List<String> brakes = new ArrayList<>();
         Options o = getOptions();

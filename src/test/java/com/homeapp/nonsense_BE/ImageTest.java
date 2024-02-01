@@ -22,6 +22,9 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The type Image test.
+ */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
@@ -33,6 +36,9 @@ public class ImageTest {
     @Autowired
     private FullBikeService fullBikeService;
 
+    /**
+     * Sets .
+     */
     @BeforeEach
     public void setup() {
         if (!isSetupDone) {
@@ -61,17 +67,26 @@ public class ImageTest {
         }
     }
 
+    /**
+     * Clearup.
+     */
     @AfterAll
     public void clearup() {
         fullBikeService.reloadBikesFromBackup();
     }
 
+    /**
+     * Test that list of images is returned.
+     */
     @Test
     public void test_That_List_of_Images_is_Returned() {
         FullBike bike = fullBikeService.getBikeUsingName("bike1").get();
         assertEquals(imageService.getImages(bike).size(), 10);
     }
 
+    /**
+     * Test that one by bike gets less images.
+     */
     @Test
     public void test_That_One_By_Bike_Gets_Less_Images() {
         FullBike bike = fullBikeService.getBikeUsingName("bike").get();
@@ -79,6 +94,9 @@ public class ImageTest {
         assertTrue(imageService.getImages(bike).size() < imageService.getImages(bike1).size());
     }
 
+    /**
+     * Test that different bikes get different lists.
+     */
     @Test
     public void test_That_Different_Bikes_get_different_lists() {
         List<Image> images1 = imageService.getImages(fullBikeService.getBikeUsingName("bike1").get());
@@ -86,6 +104,9 @@ public class ImageTest {
         assertNotEquals(images1, images2);
     }
 
+    /**
+     * Test that images are not null.
+     */
     @Test
     public void test_That_Images_Are_Not_Null() {
         FullBike bike = fullBikeService.getBikeUsingName("bike1").get();

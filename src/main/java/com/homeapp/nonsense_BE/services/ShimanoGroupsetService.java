@@ -1,10 +1,10 @@
 package com.homeapp.nonsense_BE.services;
 
-import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
 import com.homeapp.nonsense_BE.models.bike.BikeParts;
 import com.homeapp.nonsense_BE.models.bike.Error;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
 import com.homeapp.nonsense_BE.models.bike.Part;
+import com.homeapp.nonsense_BE.models.logger.ErrorLogger;
 import com.homeapp.nonsense_BE.models.logger.InfoLogger;
 import com.homeapp.nonsense_BE.models.logger.WarnLogger;
 import org.jsoup.Jsoup;
@@ -21,6 +21,9 @@ import java.util.concurrent.CompletableFuture;
 import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
 
+/**
+ * The type Shimano groupset service.
+ */
 @Service
 public class ShimanoGroupsetService {
     private static final String chainReactionURL = "https://www.chainreactioncycles.com/p/";
@@ -29,16 +32,29 @@ public class ShimanoGroupsetService {
     private BikeParts bikeParts;
     private final InfoLogger infoLogger = new InfoLogger();
     private final WarnLogger warnLogger = new WarnLogger();
+    private final ErrorLogger errorLogger = new ErrorLogger();
     private final FullBikeService fullBikeService;
-    private final ExceptionHandler exceptionHandler;
 
 
+    /**
+     * Instantiates a new Shimano Groupset Service.
+     * Autowires in a FullBike Service to allow for access to instance Bike in all methods within this class.
+     *
+     * @param fullBikeService the full bike service
+     */
     @Autowired
-    public ShimanoGroupsetService(@Lazy FullBikeService fullBikeService, ExceptionHandler exceptionHandler) {
+    public ShimanoGroupsetService(@Lazy FullBikeService fullBikeService) {
         this.fullBikeService = fullBikeService;
-        this.exceptionHandler = exceptionHandler;
     }
 
+    /**
+     * Gets shimano groupset.
+     * Sets the passed-in parts to the instance object, to be used throughout the class.
+     * Runs each separate component method in parallel to improve efficiency.
+     * Each component method chooses the correct link based on design bike and then retrieves the individual part information from the web.
+     *
+     * @param parts the parts
+     */
     public void getShimanoGroupset(BikeParts parts) {
         infoLogger.log("Getting Parts for Shimano Groupset.");
         bikeParts = parts;
@@ -60,12 +76,15 @@ public class ShimanoGroupsetService {
         CompletableFuture<Void> rearDerailleurFuture = CompletableFuture.runAsync(this::getRearDerailleur);
         CompletableFuture<Void> frontDerailleurFuture = CompletableFuture.runAsync(this::getFrontDerailleur);
         CompletableFuture.allOf(brakeFuture, chainringFuture, cassetteFuture, chainFuture, rearDerailleurFuture, frontDerailleurFuture).join();
+        if (!bikeParts.getErrorMessages().isEmpty()) {
+            errorLogger.log("BikeParts has errors: " + bikeParts.getErrorMessages());
+        }
     }
 
     private void getBrakeLevers() {
         String link = "";
         String component = "Brake-Levers";
-        String method = "etBrakeLevers";
+        String method = "getBrakeLevers";
         infoLogger.log("Getting Parts for: " + component);
         try {
             bike = fullBikeService.getBike();
@@ -79,7 +98,7 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -108,17 +127,20 @@ public class ShimanoGroupsetService {
                     }
                 }
                 default -> {
+                    warnLogger.log("Not getting link for calipers as Hydraulic calipers and levers are together");
                 }
             }
             if (!link.isEmpty()) {
                 setBikePartsFromLink(link, "Front " + component, method);
                 setBikePartsFromLink(link, "Rear " + component, method);
             } else {
-                bikeParts.getErrorMessages().add(new Error(component, method, link));
+                if (!bike.getBrakeType().equals(HYDRAULIC_DISC)) {
+                    bikeParts.getErrorMessages().add(new Error(component, method, link));
+                }
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, "Get Brake calipers", e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -169,7 +191,7 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -196,7 +218,7 @@ public class ShimanoGroupsetService {
             setBikePartsFromLink(link, "Left " + component, method);
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -218,7 +240,7 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -266,7 +288,7 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -293,7 +315,7 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -318,7 +340,7 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -344,7 +366,7 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, method, e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
@@ -386,10 +408,21 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            exceptionHandler.handleIOException(component, "Get Front Derailleur", e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
+    /**
+     * Sets bike parts from link passed-in.
+     * Majority of bike component information is coming from the same website.
+     * Single method used to access website and skim information. This is then used to populate Part Object.
+     * BikeParts Object on instance is then updated with the new Part object.
+     *
+     * @param link      the link
+     * @param component the component
+     * @param method    the method
+     * @throws IOException the io exception
+     */
     public void setBikePartsFromLink(String link, String component, String method) throws IOException {
         try {
             bike = fullBikeService.getBike();
@@ -399,7 +432,7 @@ public class ShimanoGroupsetService {
             Optional<Element> e = Optional.ofNullable(doc.select("div.ProductDetail_container__FX6xF").get(0));
             if (e.isEmpty()) {
                 bikeParts.getErrorMessages().add(new Error(component, method, link));
-                exceptionHandler.handleError(component, "SetBikePartsFromLink", link);
+                errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
             } else {
                 String name = e.get().select("h1").first().text();
                 String price = e.get().select("div.ProductPrice_productPrice__Fg1nA")
@@ -414,7 +447,7 @@ public class ShimanoGroupsetService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, link));
-            exceptionHandler.handleIOException(component, "SetBikePartsFromLink", e);
+            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 }

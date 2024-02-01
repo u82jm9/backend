@@ -17,6 +17,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The type Sticky note test.
+ */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
@@ -27,6 +30,9 @@ public class StickyNoteTest {
 
     private static boolean isSetupDone = false;
 
+    /**
+     * Sets .
+     */
     @BeforeEach
     public void setup() {
         if (!isSetupDone) {
@@ -49,17 +55,26 @@ public class StickyNoteTest {
         }
     }
 
+    /**
+     * Clearup.
+     */
     @AfterAll
     public void clearup() {
         stickyNoteService.reloadNotesFromBackup();
     }
 
+    /**
+     * Test that retrieve all returns list of notes.
+     */
     @Test
     public void test_That_Retrieve_All_Returns_List_Of_Notes() {
         List<StickyNote> stickyNoteList = stickyNoteService.retrieveAllNotes();
         assertNotNull(stickyNoteList);
     }
 
+    /**
+     * Test that a sticky note can be created.
+     */
     @Test
     public void test_That_A_StickyNote_Can_be_Created() {
         int notesBefore = stickyNoteService.retrieveAllNotes().size();
@@ -70,11 +85,17 @@ public class StickyNoteTest {
         assertTrue(notesBefore < stickyNoteService.retrieveAllNotes().size());
     }
 
+    /**
+     * Test that a sticky note can be retrieved by id.
+     */
     @Test
     public void test_That_A_StickyNote_Can_Be_Retrieved_By_Id() {
         assertNotNull(stickyNoteService.retrieveById(2L));
     }
 
+    /**
+     * Test that a stick note can be edited.
+     */
     @Test
     public void test_That_A_StickNote_Can_Be_Edited() {
         StickyNote noteBefore = stickyNoteService.retrieveById(2L);
@@ -89,6 +110,9 @@ public class StickyNoteTest {
         assertNotEquals(mapAfter, mapBefore);
     }
 
+    /**
+     * Test that a sticky note can be retrieved by title.
+     */
     @Test
     public void test_That_A_StickyNote_Can_Be_Retrieved_By_Title() {
         Map<String, Boolean> map = new HashMap<>();
@@ -97,6 +121,9 @@ public class StickyNoteTest {
         assertNotNull(stickyNoteService.retrieveByTitle(testNote.getTitle()));
     }
 
+    /**
+     * Test that two notes cannot have the same title.
+     */
     @Test
     public void test_That_Two_Notes_Cannot_Have_The_Same_Title() {
         Map<String, Boolean> map1 = new HashMap<>();
@@ -112,6 +139,9 @@ public class StickyNoteTest {
         assertEquals(notesAfter, notesBefore);
     }
 
+    /**
+     * Test that a sticky note can be deleted.
+     */
     @Test
     public void test_That_A_StickyNote_Can_Be_Deleted() {
         int notesBefore = stickyNoteService.retrieveAllNotes().size();
@@ -122,6 +152,9 @@ public class StickyNoteTest {
         assertTrue(notesAfter < notesBefore);
     }
 
+    /**
+     * Test all sticky notes can be deleted.
+     */
     @Test
     public void test_All_StickyNotes_Can_Be_Deleted() {
         stickyNoteService.create("Delete me!", "I will be deleted, goodbye. But I will have served a purpose. Please remember me.", true);

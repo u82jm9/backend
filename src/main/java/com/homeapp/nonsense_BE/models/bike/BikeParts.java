@@ -29,6 +29,7 @@ public class BikeParts {
 
     /**
      * Instantiates a new Bike parts.
+     * Sets list of Parts to instance.
      */
     public BikeParts() {
         this.listOfParts = new ArrayList<>();

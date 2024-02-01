@@ -2,9 +2,9 @@ package com.homeapp.nonsense_BE.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.homeapp.nonsense_BE.Exceptions.ExceptionHandler;
 import com.homeapp.nonsense_BE.models.bike.Frame;
 import com.homeapp.nonsense_BE.models.bike.FullBike;
+import com.homeapp.nonsense_BE.models.logger.ErrorLogger;
 import com.homeapp.nonsense_BE.models.logger.InfoLogger;
 import com.homeapp.nonsense_BE.models.logger.WarnLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,13 @@ import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
 import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
 
+/**
+ * The Full Bike Service class.
+ * Houses all methods relating to designing a Full Bike.
+ */
 @Service
 public class FullBikeService {
 
-    private static FullBikeService instance;
     private FullBike bike;
     private static final ObjectMapper om = new ObjectMapper();
     private static final String JSON_BIKES_FILE = "src/main/resources/bikes.json";
@@ -34,22 +37,22 @@ public class FullBikeService {
     private List<FullBike> bikeList;
     private final InfoLogger infoLogger = new InfoLogger();
     private final WarnLogger warnLogger = new WarnLogger();
+    private final ErrorLogger errorLogger = new ErrorLogger();
     private final ShimanoGroupsetService shimanoGroupsetService;
-    private final ExceptionHandler exceptionHandler;
 
+    /**
+     * Instantiates a new Full bike service.
+     * This instantiation is Autowired to allow this Service class to use methods from the Shimano Groupset Service class and the Exception Handler.
+     * Sets the bike object on instance to a new FullBike so has no influence from previous calls.
+     * Sets the list of bikes on the instance to a fresh load of the bike file.
+     *
+     * @param shimanoGroupsetService the Shimano Groupset service
+     */
     @Autowired
-    public FullBikeService(@Lazy ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
+    public FullBikeService(@Lazy ShimanoGroupsetService shimanoGroupsetService) {
         this.shimanoGroupsetService = shimanoGroupsetService;
-        this.exceptionHandler = exceptionHandler;
         this.bike = new FullBike();
         this.bikeList = readBikesFile();
-    }
-
-    public static FullBikeService getInstance(ShimanoGroupsetService shimanoGroupsetService, ExceptionHandler exceptionHandler) {
-        if (instance == null) {
-            instance = new FullBikeService(shimanoGroupsetService, exceptionHandler);
-        }
-        return instance;
     }
 
     private List<FullBike> readBikesFile() {
@@ -59,11 +62,14 @@ public class FullBikeService {
             return om.readValue(file, new TypeReference<>() {
             });
         } catch (IOException e) {
-            exceptionHandler.handleIOException("Bike Service", "Read bikes from File", e);
+            errorLogger.log("An IOException occurred from method: readBikesFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
         return new ArrayList<>();
     }
 
+    /**
+     * Reload bikes from backup file, writes the back-up bikes onto the normal bike file.
+     */
     public void reloadBikesFromBackup() {
         infoLogger.log("Reloading Bikes From Backup File");
         try {
@@ -73,17 +79,23 @@ public class FullBikeService {
             });
             writeBikesToFile(bikes);
         } catch (IOException e) {
-            exceptionHandler.handleIOException("Bike Service", "Read bikes from Back up File", e);
+            errorLogger.log("An IOException occurred from method: readBikesFromBackup!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
     }
 
+    /**
+     * Write bikes to normal bike file.
+     * Sets the bike list on the instance to the passed in list, to avoid an additional call to read the file.
+     *
+     * @param list the list
+     */
     public void writeBikesToFile(List<FullBike> list) {
         infoLogger.log("Writing Bikes Back to File");
         try {
             om.writeValue(new File(JSON_BIKES_FILE), list);
             bikeList = list;
         } catch (IOException e) {
-            exceptionHandler.handleIOException("Bike Service", "Write bikes to File", e);
+            errorLogger.log("An IOException occurred from method: writeBikesToFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
     }
 
@@ -91,20 +103,43 @@ public class FullBikeService {
         return bikeList;
     }
 
+    /**
+     * Gets bike from the instance.
+     *
+     * @return the bike on the instance.
+     */
     public FullBike getBike() {
         return bike;
     }
 
+    /**
+     * Sets bike to this instance.
+     *
+     * @param bike the bike
+     */
     public void setBike(FullBike bike) {
         this.bike = bike;
     }
 
+    /**
+     * Gets all full bikes on the instance.
+     * For efficiency this method does not read the file.
+     *
+     * @return a list of full bikes.
+     */
     public List<FullBike> getAllFullBikes() {
         List<FullBike> bikeList = getBikeList();
         warnLogger.log("Getting list of all bikes, number returned: " + bikeList.size());
         return bikeList;
     }
 
+    /**
+     * Create and save a Full Bike to the file.
+     * Bike passed in is given a unique ID before getting saved to the file.
+     * Method does not check the existence of this bike, or check for similar bikes. It simply adds this bike to the list.
+     *
+     * @param bike the bike
+     */
     public void create(FullBike bike) {
         infoLogger.log("Adding new bike!");
         long newId = bikeList.size() + 1;
@@ -113,6 +148,14 @@ public class FullBikeService {
         writeBikesToFile(bikeList);
     }
 
+    /**
+     * Update bike full bike.
+     * Checks passed in bike meets with standards for each component.
+     * If bike with the same name is on file this bike is replaced.
+     *
+     * @param bike the bike
+     * @return the full bike
+     */
     public FullBike updateBike(FullBike bike) {
         infoLogger.log("Updating bike on File!");
         setBike(bike);
@@ -176,6 +219,14 @@ public class FullBikeService {
         }
     }
 
+    /**
+     * Start new bike full bike.
+     * Checks there isn't currently a "new bike" using hardcoded bike name, returns bike if there is one.
+     * Creates new bike and sets all variable to their version of "not selected".
+     * Adds bike to list and returns it.
+     *
+     * @return the full bike
+     */
     public FullBike startNewBike() {
         infoLogger.log("Starting new bike, service method.");
         Optional<FullBike> b = getBikeUsingName("Your Custom Bike");
@@ -199,6 +250,12 @@ public class FullBikeService {
         }
     }
 
+    /**
+     * Gets bike using name.
+     *
+     * @param bikeName the bike name
+     * @return the bike
+     */
     public Optional<FullBike> getBikeUsingName(String bikeName) {
         warnLogger.log("Getting single bike with bike name: " + bikeName);
         return bikeList.stream()
@@ -206,12 +263,20 @@ public class FullBikeService {
                 .findFirst();
     }
 
+    /**
+     * Delete bike by id.
+     *
+     * @param bikeId the bike id
+     */
     public void deleteBike(long bikeId) {
         warnLogger.log("Deleting Bike with ID: " + bikeId);
         bikeList.removeIf(i -> i.getFullBikeId() == (bikeId));
         writeBikesToFile(bikeList);
     }
 
+    /**
+     * Delete all bikes, by writing an empty list back to normal bike file.
+     */
     public void deleteAllBikes() {
         infoLogger.log("Deleting ALL BIKES on File");
         warnLogger.log("Deleting ALL BIKES on File");
