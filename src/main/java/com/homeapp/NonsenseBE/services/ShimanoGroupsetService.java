@@ -258,7 +258,7 @@ public class ShimanoGroupsetService {
                     } else if (bike.getNumberOfRearGears() == 12) {
                         link = chainReactionURL + "shimano-m6100-deore-12-speed-mtb-single-chainset";
                     } else {
-                        link = wiggleURL + "miche-primato-advanced-track-chainset-5360048572";
+                        link = wiggleURL + "miche-primato-advanced-track-single-chainset";
                     }
                 }
                 case 2 -> {
@@ -359,7 +359,7 @@ public class ShimanoGroupsetService {
                 default -> {
                 }
             }
-            if (!link.isEmpty()) {
+            if (!link.isEmpty() && bike.getNumberOfRearGears() > 1) {
                 setBikePartsFromLink(link, component, method);
             } else {
                 bikeParts.getErrorMessages().add(new Error(component, method, link));
@@ -431,23 +431,31 @@ public class ShimanoGroupsetService {
             Document doc = Jsoup.connect(link).timeout(5000).get();
             Optional<Element> e = Optional.ofNullable(doc.select("div.ProductDetail_container__FX6xF").get(0));
             if (e.isEmpty()) {
-                bikeParts.getErrorMessages().add(new Error(component, method, link));
-                errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
+                linkElementNotFound(component, method, link);
             } else {
-                String name = e.get().select("h1").first().text();
-                String price = e.get().select("div.ProductPrice_productPrice__Fg1nA")
-                        .select("p").first().text().replace("£", "").split(" ")[0];
-                if (!price.contains(".")) {
-                    price = price + ".00";
-                }
-                warnLogger.log("Found Product: " + name);
-                warnLogger.log("For Price: " + price);
-                warnLogger.log("Link: " + link);
-                bikeParts.getListOfParts().add(new Part(component, name, price, link));
+                linkElementFound(component, e.get(), link);
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, link));
             errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
+    }
+
+    private void linkElementNotFound(String component, String method, String link) {
+        bikeParts.getErrorMessages().add(new Error(component, method, link));
+        errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
+    }
+
+    private void linkElementFound(String component, Element e, String link) {
+        String name = e.select("h1").first().text();
+        String price = e.select("div.ProductPrice_productPrice__Fg1nA")
+                .select("p").first().text().replace("£", "").split(" ")[0];
+        if (!price.contains(".")) {
+            price = price + ".00";
+        }
+        warnLogger.log("Found Product: " + name);
+        warnLogger.log("For Price: " + price);
+        warnLogger.log("Link: " + link);
+        bikeParts.getListOfParts().add(new Part(component, name, price, link));
     }
 }

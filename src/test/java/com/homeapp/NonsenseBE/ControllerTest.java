@@ -137,7 +137,7 @@ public class ControllerTest {
      */
     @Test
     public void test_That_the_front_can_send_a_log() throws Exception {
-        this.mockMvc.perform(post(TEST_API_URL + "logThis").session(session).contentType("application/json")
+        this.mockMvc.perform(put(TEST_API_URL + "LogThis").session(session).contentType("application/json")
                 .content("TEST LOG!! TESTING LOGS")).andExpect(status().isCreated());
     }
 

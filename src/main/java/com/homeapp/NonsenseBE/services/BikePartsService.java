@@ -36,7 +36,7 @@ public class BikePartsService {
 
     private static final String chainReactionURL = "https://www.chainreactioncycles.com/p/";
     private static final String wiggleURL = "https://www.wiggle.com/p/";
-    private static final String haloURL = "https://www.halowheels.com/";
+    private static final String haloURL = "https://www.halowheels.com/shop/wheels/";
     private static final String dolanURL = "https://www.dolan-bikes.com/";
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
     private static FullBike bike;
@@ -107,9 +107,9 @@ public class BikePartsService {
             } else {
                 // Wheels for Single Speed are from Halo
                 if (bike.getWheelPreference().equals("Cheap")) {
-                    link = haloURL + "shop/wheels/aerorage-track-700c-wheels/";
+                    link = haloURL + "aerorage-track-700c-wheels/";
                 } else {
-                    link = haloURL + "shop/wheels/carbaura-crit-700c-wheelset/";
+                    link = haloURL + "carbaura-crit-700c-wheelset/";
                 }
                 String wheelPrice;
                 String wheelName;
@@ -138,7 +138,7 @@ public class BikePartsService {
             }
         } catch (IOException e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
+            errorLogger.log("An IOException occurred from: " + method + "!!For link: " + link + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
