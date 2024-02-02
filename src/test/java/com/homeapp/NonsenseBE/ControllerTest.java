@@ -1,15 +1,15 @@
-package com.homeapp.nonsense_BE;
+package com.homeapp.NonsenseBE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.homeapp.nonsense_BE.controller.StickyNoteController;
-import com.homeapp.nonsense_BE.models.bike.Frame;
-import com.homeapp.nonsense_BE.models.bike.FrontGears;
-import com.homeapp.nonsense_BE.models.bike.FullBike;
-import com.homeapp.nonsense_BE.models.bike.RearGears;
-import com.homeapp.nonsense_BE.models.note.DTOnote;
-import com.homeapp.nonsense_BE.models.note.StickyNote;
-import com.homeapp.nonsense_BE.services.FullBikeService;
-import com.homeapp.nonsense_BE.services.StickyNoteService;
+import com.homeapp.NonsenseBE.controller.StickyNoteController;
+import com.homeapp.NonsenseBE.models.bike.Frame;
+import com.homeapp.NonsenseBE.models.bike.FrontGears;
+import com.homeapp.NonsenseBE.models.bike.FullBike;
+import com.homeapp.NonsenseBE.models.bike.RearGears;
+import com.homeapp.NonsenseBE.models.note.DTOnote;
+import com.homeapp.NonsenseBE.models.note.StickyNote;
+import com.homeapp.NonsenseBE.services.FullBikeService;
+import com.homeapp.NonsenseBE.services.StickyNoteService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,18 +23,18 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.GRAVEL;
-import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.ROAD;
-import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
-import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SRAM;
-import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.DROPS;
-import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
+import static com.homeapp.NonsenseBE.models.bike.Enums.BrakeType.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.FrameStyle.GRAVEL;
+import static com.homeapp.NonsenseBE.models.bike.Enums.FrameStyle.ROAD;
+import static com.homeapp.NonsenseBE.models.bike.Enums.GroupsetBrand.SHIMANO;
+import static com.homeapp.NonsenseBE.models.bike.Enums.GroupsetBrand.SRAM;
+import static com.homeapp.NonsenseBE.models.bike.Enums.HandleBarType.DROPS;
+import static com.homeapp.NonsenseBE.models.bike.Enums.ShifterStyle.STI;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * The type Controller test.
+ * The Controller test.
  */
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -72,7 +72,9 @@ public class ControllerTest {
     private static boolean isSetupDone = false;
 
     /**
-     * Sets .
+     * Sets up testing suite.
+     * Uses a boolean to ensure test suite is only set once.
+     * First all bikes on file are deleted, then new specific test bikes are added. This is to make testing more rigid and predictable.
      */
     @BeforeEach
     public void setup() {
@@ -99,7 +101,7 @@ public class ControllerTest {
     }
 
     /**
-     * Close.
+     * Closes active session and Mock MVC after each test.
      */
     @AfterEach
     public void close() {
@@ -108,16 +110,17 @@ public class ControllerTest {
     }
 
     /**
-     * Clearup.
+     * Clearup reloads Sticky Notes and Bikes from back-up files.
      */
     @AfterAll
     public void clearup() {
+        fullBikeService.reloadBikesFromBackup();
         stickyNoteService.reloadNotesFromBackup();
     }
 
 
     /**
-     * Test that options is returned with brands.
+     * Test Options start new Bike API return HTTP - status OK
      *
      * @throws Exception the exception
      */
@@ -128,7 +131,18 @@ public class ControllerTest {
     }
 
     /**
-     * Test that the front can check back end is on.
+     * Test that the front can send a log back.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_the_front_can_send_a_log() throws Exception {
+        this.mockMvc.perform(post(TEST_API_URL + "logThis").session(session).contentType("application/json")
+                .content("TEST LOG!! TESTING LOGS")).andExpect(status().isCreated());
+    }
+
+    /**
+     * Test that the front can check the BE is running.
      *
      * @throws Exception the exception
      */

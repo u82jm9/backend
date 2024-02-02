@@ -1,8 +1,8 @@
-package com.homeapp.nonsense_BE;
+package com.homeapp.NonsenseBE;
 
-import com.homeapp.nonsense_BE.models.bike.Frame;
-import com.homeapp.nonsense_BE.models.bike.FullBike;
-import com.homeapp.nonsense_BE.services.FullBikeService;
+import com.homeapp.NonsenseBE.models.bike.Frame;
+import com.homeapp.NonsenseBE.models.bike.FullBike;
+import com.homeapp.NonsenseBE.services.FullBikeService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,17 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
-import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.BULLHORNS;
-import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.DROPS;
-import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.NONE;
-import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.STI;
+import static com.homeapp.NonsenseBE.models.bike.Enums.BrakeType.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.FrameStyle.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.GroupsetBrand.SHIMANO;
+import static com.homeapp.NonsenseBE.models.bike.Enums.HandleBarType.BULLHORNS;
+import static com.homeapp.NonsenseBE.models.bike.Enums.HandleBarType.DROPS;
+import static com.homeapp.NonsenseBE.models.bike.Enums.ShifterStyle.NONE;
+import static com.homeapp.NonsenseBE.models.bike.Enums.ShifterStyle.STI;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The type Full bike test.
+ * The Full Bike tests.
  */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -33,7 +33,9 @@ public class FullBikeTest {
     private FullBikeService fullBikeService;
 
     /**
-     * Sets .
+     * Sets up test suite.
+     * Uses a boolean to ensure test suite is only set once.
+     * First all bikes on file are deleted, then new specific test bikes are added. This is to make testing more rigid and predictable.
      */
     @BeforeEach
     public void setup() {
@@ -56,7 +58,8 @@ public class FullBikeTest {
     }
 
     /**
-     * Clearup.
+     * Clearup after tests complete.
+     * Replaces the bikes on file from the back-up version, to remove all testing impact on the proper FE bikes.
      */
     @AfterAll
     public void clearup() {

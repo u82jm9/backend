@@ -1,4 +1,4 @@
-package com.homeapp.nonsense_BE;
+package com.homeapp.NonsenseBE;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * The type Home app attempt one application tests.
  */
 @SpringBootTest
-class HomeAppAttemptOneApplicationTests {
+class NonsenseBETests {
 
     /**
      * Context loads.

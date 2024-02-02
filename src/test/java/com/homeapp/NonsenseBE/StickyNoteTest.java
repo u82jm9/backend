@@ -1,7 +1,7 @@
-package com.homeapp.nonsense_BE;
+package com.homeapp.NonsenseBE;
 
-import com.homeapp.nonsense_BE.models.note.StickyNote;
-import com.homeapp.nonsense_BE.services.StickyNoteService;
+import com.homeapp.NonsenseBE.models.note.StickyNote;
+import com.homeapp.NonsenseBE.services.StickyNoteService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The type Sticky note test.
+ * The Sticky Note tests.
  */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -31,7 +31,9 @@ public class StickyNoteTest {
     private static boolean isSetupDone = false;
 
     /**
-     * Sets .
+     * Sets up testing suite.
+     * Uses a boolean to ensure test suite is only set once.
+     * New specific test Notes are added. This is to make testing more rigid and predictable.
      */
     @BeforeEach
     public void setup() {
@@ -56,7 +58,8 @@ public class StickyNoteTest {
     }
 
     /**
-     * Clearup.
+     * Clearup after tests complete.
+     * Replaces the bikes on file from the back-up version, to remove all testing impact on the proper FE bikes.
      */
     @AfterAll
     public void clearup() {

@@ -1,21 +1,21 @@
-package com.homeapp.nonsense_BE;
+package com.homeapp.NonsenseBE;
 
-import com.homeapp.nonsense_BE.models.bike.CombinedData;
-import com.homeapp.nonsense_BE.models.bike.FullBike;
-import com.homeapp.nonsense_BE.models.bike.Options;
-import com.homeapp.nonsense_BE.services.FullBikeService;
-import com.homeapp.nonsense_BE.services.OptionsService;
+import com.homeapp.NonsenseBE.models.bike.CombinedData;
+import com.homeapp.NonsenseBE.models.bike.FullBike;
+import com.homeapp.NonsenseBE.models.bike.Options;
+import com.homeapp.NonsenseBE.services.FullBikeService;
+import com.homeapp.NonsenseBE.services.OptionsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.BrakeType.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.FrameStyle.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.HandleBarType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The type Options test.
+ * The Options tests.
  */
 @SpringBootTest
 public class OptionsTest {

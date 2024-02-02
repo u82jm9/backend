@@ -1,11 +1,11 @@
-package com.homeapp.nonsense_BE;
+package com.homeapp.NonsenseBE;
 
-import com.homeapp.nonsense_BE.models.bike.*;
-import com.homeapp.nonsense_BE.models.bike.Enums.BrakeType;
-import com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType;
-import com.homeapp.nonsense_BE.services.BikePartsService;
-import com.homeapp.nonsense_BE.services.FullBikeService;
-import com.homeapp.nonsense_BE.services.OptionsService;
+import com.homeapp.NonsenseBE.models.bike.*;
+import com.homeapp.NonsenseBE.models.bike.Enums.BrakeType;
+import com.homeapp.NonsenseBE.models.bike.Enums.HandleBarType;
+import com.homeapp.NonsenseBE.services.BikePartsService;
+import com.homeapp.NonsenseBE.services.FullBikeService;
+import com.homeapp.NonsenseBE.services.OptionsService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,15 +17,15 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.homeapp.nonsense_BE.models.bike.Enums.BrakeType.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.FrameStyle.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.GroupsetBrand.SHIMANO;
-import static com.homeapp.nonsense_BE.models.bike.Enums.HandleBarType.*;
-import static com.homeapp.nonsense_BE.models.bike.Enums.ShifterStyle.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.BrakeType.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.FrameStyle.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.GroupsetBrand.SHIMANO;
+import static com.homeapp.NonsenseBE.models.bike.Enums.HandleBarType.*;
+import static com.homeapp.NonsenseBE.models.bike.Enums.ShifterStyle.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The type Bike parts test.
+ * The Bike parts test.
  */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -42,7 +42,9 @@ public class BikePartsTest {
     private static boolean isSetupDone = false;
 
     /**
-     * Sets .
+     * Sets up test suite.
+     * Uses a boolean to ensure test suite is only set once.
+     * First all bikes on file are deleted, then new specific test bikes are added. This is to make testing more rigid and predictable.
      */
     @BeforeEach
     public void setup() {
@@ -93,7 +95,8 @@ public class BikePartsTest {
     }
 
     /**
-     * Clearup.
+     * Clearup after tests complete.
+     * Replaces the bikes on file from the back-up version, to remove all testing impact on the proper FE bikes.
      */
     @AfterAll
     public void clearup() {
@@ -102,6 +105,7 @@ public class BikePartsTest {
 
     /**
      * Test that all single speed options work.
+     * Loops through all possible Options permitations and tests that each bike has a price.
      */
     @Test
     public void test_That_All_SINGLE_SPEED_Options_Work() {
@@ -126,9 +130,8 @@ public class BikePartsTest {
                             b.setWheelPreference(wp);
                             fullBikeService.setBike(b);
                             BikeParts parts = bikePartsService.getBikePartsForBike();
-                            BigDecimal bikePrice = parts.getTotalBikePrice();
-                            assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
-                            assertNotNull(bikePrice);
+                            assertNotNull(parts.getTotalBikePrice());
+                            assertTrue(parts.getTotalBikePrice().compareTo(new BigDecimal(500)) > 0);
                             numberOfLoops = numberOfLoops + 1;
                             System.out.println(numberOfLoops);
                         }
@@ -140,6 +143,7 @@ public class BikePartsTest {
 
     /**
      * Test that all road options work.
+     * Loops through all possible Options permitations and tests that each bike has a price.
      */
     @Test
     public void test_That_All_ROAD_Options_Work() {
@@ -178,6 +182,7 @@ public class BikePartsTest {
 
     /**
      * Test that all gravel options work.
+     * Loops through all possible Options permitations and tests that each bike has a price.
      */
     @Test
     public void test_That_All_GRAVEL_Options_Work() {
@@ -216,6 +221,7 @@ public class BikePartsTest {
 
     /**
      * Test that all tour options work.
+     * Loops through all possible Options permitations and tests that each bike has a price.
      */
     @Test
     public void test_That_All_TOUR_Options_Work() {
