@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The Image controller.
+ * Houses API relating to FE Images.
+ */
 @RestController
 @RequestMapping("Image/")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,13 +25,26 @@ public class ImageController {
     private final WarnLogger warnLogger = new WarnLogger();
     private final ImageService imageService;
 
+    /**
+     * Instantiates a new Image controller.
+     * Autowires in a Full Bike Service for access to the methods.
+     *
+     * @param imageService the image service
+     */
     @Autowired
     public ImageController(ImageService imageService) {
         this.imageService = imageService;
     }
 
+    /**
+     * Gets list of Images for passed-in bike.
+     *
+     * @param bike the bike
+     * @return the options
+     * @return HTTP - Status OK
+     */
     @PostMapping("GetImages")
-    public ResponseEntity<List<Image>> getOptions(@RequestBody FullBike bike) {
+    public ResponseEntity<List<Image>> getImages(@RequestBody FullBike bike) {
         infoLogger.log("Getting Images for Bike: " + bike);
         List<Image> imageList = imageService.getImages(bike);
         warnLogger.log("Returning Images to FE: " + imageList);
