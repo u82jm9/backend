@@ -1,5 +1,6 @@
 package com.homeapp.NonsenseBE.controller;
 
+import com.homeapp.NonsenseBE.models.bike.Log;
 import com.homeapp.NonsenseBE.models.logger.ErrorLoggerFE;
 import com.homeapp.NonsenseBE.models.logger.InfoLoggerFE;
 import com.homeapp.NonsenseBE.models.logger.WarnLoggerFE;
@@ -46,9 +47,9 @@ public class TestController {
      * @return HTTP - Status CREATED
      */
     @PutMapping("LogThis")
-    public ResponseEntity<HttpStatus> logThis(@RequestBody String log) {
-        String level = log.split("!!")[0].toUpperCase();
-        String message = log.split("!!")[1];
+    public ResponseEntity<HttpStatus> logThis(@RequestBody Log log) {
+        String level = log.getMessage().split("!!")[0].toUpperCase();
+        String message = log.getMessage().split("!!")[1];
         switch (level) {
             case "WARN" -> warnLogger.log(message);
             case "INFO" -> infoLogger.log(message);
