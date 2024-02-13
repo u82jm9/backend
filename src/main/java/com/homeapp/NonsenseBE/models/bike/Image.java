@@ -22,6 +22,12 @@ public class Image {
     private String altText;
 
     /**
+     * Zero argument Constructor to Instantiate a new Image.
+     */
+    public Image() {
+    }
+
+    /**
      * Instantiates a new Image.
      *
      * @param place     the place

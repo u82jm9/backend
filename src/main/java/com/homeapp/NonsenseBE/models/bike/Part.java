@@ -22,6 +22,12 @@ public class Part {
     private String link;
 
     /**
+     * Zero argument Constructor to Instantiate a new Part.
+     */
+    public Part() {
+    }
+
+    /**
      * Instantiates a new Part.
      *
      * @param component the component

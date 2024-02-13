@@ -20,6 +20,12 @@ public class Error {
     private String errorCode;
 
     /**
+     * Zero argument Constructor to Instantiate a new Error.
+     */
+    public Error() {
+    }
+
+    /**
      * Instantiates a new Error.
      *
      * @param component the component
