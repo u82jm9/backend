@@ -8,13 +8,13 @@
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
-        <RollingFile name="FileLogger" fileName="${basePath}/app.log">
+        <RollingFile name="FileLogger" fileName="${basePath}/app.DTOLog">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
             <DefaultRolloverStrategy>
-                <FileNamePattern>${basePath}/app-%d{dd-MM-yyyy}.log.gz</FileNamePattern>
+                <FileNamePattern>${basePath}/app-%d{dd-MM-yyyy}.DTOLog.gz</FileNamePattern>
             </DefaultRolloverStrategy>
         </RollingFile>
     </Appenders>

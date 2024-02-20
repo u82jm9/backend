@@ -13,9 +13,9 @@ public abstract class BaseLogger {
      */
     static final DateTimeFormatter LOGS_STAMP_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
     /**
-     * The File name formatter. Used to create a String for the date, which becomes part of the Log file name.
+     * The File name formatter. Used to create a String for the date, which becomes part of the DTOLog file name. Using Iso standard of MM-dd-yyyy to help store files in correct order.
      */
-    static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
     /**
      * Instantiates a new Base logger.
@@ -39,13 +39,13 @@ public abstract class BaseLogger {
     protected abstract String getFileName();
 
     /**
-     * Log to file, writes log message out to the correct file
+     * DTOLog to file, writes log message out to the correct file
      */
     protected abstract void logToFile();
 
 
     /**
-     * Log the passed in String
+     * DTOLog the passed in String
      *
      * @param message the message
      */

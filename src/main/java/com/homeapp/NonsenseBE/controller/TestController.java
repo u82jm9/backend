@@ -1,6 +1,6 @@
 package com.homeapp.NonsenseBE.controller;
 
-import com.homeapp.NonsenseBE.models.bike.Log;
+import com.homeapp.NonsenseBE.models.bike.DTOLog;
 import com.homeapp.NonsenseBE.models.logger.ErrorLoggerFE;
 import com.homeapp.NonsenseBE.models.logger.InfoLoggerFE;
 import com.homeapp.NonsenseBE.models.logger.WarnLoggerFE;
@@ -40,22 +40,19 @@ public class TestController {
     }
 
     /**
-     * Log this!
-     * Separates out different log levels before calling the appropriate logger for the message passed-in.
+     * DTOLog this!
+     * Separates out different DTOLog levels before calling the appropriate logger for the message passed-in.
      *
-     * @param log the log message
+     * @param dtoLog the DTOLog message
      * @return HTTP - Status CREATED
      */
     @PutMapping("LogThis")
-    public ResponseEntity<HttpStatus> logThis(@RequestBody Log log) {
-        String level = log.getMessage().split("!!")[0].toUpperCase();
-        String message = log.getMessage().split("!!")[1];
-        switch (level) {
-            case "WARN" -> warnLogger.log(message);
-            case "INFO" -> infoLogger.log(message);
-            default -> errorLogger.log(message);
+    public ResponseEntity<HttpStatus> logThis(@RequestBody DTOLog dtoLog) {
+        switch (dtoLog.getLevel()) {
+            case "WARN" -> warnLogger.log(dtoLog.getMessage());
+            case "INFO" -> infoLogger.log(dtoLog.getMessage());
+            default -> errorLogger.log(dtoLog.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
-
     }
 }
