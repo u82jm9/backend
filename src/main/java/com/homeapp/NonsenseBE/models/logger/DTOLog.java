@@ -1,16 +1,9 @@
-package com.homeapp.NonsenseBE.models.bike;
-
-import javax.persistence.*;
+package com.homeapp.NonsenseBE.models.logger;
 
 /**
  * The DTOLog object. Used as a Data Transfer Object by the Logger system to record issues from the FE.
  */
-@Entity
 public class DTOLog {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "logGen")
-    @SequenceGenerator(name = "logGen", sequenceName = "LOG_SEQ", allocationSize = 1)
-    private long logId;
 
     private String level;
     private String message;
@@ -29,15 +22,6 @@ public class DTOLog {
     public DTOLog(String level, String message) {
         this.level = level;
         this.message = message;
-    }
-
-    /**
-     * Gets log id.
-     *
-     * @return the image id
-     */
-    public long getLogId() {
-        return logId;
     }
 
     /**
@@ -79,8 +63,7 @@ public class DTOLog {
     @Override
     public String toString() {
         return "DTOLog{" +
-                ", logID='" + logId + '\'' +
-                ", level='" + level + '\'' +
+                "level='" + level + '\'' +
                 ", message='" + message + '\'' +
                 '}';
     }

@@ -1,6 +1,6 @@
 package com.homeapp.NonsenseBE.controller;
 
-import com.homeapp.NonsenseBE.models.bike.DTOLog;
+import com.homeapp.NonsenseBE.models.logger.DTOLog;
 import com.homeapp.NonsenseBE.models.logger.ErrorLoggerFE;
 import com.homeapp.NonsenseBE.models.logger.InfoLoggerFE;
 import com.homeapp.NonsenseBE.models.logger.WarnLoggerFE;
