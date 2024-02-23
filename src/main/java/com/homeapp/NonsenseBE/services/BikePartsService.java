@@ -1,5 +1,7 @@
 package com.homeapp.NonsenseBE.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.NonsenseBE.models.bike.BikeParts;
 import com.homeapp.NonsenseBE.models.bike.Error;
 import com.homeapp.NonsenseBE.models.bike.FullBike;
@@ -14,10 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +44,8 @@ public class BikePartsService {
     private static final String haloURL = "https://www.halowheels.com/shop/wheels/";
     private static final String dolanURL = "https://www.dolan-bikes.com/";
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
+    private static final String LINKS_FILE = "src/main/resources/links.json";
+    private ObjectMapper om = new ObjectMapper();
     private static FullBike bike;
     private BikeParts bikeParts;
     private final InfoLogger infoLogger = new InfoLogger();
@@ -46,6 +53,11 @@ public class BikePartsService {
     private final ErrorLogger errorLogger = new ErrorLogger();
     private final FullBikeService fullBikeService;
     private final ShimanoGroupsetService shimanoGroupsetService;
+
+    public BikePartsService() {
+        this.fullBikeService = null;
+        this.shimanoGroupsetService = null;
+    }
 
     /**
      * Instantiates a new Bike parts service.
@@ -79,6 +91,38 @@ public class BikePartsService {
         CompletableFuture.allOf(handleBarFuture, frameFuture, gearFuture, wheelFuture).join();
         calculateTotalPrice();
         return bikeParts;
+    }
+
+    public void checkAllLinks() {
+        List<String> allLinks = readLinksFile();
+        for (String link : allLinks) {
+            System.out.println("Checking link: " + link);
+            try {
+                int statusCode = Jsoup.connect(link).execute().statusCode();
+                if (statusCode >= 400 && statusCode < 500) {
+                    errorLogger.log("Link: " + link + " returned a client error (4xx): " + statusCode);
+                } else if (statusCode >= 500 && statusCode < 600) {
+                    errorLogger.log("Link: " + link + " returned a server error (5xx): " + statusCode);
+                } else if (statusCode != 200) {
+                    errorLogger.log("Link: " + link + " returned an unexpected status code: " + statusCode);
+                }
+            } catch (IOException e) {
+                errorLogger.log("An IOException occurred from method: checkAllLinks!!See error message: " + e.getMessage() + "!!From link: " + link);
+
+            }
+        }
+    }
+
+    private List<String> readLinksFile() {
+        infoLogger.log("Reading all Links from File");
+        try {
+            File file = new File(LINKS_FILE);
+            return om.readValue(file, new TypeReference<>() {
+            });
+        } catch (IOException e) {
+            errorLogger.log("An IOException occurred from method: readLinksFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
+        }
+        return new ArrayList<>();
     }
 
     private void getWheels() {

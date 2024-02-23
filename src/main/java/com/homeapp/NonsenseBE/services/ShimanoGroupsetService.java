@@ -154,7 +154,7 @@ public class ShimanoGroupsetService {
             switch ((int) bike.getNumberOfFrontGears()) {
                 case 1 -> {
                     if (bike.getNumberOfRearGears() == 9) {
-                        link = chainReactionURL + "microshift-r490-1x9-speed-dual-control-lever-set";
+                        link = chainReactionURL + "microshift-advent-m090-1x9-speed-gear-brake-levers";
                     } else if (bike.getNumberOfRearGears() == 10) {
                         link = chainReactionURL + "shimano-tiagra-4700-sti-shifter-set-2x10";
                     } else if (bike.getNumberOfRearGears() == 11) {
@@ -300,13 +300,11 @@ public class ShimanoGroupsetService {
         try {
             bike = fullBikeService.getBike();
             switch ((int) bike.getNumberOfRearGears()) {
-                case 1 -> link = wiggleURL + "shimano-dx-single-speed-sprocket";
                 case 9 -> link = wiggleURL + "shimano-sora-hg400-9-speed-cassette";
                 case 10 -> link = chainReactionURL + "shimano-tiagra-hg500-10-speed-road-cassette-5360107149";
                 case 11 -> link = chainReactionURL + "shimano-105-r7000-11-speed-cassette";
                 case 12 -> link = chainReactionURL + "shimano-105-r7100-12-speed-cassette";
-                default -> {
-                }
+                default -> link = wiggleURL + "shimano-dx-single-speed-sprocket";
             }
             if (!link.isEmpty()) {
                 setBikePartsFromLink(link, component, method);
