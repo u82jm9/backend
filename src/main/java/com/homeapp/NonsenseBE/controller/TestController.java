@@ -46,7 +46,7 @@ public class TestController {
      * @param dtoLog the DTOLog message
      * @return HTTP - Status CREATED
      */
-    @PutMapping("LogThis")
+    @PostMapping("LogThis")
     public ResponseEntity<HttpStatus> logThis(@RequestBody DTOLog dtoLog) {
         switch (dtoLog.getLevel()) {
             case "WARN" -> warnLogger.log(dtoLog.getMessage());

@@ -7,6 +7,7 @@ public class DTOLog {
 
     private String level;
     private String message;
+    private String timeStamp;
 
     /**
      * Zero argument Constructor to Instantiate a new DTOLog.
@@ -19,9 +20,10 @@ public class DTOLog {
      *
      * @param message the message
      */
-    public DTOLog(String level, String message) {
+    public DTOLog(String level, String message, String timeStamp) {
         this.level = level;
         this.message = message;
+        this.timeStamp = timeStamp;
     }
 
     /**
@@ -60,11 +62,30 @@ public class DTOLog {
         this.message = message;
     }
 
+    /**
+     * Gets Log timeStamp.
+     *
+     * @return the Log timeStamp
+     */
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    /**
+     * Sets Log timeStamp.
+     *
+     * @param timeStamp the timeStamp
+     */
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
     @Override
     public String toString() {
         return "DTOLog{" +
                 "level='" + level + '\'' +
                 ", message='" + message + '\'' +
+                ", timeStamp='" + timeStamp + '\'' +
                 '}';
     }
 }
