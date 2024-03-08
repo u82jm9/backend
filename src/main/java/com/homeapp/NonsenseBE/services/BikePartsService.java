@@ -93,24 +93,25 @@ public class BikePartsService {
         return bikeParts;
     }
 
+    /**
+     * A method that runs through the manually updated list of links in the links.json file.
+     * Collects all problem links and sends these to reporter
+     */
     public void checkAllLinks() {
         List<String> allLinks = readLinksFile();
+        List<String> problemLinks = new ArrayList<>();
         for (String link : allLinks) {
-            System.out.println("Checking link: " + link);
             try {
                 int statusCode = Jsoup.connect(link).execute().statusCode();
-                if (statusCode >= 400 && statusCode < 500) {
-                    errorLogger.log("Link: " + link + " returned a client error (4xx): " + statusCode);
-                } else if (statusCode >= 500 && statusCode < 600) {
-                    errorLogger.log("Link: " + link + " returned a server error (5xx): " + statusCode);
-                } else if (statusCode != 200) {
-                    errorLogger.log("Link: " + link + " returned an unexpected status code: " + statusCode);
+                if (statusCode != 200) {
+                    problemLinks.add(link);
                 }
             } catch (IOException e) {
+                problemLinks.add(link);
                 errorLogger.log("An IOException occurred from method: checkAllLinks!!See error message: " + e.getMessage() + "!!From link: " + link);
-
             }
         }
+        problemLinks.forEach(entry -> errorLogger.log("Issue with link: " + entry));
     }
 
     private List<String> readLinksFile() {
