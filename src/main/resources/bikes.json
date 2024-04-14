@@ -1,1 +1,102 @@
-[{"fullBikeId":1,"frame":{"frameId":2,"size":0,"tireClearance":0,"frameStyle":"GRAVEL","discBrakeCompatible":true,"requiresFrontGearCable":false,"requiresRearGearCable":true},"bikeName":"Gravel","brakeType":"HYDRAULIC_DISC","groupsetBrand":"SHIMANO","handleBarType":"FLARE","numberOfFrontGears":1,"numberOfRearGears":11,"shifterStyle":"STI","wheelPreference":"Expensive"},{"fullBikeId":3,"frame":{"frameId":4,"size":0,"tireClearance":0,"frameStyle":"ROAD","discBrakeCompatible":false,"requiresFrontGearCable":false,"requiresRearGearCable":true},"bikeName":"Workhorse","brakeType":"RIM","groupsetBrand":"SHIMANO","handleBarType":"DROPS","numberOfFrontGears":3,"numberOfRearGears":9,"shifterStyle":"STI","wheelPreference":"Cheap"},{"fullBikeId":5,"frame":{"frameId":6,"size":0,"tireClearance":0,"frameStyle":"SINGLE_SPEED","discBrakeCompatible":false,"requiresFrontGearCable":false,"requiresRearGearCable":false},"bikeName":"Fixie","brakeType":"RIM","groupsetBrand":"OTHER","handleBarType":"BULLHORNS","numberOfFrontGears":1,"numberOfRearGears":1,"shifterStyle":"NONE","wheelPreference":"Expensive"},{"fullBikeId":7,"frame":{"frameId":8,"size":0,"tireClearance":0,"frameStyle":"SINGLE_SPEED","discBrakeCompatible":true,"requiresFrontGearCable":false,"requiresRearGearCable":false},"bikeName":"City Cruiser","brakeType":"MECHANICAL_DISC","groupsetBrand":"OTHER","handleBarType":"FLAT","numberOfFrontGears":1,"numberOfRearGears":1,"shifterStyle":"NONE","wheelPreference":"Cheap"},{"fullBikeId":9,"frame":{"frameId":10,"size":0,"tireClearance":0,"frameStyle":"TOUR","discBrakeCompatible":true,"requiresFrontGearCable":true,"requiresRearGearCable":true},"bikeName":"Tourer","brakeType":"HYDRAULIC_DISC","groupsetBrand":"SHIMANO","handleBarType":"FLAT","numberOfFrontGears":3,"numberOfRearGears":10,"shifterStyle":"TRIGGER","wheelPreference":"Expensive"}]
+[
+  {
+    "fullBikeId": 1,
+    "frame": {
+      "frameId": 2,
+      "size": 0,
+      "tireClearance": 0,
+      "frameStyle": "GRAVEL",
+      "discBrakeCompatible": true,
+      "requiresFrontGearCable": false,
+      "requiresRearGearCable": true
+    },
+    "bikeName": "Gravel",
+    "brakeType": "HYDRAULIC_DISC",
+    "groupsetBrand": "SHIMANO",
+    "handleBarType": "FLARE",
+    "numberOfFrontGears": 1,
+    "numberOfRearGears": 11,
+    "shifterStyle": "STI",
+    "wheelPreference": "Expensive"
+  },
+  {
+    "fullBikeId": 3,
+    "frame": {
+      "frameId": 4,
+      "size": 0,
+      "tireClearance": 0,
+      "frameStyle": "ROAD",
+      "discBrakeCompatible": false,
+      "requiresFrontGearCable": false,
+      "requiresRearGearCable": true
+    },
+    "bikeName": "Workhorse",
+    "brakeType": "RIM",
+    "groupsetBrand": "SHIMANO",
+    "handleBarType": "DROPS",
+    "numberOfFrontGears": 3,
+    "numberOfRearGears": 9,
+    "shifterStyle": "STI",
+    "wheelPreference": "Cheap"
+  },
+  {
+    "fullBikeId": 5,
+    "frame": {
+      "frameId": 6,
+      "size": 0,
+      "tireClearance": 0,
+      "frameStyle": "SINGLE_SPEED",
+      "discBrakeCompatible": false,
+      "requiresFrontGearCable": false,
+      "requiresRearGearCable": false
+    },
+    "bikeName": "Fixie",
+    "brakeType": "RIM",
+    "groupsetBrand": "OTHER",
+    "handleBarType": "BULLHORNS",
+    "numberOfFrontGears": 1,
+    "numberOfRearGears": 1,
+    "shifterStyle": "NONE",
+    "wheelPreference": "Expensive"
+  },
+  {
+    "fullBikeId": 7,
+    "frame": {
+      "frameId": 8,
+      "size": 0,
+      "tireClearance": 0,
+      "frameStyle": "SINGLE_SPEED",
+      "discBrakeCompatible": true,
+      "requiresFrontGearCable": false,
+      "requiresRearGearCable": false
+    },
+    "bikeName": "City Cruiser",
+    "brakeType": "MECHANICAL_DISC",
+    "groupsetBrand": "OTHER",
+    "handleBarType": "FLAT",
+    "numberOfFrontGears": 1,
+    "numberOfRearGears": 1,
+    "shifterStyle": "NONE",
+    "wheelPreference": "Cheap"
+  },
+  {
+    "fullBikeId": 9,
+    "frame": {
+      "frameId": 10,
+      "size": 0,
+      "tireClearance": 0,
+      "frameStyle": "TOUR",
+      "discBrakeCompatible": true,
+      "requiresFrontGearCable": true,
+      "requiresRearGearCable": true
+    },
+    "bikeName": "Tourer",
+    "brakeType": "HYDRAULIC_DISC",
+    "groupsetBrand": "SHIMANO",
+    "handleBarType": "FLAT",
+    "numberOfFrontGears": 3,
+    "numberOfRearGears": 10,
+    "shifterStyle": "TRIGGER",
+    "wheelPreference": "Expensive"
+  }
+]
