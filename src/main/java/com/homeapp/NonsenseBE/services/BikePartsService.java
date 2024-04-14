@@ -100,6 +100,7 @@ public class BikePartsService {
     public void checkAllLinks() {
         List<String> allLinks = readLinksFile();
         List<String> problemLinks = new ArrayList<>();
+        int numberofProblemLinks = 0;
         for (String link : allLinks) {
             try {
                 int statusCode = Jsoup.connect(link).execute().statusCode();
@@ -108,9 +109,10 @@ public class BikePartsService {
                 }
             } catch (IOException e) {
                 problemLinks.add(link);
-                errorLogger.log("An IOException occurred from method: checkAllLinks!!See error message: " + e.getMessage() + "!!From link: " + link);
+                numberofProblemLinks = numberofProblemLinks + 1;
             }
         }
+        errorLogger.log("You have " + numberofProblemLinks + " links with issues");
         problemLinks.forEach(entry -> errorLogger.log("Issue with link: " + entry));
     }
 
