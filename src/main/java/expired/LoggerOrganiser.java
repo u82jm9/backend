@@ -1,7 +1,7 @@
 package expired;
 
-import com.homeapp.NonsenseBE.models.logger.ErrorLogger;
-import com.homeapp.NonsenseBE.models.logger.InfoLogger;
+import com.homeapp.backend.models.logger.ErrorLogger;
+import com.homeapp.backend.models.logger.InfoLogger;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package expired;
 
-import com.homeapp.NonsenseBE.models.logger.ErrorLogger;
+import com.homeapp.backend.models.logger.ErrorLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
