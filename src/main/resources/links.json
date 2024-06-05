@@ -286,42 +286,52 @@
   },
   {
     "link": "https://www.wiggle.com/p/shimano-sora-r3000-9-speed-rear-derailleur",
-    "component": "Rear-Derailleur"
+    "component": "Rear-Derailleur",
+    "internalReference": "RDerailleur_9"
   },
   {
     "link": "https://www.wiggle.com/p/shimano-tiagra-4700-10-speed-rear-derailleur-gs",
-    "component": "Rear-Derailleur"
+    "component": "Rear-Derailleur",
+    "internalReference": "RDerailleur_10"
   },
   {
     "link": "https://www.chainreactioncycles.com/p/shimano-105-r7000-11-speed-rear-derailleur",
-    "component": "Rear-Derailleur"
+    "component": "Rear-Derailleur",
+    "internalReference": "RDerailleur_11"
   },
   {
     "link": "https://www.chainreactioncycles.com/p/shimano-ultegra-r8150-di2-12-speed-rear-derailleur",
-    "component": "Rear-Derailleur"
+    "component": "Rear-Derailleur",
+    "internalReference": "RDerailleur_12"
   },
   {
     "link": "https://www.wiggle.com/p/shimano-sora-r3000-9-speed-double-front-derailleur",
-    "component": "Front-Derailleur"
+    "component": "Front-Derailleur",
+    "internalReference": "FDerailleur_2_9"
   },
   {
     "link": "https://www.wiggle.com/p/shimano-tiagra-fd4700-10-speed-front-derailleur",
-    "component": "Front-Derailleur"
+    "component": "Front-Derailleur",
+    "internalReference": "FDerailleur_2_10"
   },
   {
     "link": "https://www.wiggle.com/p/shimano-105-r7000-11-speed-front-derailleur",
-    "component": "Front-Derailleur"
+    "component": "Front-Derailleur",
+    "internalReference": "FDerailleur_2_11"
   },
   {
     "link": "https://www.wiggle.com/p/shimano-105-r7150-di2-e-tube-front-derailleur",
-    "component": "Front-Derailleur"
+    "component": "Front-Derailleur",
+    "internalReference": "FDerailleur_2_12"
   },
   {
     "link": "https://www.wiggle.com/p/shimano-sora-r3030-9-speed-triple-front-derailleur",
-    "component": "Front-Derailleur"
+    "component": "Front-Derailleur",
+    "internalReference": "FDerailleur_3_9"
   },
   {
     "link": "https://www.wiggle.com/p/shimano-tiagra-4703-3x10sp-braze-on-front-mech",
-    "component": "Front-Derailleur"
+    "component": "Front-Derailleur",
+    "internalReference": "FDerailleur_3_10"
   }
 ]
