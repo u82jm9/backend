@@ -11,7 +11,7 @@ import com.homeapp.backend.models.logger.InfoLogger;
 import com.homeapp.backend.models.logger.WarnLogger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -21,10 +21,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.backend.models.bike.Enums.BrakeType.RIM;
@@ -39,13 +37,13 @@ import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SHIMANO;
 @Scope("singleton")
 public class BikePartsService {
 
-    private static final String chainReactionURL = "https://www.chainreactioncycles.com/p/";
-    private static final String wiggleURL = "https://www.wiggle.com/p/";
+    private static final String chainReactionURL = "https://www.chainreactioncycles.com/";
+    private static final String wiggleURL = "https://www.wiggle.com/";
     private static final String haloURL = "https://www.halowheels.com/shop/wheels/";
     private static final String dolanURL = "https://www.dolan-bikes.com/";
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
     private static final String LINKS_FILE = "src/main/resources/links.json";
-    private ObjectMapper om = new ObjectMapper();
+    private final ObjectMapper om = new ObjectMapper();
     private static FullBike bike;
     private BikeParts bikeParts;
     private final InfoLogger infoLogger = new InfoLogger();
@@ -84,10 +82,10 @@ public class BikePartsService {
     public BikeParts getBikePartsForBike() {
         bikeParts = new BikeParts();
         bike = fullBikeService.getBike();
-        CompletableFuture<Void> handleBarFuture = CompletableFuture.runAsync(this::getHandlebarParts);
-        CompletableFuture<Void> frameFuture = CompletableFuture.runAsync(this::getFrameParts);
-        CompletableFuture<Void> gearFuture = CompletableFuture.runAsync(this::getGearSet);
-        CompletableFuture<Void> wheelFuture = CompletableFuture.runAsync(this::getWheels);
+        CompletableFuture<Void> handleBarFuture = CompletableFuture.runAsync(this::getHandlebarPartsLink);
+        CompletableFuture<Void> frameFuture = CompletableFuture.runAsync(this::getFramePartsLink);
+        CompletableFuture<Void> gearFuture = CompletableFuture.runAsync(this::getGearSetLink);
+        CompletableFuture<Void> wheelFuture = CompletableFuture.runAsync(this::getWheelsLink);
         CompletableFuture.allOf(handleBarFuture, frameFuture, gearFuture, wheelFuture).join();
         calculateTotalPrice();
         return bikeParts;
@@ -98,29 +96,50 @@ public class BikePartsService {
      * Collects all problem links and sends these to reporter
      */
     public void checkAllLinks() {
-        List<String> allLinks = readLinksFile();
-        List<String> problemLinks = new ArrayList<>();
-        int numberofProblemLinks = 0;
-        for (String link : allLinks) {
+        List<Part> allParts = readLinksFile();
+        LinkedList<String> problemLinks = new LinkedList<>();
+        LinkedList<Part> partListToWriteToFile = new LinkedList<>();
+        for (Part part : allParts) {
             try {
-                int statusCode = Jsoup.connect(link).execute().statusCode();
-                if (statusCode != 200) {
-                    problemLinks.add(link);
+                int statusCode = Jsoup.connect(part.getLink()).execute().statusCode();
+                if (statusCode == 200) {
+                    Part updatedPart = part;
+                    updatedPart = setPartAttributesFromLink(updatedPart);
+                    partListToWriteToFile.add(updatedPart);
+                } else {
+                    problemLinks.add(part.getLink());
+                    partListToWriteToFile.add(part);
                 }
             } catch (IOException e) {
-                problemLinks.add(link);
-                numberofProblemLinks = numberofProblemLinks + 1;
+                problemLinks.add(part.getLink());
             }
         }
-        errorLogger.log("You have " + numberofProblemLinks + " links with issues");
+        writePartsToFile(partListToWriteToFile);
+        errorLogger.log("**** Please check the following links ****");
+        errorLogger.log("You have " + problemLinks.size() + " links with issues");
         problemLinks.forEach(entry -> errorLogger.log("Issue with link: " + entry));
+        errorLogger.log("**** Checking links complete ****");
+        infoLogger.log("Finished checking links!");
     }
 
-    private List<String> readLinksFile() {
+    /**
+     * Writes unique list of Parts back to file, to allow information to be retrieved directly from file later.
+     *
+     * @param updatedParts unique list of Parts to be written back to File.
+     */
+    private void writePartsToFile(LinkedList<Part> updatedParts) {
+        infoLogger.log("Writing updated Bike Parts to file");
+        try {
+            om.writeValue(new File(LINKS_FILE), updatedParts);
+        } catch (IOException e) {
+            errorLogger.log("An IOException occurred from method: writePartsBackFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
+        }
+    }
+
+    private List<Part> readLinksFile() {
         infoLogger.log("Reading all Links from File");
         try {
-            File file = new File(LINKS_FILE);
-            return om.readValue(file, new TypeReference<>() {
+            return om.readValue(new File(LINKS_FILE), new TypeReference<>() {
             });
         } catch (IOException e) {
             errorLogger.log("An IOException occurred from method: readLinksFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
@@ -128,160 +147,167 @@ public class BikePartsService {
         return new ArrayList<>();
     }
 
-    private void getWheels() {
-        String link = "";
-        String component = "Wheels";
-        String method = "Get Wheels";
+    /**
+     * Sets bike parts price and name on the part that is passed-in.
+     * Single method used to access website and skim information. This is then used to populate Part Object.
+     * BikeParts Object on instance is then updated with the new Part object.
+     *
+     * @param part the part that is to updated
+     */
+    Part setPartAttributesFromLink(Part part) {
         try {
-            bike = fullBikeService.getBike();
-            infoLogger.log("Method for getting Bike Wheels from Web");
-            if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
-                // Wheels which require Gears are from Wiggle
-                if (!bike.getBrakeType().equals(RIM)) {
-                    if (bike.getWheelPreference().equals("Cheap")) {
-                        link = wiggleURL + "prime-baroudeur-disc-alloy-wheelset";
-                    } else {
-                        link = wiggleURL + "prime-primavera-56-carbon-disc-wheelset";
-                    }
+            Document doc = Jsoup.connect(part.getLink()).timeout(5000).get();
+            String today = LocalDate.now().toString();
+            Optional<Elements> e;
+            String name = "";
+            String price = "";
+            if (part.getLink().contains("dolan-bikes")) {
+                e = Optional.of(doc.select("div.productBuy > div.productPanel"));
+                if (e.get().isEmpty()) {
+                    errorLogger.log("An Error occurred !!Connecting to link: " + part.getLink() + "!!For bike Component: " + part.getComponent());
+                    return part;
                 } else {
-                    if (bike.getWheelPreference().equals("Cheap")) {
-                        link = wiggleURL + "fulcrum-racing-4-c17-road-wheelset";
-                    } else {
-                        link = wiggleURL + "reynolds-aero-65-black-label-carbon-wheelset";
-                    }
+                    name = e.get().select("h1").first().text();
+                    price = e.get().select("div.price").select("span.price").first().text();
                 }
-                shimanoGroupsetService.setBikePartsFromLink(link, component, method);
-            } else {
-                // Wheels for Single Speed are from Halo
-                if (bike.getWheelPreference().equals("Cheap")) {
-                    link = haloURL + "aerorage-track-700c-wheels/";
+            } else if (part.getLink().contains("genesisbikes")) {
+                e = Optional.of(doc.select("div.product-info-main-header"));
+                if (e.get().isEmpty()) {
+                    errorLogger.log("An Error occurred !!Connecting to link: " + part.getLink() + "!!For bike Component: " + part.getComponent());
+                    return part;
                 } else {
-                    link = haloURL + "carbaura-crit-700c-wheelset/";
+                    name = e.get().select("h1.page-title").text();
+                    price = e.get().select("div.product-info-price > div.price-final_price").first().select("span").text();
                 }
-                String wheelPrice;
-                String wheelName;
-                Document doc = Jsoup.connect(link).timeout(5000).get();
-                Optional<Element> e = Optional.of(doc.select("div.productDetails").get(0));
-                if (e.isEmpty()) {
-                    bikeParts.getErrorMessages().add(new Error(component, method, link));
-                    errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
+            } else if (part.getLink().contains("wiggle") || part.getLink().contains("chainreactioncycles")) {
+                e = Optional.of(doc.select("div.ProductDetail_container__FX6xF"));
+                if (e.get().isEmpty()) {
+                    errorLogger.log("An Error occurred !!Connecting to link: " + part.getLink() + "!!For bike Component: " + part.getComponent());
+                    return part;
                 } else {
-                    Element e1 = e.get();
-                    wheelName = e1.select("h1").first().text();
-                    if (e1.select("div.priceSummary").select("ins").first() != null) {
-                        wheelPrice = e1.select("div.priceSummary").select("ins").select("span").first().text().replace("£", "").split(" ")[0];
+                    name = e.get().select("h1").first().text();
+                    price = e.get().select("div.ProductPrice_productPrice__Fg1nA").select("p").first().text();
+                }
+            } else if (part.getLink().contains("halo")) {
+                e = Optional.of(doc.select("div.ProductDetail_container__FX6xF"));
+                if (e.get().isEmpty()) {
+                    errorLogger.log("An Error occurred !!Connecting to link: " + part.getLink() + "!!For bike Component: " + part.getComponent());
+                    return part;
+                } else {
+                    name = e.get().select("h1").first().text();
+                    if (e.get().select("div.priceSummary").select("ins").first() != null) {
+                        price = e.get().select("div.priceSummary").select("ins").select("span").first().text().replace("£", "").split(" ")[0];
                     } else {
-                        wheelPrice = e1.select("div.priceSummary").select("span").first().text().replace("£", "").split(" ")[0];
+                        price = e.get().select("div.priceSummary").select("span").first().text().replace("£", "").split(" ")[0];
                     }
-                    e1.select("div.priceSummary").select("ins").first();
-                    if (!wheelPrice.contains(".")) {
-                        wheelPrice = wheelPrice + ".00";
-                    }
-                    warnLogger.log("Found Product: " + wheelName);
-                    warnLogger.log("For Price: " + wheelPrice);
-                    warnLogger.log("Link: " + link);
-                    bikeParts.getListOfParts().add(new Part("Wheel Set", wheelName, wheelPrice, link));
+                    e.get().select("div.priceSummary").select("ins").first();
                 }
             }
+            price = price.replaceAll("[^\\d.]", "");
+            price = price.split("\\.")[0] + "." + price.split("\\.")[1].substring(0, 2);
+            if (!price.contains(".")) {
+                price = price + ".00";
+            }
+            warnLogger.log("Found Frame: " + name);
+            warnLogger.log("For price: " + price);
+            warnLogger.log("Frame link: " + part.getLink());
+            part.setDateLastUpdated(today);
+            part.setName(name);
+            part.setPrice(price);
+            if (bikeParts != null) {
+                bikeParts.getListOfParts().add(part);
+            }
         } catch (IOException e) {
-            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            errorLogger.log("An IOException occurred from: " + method + "!!For link: " + link + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
+            bikeParts.getErrorMessages().add(new Error(part.getComponent(), "getPartFromLink", e.getMessage()));
+            errorLogger.log("An IOException occurred from: getPartFromLink!!See error message: " + e.getMessage() + "!!For bike Component: " + part.getComponent());
         }
+        return part;
     }
 
-    private void getGearSet() {
+    private void getWheelsLink() {
+        String ref;
+        bike = fullBikeService.getBike();
+        infoLogger.log("Method for getting Bike Wheels from Web");
+        if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
+            // Wheels which require Gears are from Wiggle
+            if (!bike.getBrakeType().equals(RIM)) {
+                if (bike.getWheelPreference().equals("Cheap")) {
+                    ref = wiggleURL + "mavic-allroad-disc-650b-wheelset-845223#colcode=84522303";
+                } else {
+                    ref = wiggleURL + "deda-rs4-db-carbon-tubeless-wheels-836218#colcode=83621890";
+                }
+            } else {
+                if (bike.getWheelPreference().equals("Cheap")) {
+                    ref = wiggleURL + "miche-altur-wheels-846217#colcode=84621703";
+                } else {
+                    ref = wiggleURL + "miche-altur-wheels-846217#colcode=84621703";
+                }
+            }
+        } else {
+            // Wheels for Single Speed are from Halo
+            if (bike.getWheelPreference().equals("Cheap")) {
+                ref = haloURL + "aerorage-track-700c-wheels/";
+            } else {
+                ref = haloURL + "carbaura-crit-700c-wheelset/";
+            }
+        }
+        shimanoGroupsetService.findPartFromInternalRef(ref);
+    }
+
+    private void getGearSetLink() {
         bike = fullBikeService.getBike();
         bike.setGroupsetBrand(SHIMANO);
         shimanoGroupsetService.getShimanoGroupset(bikeParts);
     }
 
-    private void getHandlebarParts() {
-        String link = "";
+    private void getHandlebarPartsLink() {
+        String ref = "";
         String component = "HandleBars";
         String method = "GetHandleBarParts";
         try {
             bike = fullBikeService.getBike();
             infoLogger.log("Method for Getting Handlebar Parts from web");
             switch (bike.getHandleBarType()) {
-                case DROPS -> link = chainReactionURL + "prime-primavera-x-light-pro-carbon-handlebar";
-                case FLAT -> link = chainReactionURL + "nukeproof-horizon-v2-alloy-riser-handlebar-35mm";
-                case BULLHORNS -> link = chainReactionURL + "cinelli-bullhorn-road-handlebar";
-                case FLARE -> link = chainReactionURL + "ritchey-comp-venturemax-handlebar";
+                case DROPS -> ref = chainReactionURL + "thomson-alloy-road-drop-bar-aero-top-837837#colcode=83783703";
+                case FLAT -> ref = chainReactionURL + "dmr-odub-handlebar-318mm-clamp-836711#colcode=83671103";
+                case BULLHORNS -> ref = wiggleURL + "deda-crononero-low-rider-tri-bar-836815#colcode=83681503";
+                case FLARE ->
+                        ref = chainReactionURL + "thomson-carbon-dirt-drop-drop-bar-25d-flare-837830#colcode=83783003";
             }
-            shimanoGroupsetService.setBikePartsFromLink(link, component, method);
+            shimanoGroupsetService.findPartFromInternalRef(ref);
         } catch (Exception e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
             errorLogger.log("An Exception occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
-    private void getFrameParts() {
-        String link = "";
-        String component = "Frame";
-        String method = "GetFrameParts";
-        try {
-            bike = fullBikeService.getBike();
-            infoLogger.log("Jsoup Method for Getting Frame Parts");
-            String frameName = "";
-            String framePrice = "";
-            Optional<Element> e = Optional.empty();
-            Document doc;
-            switch (bike.getFrame().getFrameStyle()) {
-                case ROAD -> {
-                    if (bike.getFrame().isDiscBrakeCompatible()) {
-                        link = dolanURL + "dolan-rdx-aluminium-disc--frameset/";
-                    } else {
-                        link = dolanURL + "dolan-preffisio-aluminium-road--frameset/";
-                    }
-                }
-                case TOUR -> {
-                    if (bike.getFrame().isDiscBrakeCompatible()) {
-                        link = genesisURL + "genesis-fugio-frameset-vargn22330/";
-                    } else {
-                        link = genesisURL + "genesis-equilibrium-725-frameset-vargn21810";
-                    }
-                }
-                case GRAVEL -> {
-                    link = dolanURL + "dolan-gxa2020-aluminium-gravel-frameset/";
-                }
-                case SINGLE_SPEED -> {
-                    link = dolanURL + "dolan-pre-cursa-aluminium-frameset/";
-                }
-            }
-            doc = Jsoup.connect(link).timeout(5000).get();
-            if (link.contains("dolan-bikes")) {
-                e = Optional.of(doc.select("div.productBuy > div.productPanel").first());
-                if (e.isEmpty()) {
-                    errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
+    private void getFramePartsLink() {
+        String ref = "";
+        bike = fullBikeService.getBike();
+        infoLogger.log("Method for Getting Frame Parts Link");
+        switch (bike.getFrame().getFrameStyle()) {
+            case ROAD -> {
+                if (bike.getFrame().isDiscBrakeCompatible()) {
+                    ref = dolanURL + "dolan-adx-disc-titanium-road-frameset/";
                 } else {
-                    frameName = e.get().select("h1").first().text();
-                    framePrice = e.get().select("div.price").select("span.price").first().text();
+                    ref = dolanURL + "adx-titanium-road-frameset/";
                 }
-            } else if (link.contains("genesisbikes")) {
-                e = Optional.of(doc.select("div.product-info-main-header").first());
-                if (e.isEmpty()) {
-                    bikeParts.getErrorMessages().add(new Error(component, method, link));
-                    errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
+            }
+            case TOUR -> {
+                if (bike.getFrame().isDiscBrakeCompatible()) {
+                    ref = genesisURL + "genesis-fugio-frameset-vargn22330/";
                 } else {
-                    frameName = e.get().select("h1.page-title").text();
-                    framePrice = e.get().select("div.product-info-price > div.price-final_price").first().select("span").text();
+                    ref = genesisURL + "genesis-equilibrium-725-frameset-vargn21810";
                 }
             }
-            if (e.isPresent()) {
-                framePrice = framePrice.replaceAll("[^\\d.]", "");
-                framePrice = framePrice.split("\\.")[0] + "." + framePrice.split("\\.")[1].substring(0, 2);
-                if (!framePrice.contains(".")) {
-                    framePrice = framePrice + ".00";
-                }
-                bikeParts.getListOfParts().add(new Part("Frame", frameName, framePrice, link));
-                warnLogger.log("Found Frame: " + frameName);
-                warnLogger.log("For price: " + framePrice);
-                warnLogger.log("Frame link: " + link);
+            case GRAVEL -> {
+                ref = dolanURL + "dolan-gxa2020-aluminium-gravel-frameset/";
             }
-        } catch (IOException e) {
-            bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            errorLogger.log("An IOException occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
+            case SINGLE_SPEED -> {
+                ref = dolanURL + "dolan-pre-cursa-aluminium-frameset/";
+            }
         }
+        shimanoGroupsetService.findPartFromInternalRef(ref);
     }
 
     /**

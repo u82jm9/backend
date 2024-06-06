@@ -124,9 +124,10 @@ public class OptionsService {
         if (!b.getHandleBarType().equals(FLAT)) {
             switch (b.getFrame().getFrameStyle()) {
                 case ROAD -> {
+                    rearGears.add(9L);
                     rearGears.add(10L);
                     rearGears.add(11L);
-                    rearGears.add(12L);
+//                    rearGears.add(12L);
                     frontGears.add(2L);
                 }
                 case TOUR -> {
@@ -141,7 +142,8 @@ public class OptionsService {
                     rearGears.add(10L);
                     rearGears.add(11L);
                     frontGears.add(2L);
-                    frontGears.add(1L);
+                    //could not find active site for 1 by options
+//                    frontGears.add(1L);
                 }
                 default -> {
                 }

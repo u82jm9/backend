@@ -1,7 +1,6 @@
 package com.homeapp.backend.models.bike;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * The Part object, for a single complete Bike part.
@@ -24,7 +23,7 @@ public class Part {
 
     private String link;
 
-    private Date dateLastUpdated;
+    private String dateLastUpdated;
 
     /**
      * Zero argument Constructor to Instantiate a new Part.
@@ -42,7 +41,7 @@ public class Part {
      * @param link              the link
      * @param dateLastUpdated   the date this part last had it's price/name updated
      */
-    public Part(String component, String internalReference, String name, String price, String link, Date dateLastUpdated) {
+    public Part(String component, String internalReference, String name, String price, String link, String dateLastUpdated) {
         this.component = component;
         this.internalReference = internalReference;
         this.name = name;
@@ -168,7 +167,7 @@ public class Part {
      *
      * @return the dateLastUpdated
      */
-    public Date getDateLastUpdated() {
+    public String getDateLastUpdated() {
         return dateLastUpdated;
     }
 
@@ -177,7 +176,7 @@ public class Part {
      *
      * @param dateLastUpdated the dateLastUpdated
      */
-    public void setDateLastUpdated(Date dateLastUpdated) {
+    public void setDateLastUpdated(String dateLastUpdated) {
         this.dateLastUpdated = dateLastUpdated;
     }
 

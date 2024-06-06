@@ -1,4 +1,4 @@
-package com.homeapp.backend.models.logger;
+package com.homeapp.backend.models;
 
 /**
  * The DTOLog object. Used as a Data Transfer Object by the Logger system to record issues from the FE.

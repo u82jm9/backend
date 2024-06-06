@@ -1,6 +1,6 @@
 package com.homeapp.backend.controller;
 
-import com.homeapp.backend.models.logger.DTOLog;
+import com.homeapp.backend.models.DTOLog;
 import com.homeapp.backend.models.logger.ErrorLoggerFE;
 import com.homeapp.backend.models.logger.InfoLoggerFE;
 import com.homeapp.backend.models.logger.WarnLoggerFE;
