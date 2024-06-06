@@ -1,7 +1,5 @@
 package com.homeapp.backend.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.bike.BikeParts;
 import com.homeapp.backend.models.bike.Error;
 import com.homeapp.backend.models.bike.FullBike;
@@ -9,20 +7,14 @@ import com.homeapp.backend.models.bike.Part;
 import com.homeapp.backend.models.logger.ErrorLogger;
 import com.homeapp.backend.models.logger.InfoLogger;
 import com.homeapp.backend.models.logger.WarnLogger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.backend.models.bike.Enums.BrakeType.RIM;
@@ -42,8 +34,6 @@ public class BikePartsService {
     private static final String haloURL = "https://www.halowheels.com/shop/wheels/";
     private static final String dolanURL = "https://www.dolan-bikes.com/";
     private static final String genesisURL = "https://www.genesisbikes.co.uk/";
-    private static final String LINKS_FILE = "src/main/resources/links.json";
-    private final ObjectMapper om = new ObjectMapper();
     private static FullBike bike;
     private BikeParts bikeParts;
     private final InfoLogger infoLogger = new InfoLogger();
@@ -89,139 +79,6 @@ public class BikePartsService {
         CompletableFuture.allOf(handleBarFuture, frameFuture, gearFuture, wheelFuture).join();
         calculateTotalPrice();
         return bikeParts;
-    }
-
-    /**
-     * A method that runs through the manually updated list of links in the links.json file.
-     * Collects all problem links and sends these to reporter
-     */
-    public void checkAllLinks() {
-        List<Part> allParts = readLinksFile();
-        LinkedList<String> problemLinks = new LinkedList<>();
-        LinkedList<Part> partListToWriteToFile = new LinkedList<>();
-        for (Part part : allParts) {
-            try {
-                int statusCode = Jsoup.connect(part.getLink()).execute().statusCode();
-                if (statusCode == 200) {
-                    Part updatedPart = part;
-                    updatedPart = setPartAttributesFromLink(updatedPart);
-                    partListToWriteToFile.add(updatedPart);
-                } else {
-                    problemLinks.add(part.getLink());
-                    partListToWriteToFile.add(part);
-                }
-            } catch (IOException e) {
-                problemLinks.add(part.getLink());
-            }
-        }
-        writePartsToFile(partListToWriteToFile);
-        errorLogger.log("**** Please check the following links ****");
-        errorLogger.log("You have " + problemLinks.size() + " links with issues");
-        problemLinks.forEach(entry -> errorLogger.log("Issue with link: " + entry));
-        errorLogger.log("**** Checking links complete ****");
-        infoLogger.log("Finished checking links!");
-    }
-
-    /**
-     * Writes unique list of Parts back to file, to allow information to be retrieved directly from file later.
-     *
-     * @param updatedParts unique list of Parts to be written back to File.
-     */
-    private void writePartsToFile(LinkedList<Part> updatedParts) {
-        infoLogger.log("Writing updated Bike Parts to file");
-        try {
-            om.writeValue(new File(LINKS_FILE), updatedParts);
-        } catch (IOException e) {
-            errorLogger.log("An IOException occurred from method: writePartsBackFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
-        }
-    }
-
-    private List<Part> readLinksFile() {
-        infoLogger.log("Reading all Links from File");
-        try {
-            return om.readValue(new File(LINKS_FILE), new TypeReference<>() {
-            });
-        } catch (IOException e) {
-            errorLogger.log("An IOException occurred from method: readLinksFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
-        }
-        return new ArrayList<>();
-    }
-
-    /**
-     * Sets bike parts price and name on the part that is passed-in.
-     * Single method used to access website and skim information. This is then used to populate Part Object.
-     * BikeParts Object on instance is then updated with the new Part object.
-     *
-     * @param part the part that is to updated
-     */
-    Part setPartAttributesFromLink(Part part) {
-        try {
-            Document doc = Jsoup.connect(part.getLink()).timeout(5000).get();
-            String today = LocalDate.now().toString();
-            Optional<Elements> e;
-            String name = "";
-            String price = "";
-            if (part.getLink().contains("dolan-bikes")) {
-                e = Optional.of(doc.select("div.productBuy > div.productPanel"));
-                if (e.get().isEmpty()) {
-                    errorLogger.log("An Error occurred !!Connecting to link: " + part.getLink() + "!!For bike Component: " + part.getComponent());
-                    return part;
-                } else {
-                    name = e.get().select("h1").first().text();
-                    price = e.get().select("div.price").select("span.price").first().text();
-                }
-            } else if (part.getLink().contains("genesisbikes")) {
-                e = Optional.of(doc.select("div.product-info-main-header"));
-                if (e.get().isEmpty()) {
-                    errorLogger.log("An Error occurred !!Connecting to link: " + part.getLink() + "!!For bike Component: " + part.getComponent());
-                    return part;
-                } else {
-                    name = e.get().select("h1.page-title").text();
-                    price = e.get().select("div.product-info-price > div.price-final_price").first().select("span").text();
-                }
-            } else if (part.getLink().contains("wiggle") || part.getLink().contains("chainreactioncycles")) {
-                e = Optional.of(doc.select("div.ProductDetail_container__FX6xF"));
-                if (e.get().isEmpty()) {
-                    errorLogger.log("An Error occurred !!Connecting to link: " + part.getLink() + "!!For bike Component: " + part.getComponent());
-                    return part;
-                } else {
-                    name = e.get().select("h1").first().text();
-                    price = e.get().select("div.ProductPrice_productPrice__Fg1nA").select("p").first().text();
-                }
-            } else if (part.getLink().contains("halo")) {
-                e = Optional.of(doc.select("div.ProductDetail_container__FX6xF"));
-                if (e.get().isEmpty()) {
-                    errorLogger.log("An Error occurred !!Connecting to link: " + part.getLink() + "!!For bike Component: " + part.getComponent());
-                    return part;
-                } else {
-                    name = e.get().select("h1").first().text();
-                    if (e.get().select("div.priceSummary").select("ins").first() != null) {
-                        price = e.get().select("div.priceSummary").select("ins").select("span").first().text().replace("£", "").split(" ")[0];
-                    } else {
-                        price = e.get().select("div.priceSummary").select("span").first().text().replace("£", "").split(" ")[0];
-                    }
-                    e.get().select("div.priceSummary").select("ins").first();
-                }
-            }
-            price = price.replaceAll("[^\\d.]", "");
-            price = price.split("\\.")[0] + "." + price.split("\\.")[1].substring(0, 2);
-            if (!price.contains(".")) {
-                price = price + ".00";
-            }
-            warnLogger.log("Found Frame: " + name);
-            warnLogger.log("For price: " + price);
-            warnLogger.log("Frame link: " + part.getLink());
-            part.setDateLastUpdated(today);
-            part.setName(name);
-            part.setPrice(price);
-            if (bikeParts != null) {
-                bikeParts.getListOfParts().add(part);
-            }
-        } catch (IOException e) {
-            bikeParts.getErrorMessages().add(new Error(part.getComponent(), "getPartFromLink", e.getMessage()));
-            errorLogger.log("An IOException occurred from: getPartFromLink!!See error message: " + e.getMessage() + "!!For bike Component: " + part.getComponent());
-        }
-        return part;
     }
 
     private void getWheelsLink() {
