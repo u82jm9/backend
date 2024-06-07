@@ -1,6 +1,9 @@
 package com.homeapp.backend.models.bike;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * The Part object, for a single complete Bike part.
@@ -9,45 +12,28 @@ import javax.persistence.*;
 public class Part {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "partGen")
-    @SequenceGenerator(name = "partGen", sequenceName = "PART_SEQ", allocationSize = 1)
-    private long partId;
-
-    private String component;
-
+    @JsonProperty("internalReference")
     private String internalReference;
 
+    @JsonProperty("component")
+    private String component;
+
+    @JsonProperty("name")
     private String name;
 
+    @JsonProperty("price")
     private String price;
 
+    @JsonProperty("link")
     private String link;
 
+    @JsonProperty("dateLastUpdated")
     private String dateLastUpdated;
 
     /**
      * Zero argument Constructor to Instantiate a new Part.
      */
     public Part() {
-    }
-
-    /**
-     * Instantiates a new Part.
-     *
-     * @param component         the component
-     * @param internalReference the internalReference, used to retrieve info about Part
-     * @param name              the name
-     * @param price             the price
-     * @param link              the link
-     * @param dateLastUpdated   the date this part last had it's price/name updated
-     */
-    public Part(String component, String internalReference, String name, String price, String link, String dateLastUpdated) {
-        this.component = component;
-        this.internalReference = internalReference;
-        this.name = name;
-        this.price = price;
-        this.link = link;
-        this.dateLastUpdated = dateLastUpdated;
     }
 
     /**
@@ -64,12 +50,22 @@ public class Part {
     }
 
     /**
-     * Gets part id.
+     * Instantiates a new Part using all fields.
      *
-     * @return the part id
+     * @param component         the component
+     * @param internalReference the internalReference
+     * @param link              the link
+     * @param name              the name
+     * @param price             the price
+     * @param dateLastUpdated   the date the Price/name was last updated
      */
-    public long getPartId() {
-        return partId;
+    public Part(String component, String internalReference, String name, String price, String link, String dateLastUpdated) {
+        this.component = component;
+        this.internalReference = internalReference;
+        this.name = name;
+        this.price = price;
+        this.link = link;
+        this.dateLastUpdated = dateLastUpdated;
     }
 
     /**
@@ -123,7 +119,7 @@ public class Part {
      * @param internalReference the internalReference
      */
     public void setInternalReference(String internalReference) {
-        this.internalReference = Part.this.internalReference;
+        this.internalReference = internalReference;
     }
 
     /**
@@ -183,9 +179,8 @@ public class Part {
     @Override
     public String toString() {
         return "Part{" +
-                "partId='" + partId + '\'' +
                 "component='" + component + '\'' +
-                ", name='" + internalReference + '\'' +
+                ", internalReference='" + internalReference + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", link='" + link + '\'' +
