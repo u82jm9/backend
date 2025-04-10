@@ -26,7 +26,7 @@ public class backend implements CommandLineRunner {
     private static final WarnLogger warnLogger = new WarnLogger();
     private static final ErrorLogger errorLogger = new ErrorLogger();
     private static final String today = LocalDate.now().toString();
-    private static String price = "";
+    private static String price;
 
     public static void main(String[] args) {
         checkAllLinks();
@@ -100,98 +100,174 @@ public class backend implements CommandLineRunner {
      * @param part the part that is to updated
      */
     static void setPartAttributesFromLink(Set<Part> problemParts, Part part) {
+        price = "";
         try {
             String name = part.getName();
             price = part.getPrice();
             Document doc = Jsoup.connect(part.getLink()).timeout(5000).get();
-            Optional<Element> e;
+            Optional<Element> e = null;
+            Optional<Element> priceElement = null;
             if (part.getLink().contains("dolan-bikes")) {
-                e = Optional.ofNullable(doc.select("div.productBuy > div.productPanel").get(0));
-                if (!e.isPresent()) {
+                e = Optional.ofNullable(doc.selectFirst("div.productBuy > div.productPanel"));
+                if (e.isEmpty()) {
                     invalidPart(problemParts, part);
                     return;
+                }
+                name = Optional.ofNullable(e.get().selectFirst("h1"))
+                        .map(Element::text)
+                        .orElseGet(() -> {
+                            invalidPart(problemParts, part);
+                            return part.getName();
+                        });
+                priceElement = Optional.ofNullable(e.get().selectFirst("span.price"));
+                if (priceElement.isPresent()) {
+                    setPartPricing(priceElement.get(), part);
                 } else {
-                    name = e.get().select("h1").first().text();
-                    price = e.get().select("div.price").select("span.price").first().text();
-                    setPartPricing(part);
+                    invalidPart(problemParts, part);
                 }
             } else if (part.getLink().contains("evans")) {
                 e = Optional.ofNullable(doc.getElementById("productDetails"));
-                if (!e.isPresent()) {
+                if (e.isEmpty()) {
                     invalidPart(problemParts, part);
                     return;
+                }
+                name = Optional.ofNullable(e.get().getElementById("lblProductName"))
+                        .map(Element::text)
+                        .orElseGet(() -> {
+                            invalidPart(problemParts, part);
+                            return part.getName();
+                        });
+                priceElement = Optional.ofNullable(e.get().getElementById("lblSellingPrice"));
+                if (priceElement.isPresent()) {
+                    setPartPricing(priceElement.get(), part);
                 } else {
-                    name = Objects.requireNonNull(e.get().getElementById("lblProductName")).text();
-                    price = Objects.requireNonNull(e.get().getElementById("lblSellingPrice")).text();
-                    setPartPricing(part);
+                    invalidPart(problemParts, part);
                 }
             } else if (part.getLink().contains("wiggle") || part.getLink().contains("chainreactioncycles")) {
+
                 e = Optional.ofNullable(doc.getElementById("productDetails"));
-                if (!e.isPresent()) {
+                if (e.isEmpty()) {
                     invalidPart(problemParts, part);
                     return;
+                }
+                name = Optional.ofNullable(e.get().getElementById("lblProductName"))
+                        .map(Element::text)
+                        .orElseGet(() -> {
+                            invalidPart(problemParts, part);
+                            return part.getName();
+                        });
+                priceElement = Optional.ofNullable(e.get().getElementById("lblSellingPrice"));
+                if (priceElement.isPresent()) {
+                    setPartPricing(priceElement.get(), part);
                 } else {
-                    name = Objects.requireNonNull(e.get().getElementById("lblProductName")).text();
-                    price = Objects.requireNonNull(e.get().getElementById("lblSellingPrice")).text();
-                    setPartPricing(part);
+                    invalidPart(problemParts, part);
                 }
             } else if (part.getLink().contains("halfords")) {
                 e = Optional.ofNullable(doc.getElementById("productInfoBlock"));
-                if (!e.isPresent()) {
+                if (e.isEmpty()) {
                     invalidPart(problemParts, part);
                     return;
+                }
+                name = Optional.ofNullable(e.get().select("h1").first())
+                        .map(Element::text)
+                        .orElseGet(() -> {
+                            invalidPart(problemParts, part);
+                            return part.getName();
+                        });
+                priceElement = Optional.ofNullable(e.get().selectFirst("span.b-price__sale"));
+                if (priceElement.isPresent()) {
+                    setPartPricing(priceElement.get(), part);
                 } else {
-                    name = Objects.requireNonNull(e.get().select("h1").first()).text();
-                    price = Objects.requireNonNull(e.get().select("div.price").select("span.b-price__sale")).text();
-                    setPartPricing(part);
+                    invalidPart(problemParts, part);
                 }
             } else if (part.getLink().contains("sjscycles")) {
-                e = Optional.of(doc);
-                if (!e.isPresent()) {
+                e = Optional.ofNullable(doc);
+                if (e.isEmpty()) {
                     invalidPart(problemParts, part);
                     return;
+                }
+                name = Optional.ofNullable(e.get().selectFirst("title"))
+                        .map(Element::text)
+                        .orElseGet(() -> {
+                            invalidPart(problemParts, part);
+                            return part.getName();
+                        });
+                priceElement = Optional.ofNullable(e.get().selectFirst("span.f-xxxlarge"));
+                if (priceElement.isPresent()) {
+                    setPartPricing(priceElement.get(), part);
                 } else {
-                    name = Objects.requireNonNull(e.get().select("title").first().text());
-                    price = Objects.requireNonNull(e.get().getElementById("ProductOptions").select("div.pl2-notnarrow").select("div.container-2-3-stackSM").select("span.f-xxxlarge")).text();
-                    setPartPricing(part);
+                    invalidPart(problemParts, part);
                 }
             } else if (part.getLink().contains("halo")) {
-                e = Optional.ofNullable(doc.select("div.productDetails").get(0));
-                if (!e.isPresent()) {
+                e = Optional.ofNullable(doc.selectFirst("div.productDetails"));
+                if (e.isEmpty()) {
                     invalidPart(problemParts, part);
                     return;
-                } else {
-                    name = Objects.requireNonNull(e.get().select("h1").first()).text();
-                    if (e.get().select("div.priceSummary").select("ins").first() != null) {
-                        price = Objects.requireNonNull(e.get().select("div.priceSummary").select("ins").select("span").first()).text();
+                }
+                name = Optional.ofNullable(e.get().select("h1").first())
+                        .map(Element::text)
+                        .orElseGet(() -> {
+                            invalidPart(problemParts, part);
+                            return part.getName();
+                        });
+                priceElement = Optional.ofNullable(e.get().selectFirst("div.priceSummary"));
+                if (priceElement.isPresent()) {
+                    if (e.get().selectFirst("div.priceSummary > ins") != null) {
+                        priceElement = Optional.ofNullable(e.get().selectFirst("div.priceSummary > ins > span"));
+                        if (priceElement.isPresent()) {
+                            setPartPricing(priceElement.get(), part);
+                        } else {
+                            invalidPart(problemParts, part);
+                        }
                     } else {
-                        price = Objects.requireNonNull(e.get().select("div.priceSummary").select("span").first()).text();
+                        priceElement = Optional.ofNullable(e.get().selectFirst("div.priceSummary > span"));
+                        if (priceElement.isPresent()) {
+                            setPartPricing(priceElement.get(), part);
+                        } else {
+                            invalidPart(problemParts, part);
+                        }
                     }
-                    setPartPricing(part);
+                } else {
+                    invalidPart(problemParts, part);
                 }
             } else {
                 errorLogger.log("Trying to use unknown website");
                 invalidPart(problemParts, part);
+
             }
             warnLogger.log("Found: " + name);
             warnLogger.log("For: " + price);
             warnLogger.log("From: " + part.getLink());
             part.setName(name);
             part.setPrice(price);
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             invalidPart(problemParts, part);
             errorLogger.log("An IOException occurred from: getPartFromLink!!See error message: " + e.getMessage() + "!!For bike Component: " + part.getComponent());
         }
     }
 
-    private static void setPartPricing(Part part) {
-        part.setIsUptoDate(true);
-        price = price.replaceAll("[^\\d.]", "");
-        price = price.split("\\.")[0] + "." + price.split("\\.")[1].substring(0, 2);
-        if (!price.contains(".")) {
-            price = price + ".00";
+    private static void setPartPricing(Element element, Part part) {
+        if (!element.text().isEmpty()) {
+            price = element.text();
+            if (price.contains("£")) {
+                int firstIndex = price.indexOf("£");
+                int secondIndex = price.indexOf("£", firstIndex + 1);
+                if (secondIndex != -1) {
+                    price = price.substring(0, secondIndex).trim();
+                }
+            }
+            price = price.replaceAll("[^\\d.]", "");
+            if (price.contains(".")) {
+                price = price.split("\\.")[0] + "." + price.split("\\.")[1].substring(0, 2);
+            } else {
+                price = price + ".00";
+            }
+            part.setIsUptoDate(true);
+            part.setDateLastUpdated(today);
+        } else {
+            part.setIsUptoDate(false);
         }
-        part.setDateLastUpdated(today);
     }
 
     private static void invalidPart(Set<Part> problemParts, Part part) {
