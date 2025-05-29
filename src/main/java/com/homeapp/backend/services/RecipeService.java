@@ -33,25 +33,57 @@ public class RecipeService {
         try {
             Optional<Element> e;
             Document doc = Jsoup.connect(recipeLink).get();
-            e = Optional.ofNullable(doc.getElementById("main-content"));
-            if (e.isPresent()) {
-                Element mainContent = e.get();
-                processedRecipe.setRecipeName(mainContent.getElementById("main-heading").select("h1").text());
-                populateIngredients(mainContent, processedRecipe);
-                populateInstructions(mainContent, processedRecipe);
-                populateNotes(mainContent, processedRecipe);
-            } else {
-                warnLogger.log("No main content found for recipe: " + recipeLink);
+            if (recipeLink.contains("bbc.co.uk")) {
+                infoLogger.log("Processing BBC recipe link: " + recipeLink);
+                e = Optional.ofNullable(doc.getElementById("main-content"));
+                if (e.isPresent()) {
+                    Element mainContent = e.get();
+                    processedRecipe.setRecipeName(mainContent.getElementById("main-heading").select("h1").text());
+                    populateBBCIngredients(mainContent, processedRecipe);
+                    populateBBCInstructions(mainContent, processedRecipe);
+                    populateBBCNotes(mainContent, processedRecipe);
+                } else {
+                    warnLogger.log("No main content found for recipe: " + recipeLink);
+                }
+            } else if (recipeLink.contains("allrecipes.com")) {
+                infoLogger.log("Processing allrecipes recipe link: " + recipeLink);
+                e = Optional.ofNullable(doc.getElementById("main"));
+                if (e.isPresent()) {
+                    Element mainContent = e.get();
+                    processedRecipe.setRecipeName(mainContent.getElementById("article-header--recipe_1-0").select("h1").text());
+                    populateAllRecipeIngredients(mainContent, processedRecipe);
+                    populateAllRecipeInstructions(mainContent, processedRecipe);
+                } else {
+                    warnLogger.log("No main content found for recipe: " + recipeLink);
+                }
             }
-
         } catch (IOException e) {
-            errorLogger.log("An IOException occurred processing recipe: " + recipeLink + "!!See error message: " + e);
-
+            errorLogger.log("An IOException occurred processing recipe: " + recipeLink + "!! See error message: " + e);
         }
         return processedRecipe;
     }
 
-    private void populateNotes(Element mainContent, ProcessedRecipe processedRecipe) {
+    private void populateAllRecipeInstructions(Element mainContent, ProcessedRecipe processedRecipe) {
+        List<String> instructions = new ArrayList<>();
+        List<Element> instructionElements = mainContent.select("div.mm-recipes-steps__content").first().select("li");
+        for (Element instruction : instructionElements) {
+            instructions.add(instruction.text());
+        }
+        processedRecipe.setInstructions(instructions);
+    }
+
+    private void populateAllRecipeIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
+        HashMap<String, List<String>> ingredientsMap = new HashMap<>();
+        List<Element> ingredientElements = mainContent.select("div.mm-recipes-structured-ingredients").first().select("li");
+        List<String> ingredients = new ArrayList<>();
+        for (Element ingredient : ingredientElements) {
+            ingredients.add(ingredient.text());
+        }
+        ingredientsMap.put("main", ingredients);
+        processedRecipe.setIngredients(ingredientsMap);
+    }
+
+    private void populateBBCNotes(Element mainContent, ProcessedRecipe processedRecipe) {
         Element notesElement = mainContent.select("div.e1p7pssy1").first();
         if (notesElement != null) {
             String additionalNotes = notesElement.select("div.eap7u6q0").text();
@@ -61,7 +93,7 @@ public class RecipeService {
         }
     }
 
-    private void populateInstructions(Element mainContent, ProcessedRecipe processedRecipe) {
+    private void populateBBCInstructions(Element mainContent, ProcessedRecipe processedRecipe) {
         List<String> instructions = new ArrayList<>();
         List<Element> instructionElements = mainContent.select("div.e10q0gy41").first().select("li");
         for (Element instruction : instructionElements) {
@@ -70,7 +102,7 @@ public class RecipeService {
         processedRecipe.setInstructions(instructions);
     }
 
-    private void populateIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
+    private void populateBBCIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
         HashMap<String, List<String>> ingredientsMap = new HashMap<>();
         String firstKey = "main";
         String secondKey = "extra";

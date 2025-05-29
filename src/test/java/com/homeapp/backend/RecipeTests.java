@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class RecipeTests {
@@ -37,7 +36,7 @@ public class RecipeTests {
     }
 
     @Test
-    public void test_That_a_recipe_link_can_be_processed() {
+    public void test_That_a_BBC_recipe_link_can_be_processed() {
         RecipeService recipeService = new RecipeService();
         String recipeLink = "https://www.bbc.co.uk/food/recipes/one-pan_pastitsio_74748";
         String expectedRecipeName = "One-pan pastitsio";
@@ -49,6 +48,27 @@ public class RecipeTests {
         assertTrue(processedRecipe.getIngredients().get("main").containsAll(expectedIngredients.get("main")));
         assertTrue(processedRecipe.getIngredients().get("For the salad").containsAll(expectedIngredients.get("For the salad")));
         assertTrue(processedRecipe.getInstructions().containsAll(getExpectedInstructions()));
+    }
+
+    @Test
+    public void test_That_a_ALL_RECIPES_recipe_link_can_be_processed() {
+        RecipeService recipeService = new RecipeService();
+        String recipeLink = "https://www.allrecipes.com/recipe/11786/hearty-vegetable-lasagna/";
+        String expectedRecipeName = "Hearty Vegetable Lasagna";
+        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
+        List<String> mainIngredients = new ArrayList<>();
+        mainIngredients.add("¾ cup chopped onion");
+        mainIngredients.add("2 eggs");
+        expectedIngredients.put("main", mainIngredients);
+        List<String> expectedInstructions = new ArrayList<>();
+        expectedInstructions.add("Heat oil in a large saucepan. Add mushrooms, green peppers, onion, and garlic; cook and stir until tender, about 5 minutes. Stir in pasta sauce and basil; bring to a boil. Reduce heat, and simmer for 15 minutes.");
+        expectedInstructions.add("Spread 1 cup cooked tomato and vegetable sauce into the bottom of the prepared baking dish. Lay down 1/2 of the lasagna noodles and layer 1/2 each of the ricotta mix, sauce, and Parmesan cheese on top. Repeat layering again with noodles, ricotta mix, sauce, and Parmesan cheese. Top with remaining 2 cups mozzarella.");
+        ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
+        assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
+        assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
+        assertNull(processedRecipe.getAdditionalNotes());
+        assertTrue(processedRecipe.getIngredients().get("main").containsAll(expectedIngredients.get("main")));
+        assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
     }
 
 }
