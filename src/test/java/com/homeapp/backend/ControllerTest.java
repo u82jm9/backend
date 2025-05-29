@@ -11,6 +11,7 @@ import com.homeapp.backend.models.bike.RearGears;
 import com.homeapp.backend.models.note.DTOnote;
 import com.homeapp.backend.models.note.StickyNote;
 import com.homeapp.backend.services.FullBikeService;
+import com.homeapp.backend.services.RecipeService;
 import com.homeapp.backend.services.SaveJokeService;
 import com.homeapp.backend.services.StickyNoteService;
 import org.junit.jupiter.api.*;
@@ -45,22 +46,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ControllerTest {
 
     /**
-     * The constant TEST_API_URL.
+     * The constant TEST API URL.
      */
     final static String TEST_API_URL = "/Test/";
+
     /**
-     * The constant STICKY_NOTE_URL.
+     * The constant STICKY NOTE URL.
      */
     final static String STICKY_NOTE_URL = "/StickyNotes/";
+
     /**
-     * The constant FULL_BIKE_URL.
+     * The constant FULL BIKE URL.
      */
     final static String FULL_BIKE_URL = "/FullBike/";
+
     /**
-     * The constant OPTIONS_URL.
+     * The constant RECIPE URL.
+     */
+    final static String RECIPE_URL = "/Recipes/";
+
+    /**
+     * The constant OPTIONS URL.
      */
     final static String OPTIONS_URL = "/Options/";
+
     private static boolean isSetupDone = false;
+    @Autowired
+    private RecipeService recipeService;
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
@@ -125,6 +137,17 @@ public class ControllerTest {
         saveJokeService.reloadJokesFromBackup();
     }
 
+
+    /**
+     * Test Recipe can be sent back and Processed to return HTTP - status OK
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_Recipe_can_be_sent_back_and_is_OK() throws Exception {
+        this.mockMvc.perform(post(RECIPE_URL + "ProcessRecipe").session(session).contentType("application/json")
+                .content("https://www.bbc.co.uk/food/recipes/healthy_meatballs_05528")).andExpect(status().isOk());
+    }
 
     /**
      * Test Options start new Bike API return HTTP - status OK

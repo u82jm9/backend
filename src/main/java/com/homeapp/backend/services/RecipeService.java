@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RecipeService {
@@ -56,6 +57,17 @@ public class RecipeService {
                 } else {
                     warnLogger.log("No main content found for recipe: " + recipeLink);
                 }
+            } else if (recipeLink.contains("bbcgoodfood.com")) {
+                infoLogger.log("Processing BBC Good Food recipe link: " + recipeLink);
+                e = Optional.ofNullable(doc.selectFirst("[data-item-id='243738']"));
+                if (e.isPresent()) {
+                    Element mainContent = e.get();
+                    processedRecipe.setRecipeName(mainContent.select("div.post-header__title").select("h1").text());
+                    populateBBCGoodFoodIngredients(mainContent, processedRecipe);
+                    populateBBCGoodFoodInstructions(mainContent, processedRecipe);
+                } else {
+                    warnLogger.log("No main content found for recipe: " + recipeLink);
+                }
             }
         } catch (IOException e) {
             errorLogger.log("An IOException occurred processing recipe: " + recipeLink + "!! See error message: " + e);
@@ -63,23 +75,31 @@ public class RecipeService {
         return processedRecipe;
     }
 
+    private void populateBBCGoodFoodInstructions(Element mainContent, ProcessedRecipe processedRecipe) {
+        List<Element> instructionElements = mainContent.select("div.js-piano-recipe-method").first().select("li");
+        List<String> instructions = extractTextFromElements(instructionElements);
+        List<String> trimmed = instructions.stream()
+                .map(s -> s.replaceFirst("(?i)^step\\s*\\d+\\s*", ""))
+                .collect(Collectors.toList());
+        processedRecipe.setInstructions(trimmed);
+    }
+
+    private void populateBBCGoodFoodIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
+        HashMap<String, List<String>> ingredientsMap = new HashMap<>();
+        List<Element> ingredientElements = mainContent.select("div.recipe__ingredients-nutrition").select("div.tabbed-list__content").first().select("li");
+        ingredientsMap.put("main", extractTextFromElements(ingredientElements));
+        processedRecipe.setIngredients(ingredientsMap);
+    }
+
     private void populateAllRecipeInstructions(Element mainContent, ProcessedRecipe processedRecipe) {
-        List<String> instructions = new ArrayList<>();
         List<Element> instructionElements = mainContent.select("div.mm-recipes-steps__content").first().select("li");
-        for (Element instruction : instructionElements) {
-            instructions.add(instruction.text());
-        }
-        processedRecipe.setInstructions(instructions);
+        processedRecipe.setInstructions(extractTextFromElements(instructionElements));
     }
 
     private void populateAllRecipeIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
         HashMap<String, List<String>> ingredientsMap = new HashMap<>();
         List<Element> ingredientElements = mainContent.select("div.mm-recipes-structured-ingredients").first().select("li");
-        List<String> ingredients = new ArrayList<>();
-        for (Element ingredient : ingredientElements) {
-            ingredients.add(ingredient.text());
-        }
-        ingredientsMap.put("main", ingredients);
+        ingredientsMap.put("main", extractTextFromElements(ingredientElements));
         processedRecipe.setIngredients(ingredientsMap);
     }
 

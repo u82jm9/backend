@@ -71,4 +71,25 @@ public class RecipeTests {
         assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
     }
 
+    @Test
+    public void test_That_a_BBC_Good_Food_recipe_link_can_be_processed() {
+        RecipeService recipeService = new RecipeService();
+        String recipeLink = "https://www.bbcgoodfood.com/recipes/easy-vegetable-lasagne";
+        String expectedRecipeName = "Vegetarian lasagne";
+        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
+        List<String> mainIngredients = new ArrayList<>();
+        mainIngredients.add("2 aubergines cut into ½ cm thick slices");
+        mainIngredients.add("1 tbsp olive oil");
+        expectedIngredients.put("main", mainIngredients);
+        List<String> expectedInstructions = new ArrayList<>();
+        expectedInstructions.add("To make the white sauce, melt the butter in a saucepan, stir in the plain flour, then cook for 2 mins. Slowly whisk in the milk, then bring to the boil, stirring. Turn down the heat, then cook until the sauce starts to thicken and coats the back of a wooden spoon. Will keep, cooled, in the fridge for up to three days or frozen for three months.");
+        expectedInstructions.add("Spoon the remaining white sauce over the pasta, making sure the whole surface is covered, then scatter over the mozzarella and cherry tomatoes. Bake for 45 mins until bubbling and golden.");
+        ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
+        assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
+        assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
+        assertNull(processedRecipe.getAdditionalNotes());
+        assertTrue(processedRecipe.getIngredients().get("main").containsAll(expectedIngredients.get("main")));
+        assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
+    }
+
 }
