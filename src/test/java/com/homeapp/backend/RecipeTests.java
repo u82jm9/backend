@@ -39,7 +39,7 @@ public class RecipeTests {
     @Test
     public void test_That_a_recipe_link_can_be_processed() {
         RecipeService recipeService = new RecipeService();
-        String recipeLink = "https://www.bbc.co.uk/food/recipes/healthy_meatballs_05528";
+        String recipeLink = "https://www.bbc.co.uk/food/recipes/one-pan_pastitsio_74748";
         String expectedRecipeName = "One-pan pastitsio";
         HashMap<String, List<String>> expectedIngredients = getExpectedIngredients();
         ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
