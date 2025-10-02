@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("Recipes/")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -26,5 +28,11 @@ public class RecipeController {
         return ResponseEntity.ok(recipe);
     }
 
-
+    @GetMapping("GetValidSites")
+    public ResponseEntity<List<String>> getValidSites() {
+        infoLogger.log("Fetching valid sites for recipe processing.");
+        List<String> validSites = recipeService.getValidSites();
+        infoLogger.log("Fetched valid sites successfully.");
+        return ResponseEntity.ok(validSites);
+    }
 }

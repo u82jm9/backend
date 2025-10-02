@@ -1,13 +1,13 @@
 package com.homeapp.backend;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.controller.StickyNoteController;
 import com.homeapp.backend.models.DTOJoke;
 import com.homeapp.backend.models.DTOLog;
+import com.homeapp.backend.models.DTORecipe;
 import com.homeapp.backend.models.bike.Frame;
-import com.homeapp.backend.models.bike.FrontGears;
 import com.homeapp.backend.models.bike.FullBike;
-import com.homeapp.backend.models.bike.RearGears;
 import com.homeapp.backend.models.note.DTOnote;
 import com.homeapp.backend.models.note.StickyNote;
 import com.homeapp.backend.services.FullBikeService;
@@ -20,11 +20,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.homeapp.backend.models.bike.Enums.BrakeType.*;
@@ -34,6 +36,7 @@ import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SRAM;
 import static com.homeapp.backend.models.bike.Enums.HandleBarType.DROPS;
 import static com.homeapp.backend.models.bike.Enums.ShifterStyle.STI;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -139,14 +142,31 @@ public class ControllerTest {
 
 
     /**
+     * Test list of Recipe sites can be returned and get HTTP - status OK
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_List_of_Recipe_sites_can_be_returned() throws Exception {
+        MvcResult result = this.mockMvc.perform(get(RECIPE_URL + "GetValidSites").session(session))
+                .andExpect(status().isOk()).andReturn();
+        List<String> sites = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+        assertEquals(sites, recipeService.getValidSites());
+    }
+
+
+    /**
      * Test Recipe can be sent back and Processed to return HTTP - status OK
      *
      * @throws Exception the exception
      */
     @Test
     public void test_That_Recipe_can_be_sent_back_and_is_OK() throws Exception {
+        DTORecipe recipe = new DTORecipe();
+        recipe.setRecipeLink("https://www.bbc.co.uk/food/recipes/healthy_meatballs_05528");
         this.mockMvc.perform(post(RECIPE_URL + "ProcessRecipe").session(session).contentType("application/json")
-                .content("https://www.bbc.co.uk/food/recipes/healthy_meatballs_05528")).andExpect(status().isOk());
+                .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isOk());
     }
 
     /**
@@ -299,7 +319,7 @@ public class ControllerTest {
     @Test
     public void test_That_a_single_Bike_can_be_deleted() throws Exception {
         FullBike bike = fullBikeService.getBikeUsingName("bike1").get();
-        this.mockMvc.perform(delete(FULL_BIKE_URL + "DeleteBike").session(session).contentType("application/json").content(objectMapper.writeValueAsString(bike)))
+        this.mockMvc.perform(post(FULL_BIKE_URL + "DeleteBike").session(session).contentType("application/json").content(objectMapper.writeValueAsString(bike)))
                 .andExpect(status().isAccepted());
         isSetupDone = false;
     }
@@ -338,8 +358,6 @@ public class ControllerTest {
     @Test
     public void test_That_a_fully_defined_bike_can_be_created() throws Exception {
         Frame frame = new Frame(GRAVEL, false, true, true);
-        FrontGears frontGears = new FrontGears(1);
-        RearGears rearGears = new RearGears(11);
         FullBike testBike = new FullBike("testBike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
         this.mockMvc.perform(post(FULL_BIKE_URL + "AddFullBike").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(testBike))).andExpect(status().isCreated());

@@ -86,8 +86,19 @@ public class RecipeService {
 
     private void populateBBCGoodFoodIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
         HashMap<String, List<String>> ingredientsMap = new HashMap<>();
-        List<Element> ingredientElements = mainContent.select("div.recipe__ingredients-nutrition").select("div.tabbed-list__content").first().select("li");
-        ingredientsMap.put("main", extractTextFromElements(ingredientElements));
+        List<Element> ingredientSections = mainContent.getElementById("ingredients-list").select("section");
+        ingredientSections.remove(0);
+        for (Element section : ingredientSections) {
+            String sectionTitle = "";
+            sectionTitle = section.select("h3").text();
+            List<Element> ingredientElements = section.select("li");
+            if (sectionTitle.isEmpty()) {
+                sectionTitle = "Main";
+            }
+            if (!ingredientElements.isEmpty()) {
+                ingredientsMap.put(sectionTitle, extractTextFromElements(ingredientElements));
+            }
+        }
         processedRecipe.setIngredients(ingredientsMap);
     }
 
@@ -99,7 +110,7 @@ public class RecipeService {
     private void populateAllRecipeIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
         HashMap<String, List<String>> ingredientsMap = new HashMap<>();
         List<Element> ingredientElements = mainContent.select("div.mm-recipes-structured-ingredients").first().select("li");
-        ingredientsMap.put("main", extractTextFromElements(ingredientElements));
+        ingredientsMap.put("Main", extractTextFromElements(ingredientElements));
         processedRecipe.setIngredients(ingredientsMap);
     }
 
@@ -124,8 +135,8 @@ public class RecipeService {
 
     private void populateBBCIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
         HashMap<String, List<String>> ingredientsMap = new HashMap<>();
-        String firstKey = "main";
-        String secondKey = "extra";
+        String firstKey = "Main";
+        String secondKey = "Extra";
         List<Element> extraIngredientsElements = new ArrayList<>();
         List<Element> mainIngredientsElements;
         List<Element> ingredientDivs;
@@ -164,5 +175,14 @@ public class RecipeService {
             texts.add(e.text());
         }
         return texts;
+    }
+
+    public List<String> getValidSites() {
+        infoLogger.log("Returning valid sites that can be processed.");
+        List<String> validSites = new ArrayList<>();
+        validSites.add("bbc.co.uk/food/recipes");
+        validSites.add("allrecipes.com");
+        validSites.add("bbcgoodfood.com");
+        return validSites;
     }
 }

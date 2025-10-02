@@ -22,7 +22,7 @@ public class RecipeTests {
         List<String> extraIngredients = new ArrayList<>();
         extraIngredients.add("2 tbsp red wine vinegar");
         extraIngredients.add("½ bunch parsley, finely chopped");
-        expectedIngredients.put("main", mainIngredients);
+        expectedIngredients.put("Main", mainIngredients);
         expectedIngredients.put("For the salad", extraIngredients);
         return expectedIngredients;
     }
@@ -35,6 +35,30 @@ public class RecipeTests {
         return expectedInstructions;
     }
 
+    private static List<String> getBBCGoodFoodInstructions() {
+        List<String> expectedInstructions = new ArrayList<>();
+        expectedInstructions.add("To make the white sauce, melt the butter in a saucepan, stir in the plain flour, then cook for 2 mins. Slowly whisk in the milk, then bring to the boil, stirring. Turn down the heat, then cook until the sauce starts to thicken and coats the back of a wooden spoon. Will keep, cooled, in the fridge for up to three days or frozen for three months.");
+        expectedInstructions.add("Spoon the remaining white sauce over the pasta, making sure the whole surface is covered, then scatter over the mozzarella and cherry tomatoes. Bake for 45 mins until bubbling and golden.");
+        return expectedInstructions;
+    }
+
+    private static HashMap<String, List<String>> getBBCGoodFoodIngredientsHashMap() {
+        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
+        List<String> mainIngredients1 = new ArrayList<>();
+        mainIngredients1.add("2 aubergines cut into ½ cm thick slices");
+        mainIngredients1.add("8 tbsp olive oil plus extra for the dish");
+        expectedIngredients.put("Main", mainIngredients1);
+        List<String> mainIngredients2 = new ArrayList<>();
+        mainIngredients2.add("2 garlic cloves sliced");
+        mainIngredients2.add("2 onions finely chopped");
+        expectedIngredients.put("For the tomato sauce", mainIngredients2);
+        List<String> mainIngredients3 = new ArrayList<>();
+        mainIngredients3.add("85g butter");
+        mainIngredients3.add("750ml milk");
+        expectedIngredients.put("For the white sauce", mainIngredients3);
+        return expectedIngredients;
+    }
+
     @Test
     public void test_That_a_BBC_recipe_link_can_be_processed() {
         RecipeService recipeService = new RecipeService();
@@ -45,7 +69,7 @@ public class RecipeTests {
         assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
         assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
         assertEquals("You'll need a wide, deep frying pan for this dish. If you don't have one that will fit all the ingredients, make this recipe in a large saucepan instead.", processedRecipe.getAdditionalNotes());
-        assertTrue(processedRecipe.getIngredients().get("main").containsAll(expectedIngredients.get("main")));
+        assertTrue(processedRecipe.getIngredients().get("Main").containsAll(expectedIngredients.get("Main")));
         assertTrue(processedRecipe.getIngredients().get("For the salad").containsAll(expectedIngredients.get("For the salad")));
         assertTrue(processedRecipe.getInstructions().containsAll(getExpectedInstructions()));
     }
@@ -59,7 +83,7 @@ public class RecipeTests {
         List<String> mainIngredients = new ArrayList<>();
         mainIngredients.add("¾ cup chopped onion");
         mainIngredients.add("2 eggs");
-        expectedIngredients.put("main", mainIngredients);
+        expectedIngredients.put("Main", mainIngredients);
         List<String> expectedInstructions = new ArrayList<>();
         expectedInstructions.add("Heat oil in a large saucepan. Add mushrooms, green peppers, onion, and garlic; cook and stir until tender, about 5 minutes. Stir in pasta sauce and basil; bring to a boil. Reduce heat, and simmer for 15 minutes.");
         expectedInstructions.add("Spread 1 cup cooked tomato and vegetable sauce into the bottom of the prepared baking dish. Lay down 1/2 of the lasagna noodles and layer 1/2 each of the ricotta mix, sauce, and Parmesan cheese on top. Repeat layering again with noodles, ricotta mix, sauce, and Parmesan cheese. Top with remaining 2 cups mozzarella.");
@@ -67,7 +91,7 @@ public class RecipeTests {
         assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
         assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
         assertNull(processedRecipe.getAdditionalNotes());
-        assertTrue(processedRecipe.getIngredients().get("main").containsAll(expectedIngredients.get("main")));
+        assertTrue(processedRecipe.getIngredients().get("Main").containsAll(expectedIngredients.get("Main")));
         assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
     }
 
@@ -76,19 +100,13 @@ public class RecipeTests {
         RecipeService recipeService = new RecipeService();
         String recipeLink = "https://www.bbcgoodfood.com/recipes/easy-vegetable-lasagne";
         String expectedRecipeName = "Vegetarian lasagne";
-        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
-        List<String> mainIngredients = new ArrayList<>();
-        mainIngredients.add("2 aubergines cut into ½ cm thick slices");
-        mainIngredients.add("1 tbsp olive oil");
-        expectedIngredients.put("main", mainIngredients);
-        List<String> expectedInstructions = new ArrayList<>();
-        expectedInstructions.add("To make the white sauce, melt the butter in a saucepan, stir in the plain flour, then cook for 2 mins. Slowly whisk in the milk, then bring to the boil, stirring. Turn down the heat, then cook until the sauce starts to thicken and coats the back of a wooden spoon. Will keep, cooled, in the fridge for up to three days or frozen for three months.");
-        expectedInstructions.add("Spoon the remaining white sauce over the pasta, making sure the whole surface is covered, then scatter over the mozzarella and cherry tomatoes. Bake for 45 mins until bubbling and golden.");
+        HashMap<String, List<String>> expectedIngredients = getBBCGoodFoodIngredientsHashMap();
+        List<String> expectedInstructions = getBBCGoodFoodInstructions();
         ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
         assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
         assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
         assertNull(processedRecipe.getAdditionalNotes());
-        assertTrue(processedRecipe.getIngredients().get("main").containsAll(expectedIngredients.get("main")));
+        assertTrue(processedRecipe.getIngredients().get("Main").containsAll(expectedIngredients.get("Main")));
         assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
     }
 
