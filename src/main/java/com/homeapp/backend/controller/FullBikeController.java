@@ -98,12 +98,12 @@ public class FullBikeController {
      *
      * @param bike the bike
      * @return the response entity
-     * @return HTTP - Status OK
+     * @return HTTP - Accepted
      */
     @PostMapping("DeleteBike")
     ResponseEntity<HttpStatus> deleteBike(@RequestBody FullBike bike) {
         infoLogger.log("Deleting Bike from DB with id " + bike.getFullBikeId());
         fullBikeService.deleteBike(bike.getFullBikeId());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

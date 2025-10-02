@@ -61,7 +61,7 @@ public class BikePartsTest {
             FullBike bike10 = new FullBike("Gravel", frame10, HYDRAULIC_DISC, SHIMANO, FLARE, 1L, 11L, STI);
             bike10.setWheelPreference("Expensive");
             fullBikeService.create(bike10);
-            Frame frame = new Frame(GRAVEL, true, false, true);
+            Frame frame = new Frame(GRAVEL, true, true, true);
             FullBike bike = new FullBike("bike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 3L, 9L, STI);
             bike.setWheelPreference("Cheap");
             fullBikeService.create(bike);
@@ -274,11 +274,9 @@ public class BikePartsTest {
      */
     @Test
     public void test_That_The_Parts_Array_is_Populated() {
-        FullBike bikeBefore = fullBikeService.getBikeUsingName("bike").get();
-        fullBikeService.setBike(bikeBefore);
+        FullBike bike = fullBikeService.getBikeUsingName("bike").get();
+        fullBikeService.setBike(bike);
         BikeParts parts = bikePartsService.getBikePartsForBike();
-        System.out.println("Array is populated: " + parts.getListOfParts().toString());
-        System.out.println("Total: " + parts.getListOfParts().size());
         assertEquals(parts.getListOfParts().size(), 11);
     }
 

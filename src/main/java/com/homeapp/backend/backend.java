@@ -29,8 +29,8 @@ public class backend implements CommandLineRunner {
     private static String price;
 
     public static void main(String[] args) {
-        checkAllLinks();
         SpringApplication.run(backend.class, args);
+        checkAllLinks();
     }
 
     @Override
