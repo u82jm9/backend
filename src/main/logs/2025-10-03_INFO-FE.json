@@ -1,0 +1,18 @@
+[
+  "[10:01:25.9371541] - Getting Forecast for: Edinburgh",
+  "[10:01:25.9622207] - Next Bank Holiday event set",
+  "[10:01:25.9640982] - Getting Bank Holidays from ONLINE",
+  "[10:01:25.9666134] - Getting Forecast for: Edinburgh",
+  "[10:01:25.9686205] - Next Bank Holiday event set",
+  "[10:01:25.9716202] - Getting Bank Holidays from ONLINE",
+  "[10:01:38.8201356] - Getting valid sites for recipe processing",
+  "[10:01:38.8211361] - Getting valid sites for recipe processing",
+  "[10:01:38.8332304] - Valid sites received: bbc.co.uk/food/recipes,allrecipes.com,bbcgoodfood.com",
+  "[10:01:38.8487149] - Valid sites received: bbc.co.uk/food/recipes,allrecipes.com,bbcgoodfood.com",
+  "[10:01:41.4587928] - Getting valid sites for recipe processing",
+  "[10:01:41.5207308] - Getting valid sites for recipe processing",
+  "[10:01:41.5217333] - Valid sites received: bbc.co.uk/food/recipes,allrecipes.com,bbcgoodfood.com",
+  "[10:01:41.5227329] - Valid sites received: bbc.co.uk/food/recipes,allrecipes.com,bbcgoodfood.com",
+  "[10:01:56.096721] - Processing Recipe! https://www.bbcgoodfood.com/recipes/brilliant-banana-loaf",
+  "[10:02:17.5018487] - Processing Recipe! https://www.bbc.co.uk/food/recipes/barbecue_pulled_chicken_47216"
+]
