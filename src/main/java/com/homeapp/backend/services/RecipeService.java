@@ -59,7 +59,7 @@ public class RecipeService {
                 }
             } else if (recipeLink.contains("bbcgoodfood.com")) {
                 infoLogger.log("Processing BBC Good Food recipe link: " + recipeLink);
-                e = Optional.ofNullable(doc.selectFirst("[data-item-id='243738']"));
+                e = Optional.ofNullable(doc.select("div.post.recipe").first());
                 if (e.isPresent()) {
                     Element mainContent = e.get();
                     processedRecipe.setRecipeName(mainContent.select("div.post-header__title").select("h1").text());
@@ -135,37 +135,14 @@ public class RecipeService {
 
     private void populateBBCIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
         HashMap<String, List<String>> ingredientsMap = new HashMap<>();
-        String firstKey = "Main";
-        String secondKey = "Extra";
-        List<Element> extraIngredientsElements = new ArrayList<>();
-        List<Element> mainIngredientsElements;
-        List<Element> ingredientDivs;
-        List<Element> ingredientTitleElements;
-        List<String> ingredientTitles = new ArrayList<>();
-        ingredientDivs = mainContent.select("div.e1hdfwc20");
-        ingredientTitleElements = mainContent.select("div.e1hdfwc21").select("h3");
-        mainIngredientsElements = ingredientDivs.get(0).select("li");
-        for (Element h3 : ingredientTitleElements) {
-            String text = h3.text();
-            if (!text.isEmpty()) {
-                ingredientTitles.add(text);
-            }
+
+        Element allIngredientsDiv = mainContent.select("div.e1hdfwc21").get(0);
+        Integer numberOfIngredientSections = allIngredientsDiv.select("h3").size();
+        for (int i = 0; i < numberOfIngredientSections; i++) {
+            String key = allIngredientsDiv.select("h3").get(i).text();
+            List<Element> ingredientElements = allIngredientsDiv.select("div.e1hdfwc20").get(i).select("li");
+            ingredientsMap.put(key, extractTextFromElements(ingredientElements));
         }
-        if (!ingredientTitles.isEmpty()) {
-            if (ingredientTitles.size() < ingredientTitleElements.size()) {
-                secondKey = ingredientTitles.get(0);
-            } else {
-                firstKey = ingredientTitles.get(0);
-                secondKey = ingredientTitles.get(1);
-            }
-        }
-        if (ingredientDivs.size() > 1) {
-            for (int i = 1; i < ingredientDivs.size(); i++) {
-                extraIngredientsElements.addAll(ingredientDivs.get(i).select("li"));
-            }
-        }
-        ingredientsMap.put(firstKey, extractTextFromElements(mainIngredientsElements));
-        ingredientsMap.put(secondKey, extractTextFromElements(extraIngredientsElements));
         processedRecipe.setIngredients(ingredientsMap);
     }
 

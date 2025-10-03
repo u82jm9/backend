@@ -75,6 +75,36 @@ public class RecipeTests {
     }
 
     @Test
+    public void test_That_a_BBC_recipe_link_chicken_and_chips_can_be_processed() {
+        RecipeService recipeService = new RecipeService();
+        String recipeLink = "https://www.bbc.co.uk/food/recipes/barbecue_pulled_chicken_47216";
+        String expectedRecipeName = "Barbecue pulled chicken with sweet potato wedges";
+        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
+        List<String> mainIngredients = new ArrayList<>();
+        mainIngredients.add("1.8kg/4lb chicken thighs, boneless and skin removed");
+        mainIngredients.add("2 tsp olive oil");
+        expectedIngredients.put("For the batch-cooked chicken thighs", mainIngredients);
+        List<String> burgerIngredients = new ArrayList<>();
+        burgerIngredients.add("⅓ of the batch-cooked chicken thighs, about 400g/14oz cooked weight (see above)");
+        burgerIngredients.add("4 bread rolls or burger buns");
+        expectedIngredients.put("For the barbecue pulled chicken", burgerIngredients);
+        List<String> wedgesIngredients = new ArrayList<>();
+        wedgesIngredients.add("1kg/2lb 4oz sweet potatoes, scrubbed and cut into wedges");
+        wedgesIngredients.add("2 tsp paprika");
+        expectedIngredients.put("For the sweet potato wedges", wedgesIngredients);
+        List<String> expectedInstructions = new ArrayList<>();
+        expectedInstructions.add("For the sweet potato wedges, preheat the oven to 240C/220C Fan/Gas 9. Put the sweet potato wedges on a baking tray and toss with the vegetable oil and paprika (using clean hands is the easiest way to coat them). Roast for 40–50 minutes or until cooked through and turning brown.");
+        expectedInstructions.add("While the chicken is warming, toast the rolls or buns. Pile the hot chicken into the buns and serve with the sweet potato wedges.");
+        ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
+        assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
+        assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
+        assertEquals(processedRecipe.getIngredients().size(), 3);
+        assertTrue(processedRecipe.getIngredients().get("For the batch-cooked chicken thighs").containsAll(expectedIngredients.get("For the batch-cooked chicken thighs")));
+        assertTrue(processedRecipe.getIngredients().get("For the barbecue pulled chicken").containsAll(expectedIngredients.get("For the barbecue pulled chicken")));
+        assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
+    }
+
+    @Test
     public void test_That_a_ALL_RECIPES_recipe_link_can_be_processed() {
         RecipeService recipeService = new RecipeService();
         String recipeLink = "https://www.allrecipes.com/recipe/11786/hearty-vegetable-lasagna/";
@@ -96,6 +126,27 @@ public class RecipeTests {
     }
 
     @Test
+    public void test_That_a_ALL_RECIPES_recipe_Shrimp_stirfry() {
+        RecipeService recipeService = new RecipeService();
+        String recipeLink = "https://www.allrecipes.com/recipe/231376/shrimp-stirfry/";
+        String expectedRecipeName = "Shrimp Stirfry";
+        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
+        List<String> mainIngredients = new ArrayList<>();
+        mainIngredients.add("1 ½ cups sliced king mushrooms");
+        mainIngredients.add("2 cups bean sprouts");
+        expectedIngredients.put("Main", mainIngredients);
+        List<String> expectedInstructions = new ArrayList<>();
+        expectedInstructions.add("Pour water and oyster sauce into shrimp mixture; simmer until shrimp are bright pink on the outside and the meat is no longer transparent in the center, 5 minutes. Stir well.");
+        expectedInstructions.add("Mix noodles and bean sprouts into shrimp mixture; toss to combine. Cook until noodles are heated through, 2 minutes. Toss again.");
+        ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
+        assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
+        assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
+        assertNull(processedRecipe.getAdditionalNotes());
+        assertTrue(processedRecipe.getIngredients().get("Main").containsAll(expectedIngredients.get("Main")));
+        assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
+    }
+
+    @Test
     public void test_That_a_BBC_Good_Food_recipe_link_can_be_processed() {
         RecipeService recipeService = new RecipeService();
         String recipeLink = "https://www.bbcgoodfood.com/recipes/easy-vegetable-lasagne";
@@ -103,6 +154,29 @@ public class RecipeTests {
         HashMap<String, List<String>> expectedIngredients = getBBCGoodFoodIngredientsHashMap();
         List<String> expectedInstructions = getBBCGoodFoodInstructions();
         ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
+        assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
+        assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
+        assertNull(processedRecipe.getAdditionalNotes());
+        assertTrue(processedRecipe.getIngredients().get("Main").containsAll(expectedIngredients.get("Main")));
+        assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
+    }
+
+    @Test
+    public void test_That_a_BBC_Good_Food_banana_bread_can_be_processed() {
+        RecipeService recipeService = new RecipeService();
+        String recipeLink = "https://www.bbcgoodfood.com/recipes/brilliant-banana-loaf";
+        String expectedRecipeName = "Banana bread";
+        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
+        List<String> mainIngredients = new ArrayList<>();
+        mainIngredients.add("140g self-raising flour");
+        mainIngredients.add("2 very ripe bananas mashed");
+        expectedIngredients.put("Main", mainIngredients);
+        List<String> expectedInstructions = new ArrayList<>();
+        expectedInstructions.add("Pour the mixture into the prepared tin and bake for about 50 mins, or until cooked through. Check the loaf at 5-min intervals from around 30-40 mins in the oven by testing it with a skewer (it should be able to be inserted and removed cleanly), as the time may vary depending on the shape of your loaf tin.");
+        expectedInstructions.add("Cream 140g softened butter and 140g caster sugar until light and fluffy, then slowly add 2 beaten large eggs with a little of the 140g flour.");
+        expectedInstructions.add("Drizzle the icing across the top of the cake and decorate with a handful of banana chips.");
+        ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
+        List<String> processedIngredients = processedRecipe.getIngredients().get("Main");
         assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
         assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
         assertNull(processedRecipe.getAdditionalNotes());
