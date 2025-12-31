@@ -176,7 +176,6 @@ public class RecipeTests {
         expectedInstructions.add("Cream 140g softened butter and 140g caster sugar until light and fluffy, then slowly add 2 beaten large eggs with a little of the 140g flour.");
         expectedInstructions.add("Drizzle the icing across the top of the cake and decorate with a handful of banana chips.");
         ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
-        List<String> processedIngredients = processedRecipe.getIngredients().get("Main");
         assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
         assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
         assertNull(processedRecipe.getAdditionalNotes());

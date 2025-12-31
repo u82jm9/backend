@@ -76,7 +76,7 @@ public class RecipeService {
     }
 
     private void populateBBCGoodFoodInstructions(Element mainContent, ProcessedRecipe processedRecipe) {
-        List<Element> instructionElements = mainContent.select("div.js-piano-recipe-method").first().select("li");
+        List<Element> instructionElements = mainContent.select("ul.method-steps__list").first().select("li");
         List<String> instructions = extractTextFromElements(instructionElements);
         List<String> trimmed = instructions.stream()
                 .map(s -> s.replaceFirst("(?i)^step\\s*\\d+\\s*", ""))
@@ -140,6 +140,9 @@ public class RecipeService {
         Integer numberOfIngredientSections = allIngredientsDiv.select("h3").size();
         for (int i = 0; i < numberOfIngredientSections; i++) {
             String key = allIngredientsDiv.select("h3").get(i).text();
+            if (key.equals("")) {
+                key = "Main";
+            }
             List<Element> ingredientElements = allIngredientsDiv.select("div.e1hdfwc20").get(i).select("li");
             ingredientsMap.put(key, extractTextFromElements(ingredientElements));
         }
