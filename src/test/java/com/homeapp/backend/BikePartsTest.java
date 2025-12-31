@@ -145,7 +145,6 @@ public class BikePartsTest {
                             assertNotNull(parts.getTotalBikePrice());
                             assertTrue(parts.getTotalBikePrice().compareTo(new BigDecimal(500)) > 0);
                             numberOfLoops = numberOfLoops + 1;
-                            System.out.println(numberOfLoops);
                         }
                     }
                 }
@@ -184,7 +183,6 @@ public class BikePartsTest {
                             assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
-                            System.out.println(numberOfLoops);
                         }
                     }
                 }
@@ -223,7 +221,6 @@ public class BikePartsTest {
                             assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
-                            System.out.println(numberOfLoops);
                         }
                     }
                 }
@@ -262,7 +259,6 @@ public class BikePartsTest {
                             assertTrue(bikePrice.compareTo(new BigDecimal(500)) > 0);
                             assertNotNull(bikePrice);
                             numberOfLoops = numberOfLoops + 1;
-                            System.out.println(numberOfLoops);
                         }
                     }
                 }
@@ -301,8 +297,6 @@ public class BikePartsTest {
         fullBikeService.setBike(bikeBefore);
         BikeParts parts = bikePartsService.getBikePartsForBike();
         long bikePrice = parts.getTotalBikePrice().longValue();
-        System.out.println("Full Price is heaps: " + parts.getListOfParts().toString());
-        System.out.println("Total: " + parts.getListOfParts().size());
         assertEquals(parts.getListOfParts().size(), 11);
         assumeTrue(bikePrice > 1500);
     }

@@ -19,7 +19,7 @@
     </distributionManagement>
 
     <groupId>com.homeapp.one</groupId>
-    <artifactId>Nonsense-Java-Back-End</artifactId>
+    <artifactId>Nonsense-Java-Back-End-250</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Nonsense - Back End</name>
     <description>Spring Boot Project to support Nonsense</description>
