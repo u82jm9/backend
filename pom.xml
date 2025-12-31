@@ -10,8 +10,16 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Killer Quads Java Back-End</name>
+            <url>https://github.com/u82jm9/backend</url>
+        </repository>
+    </distributionManagement>
+
     <groupId>com.homeapp.one</groupId>
-    <artifactId>demo</artifactId>
+    <artifactId>Nonesense Java Back-End</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Nonsense - Back End</name>
     <description>Spring Boot Project to support Nonsense</description>
