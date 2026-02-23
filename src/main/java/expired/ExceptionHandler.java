@@ -30,7 +30,7 @@ public class ExceptionHandler {
      * @param link      the link
      */
     public void handleError(String component, String method, String link) {
-        errorLogger.log("An Error occurred from: " + method + "!!Connecting to link: " + link + "!!For bike Component: " + component);
+        errorLogger.log("An Error occurred from: " + method + "!!"+"\nConnecting to link: " + link + "!!"+"\nFor bike Component: " + component);
     }
 
     /**

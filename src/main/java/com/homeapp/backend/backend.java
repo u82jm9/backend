@@ -235,9 +235,7 @@ public class backend implements CommandLineRunner {
                 invalidPart(problemParts, part);
 
             }
-            warnLogger.log("Found: " + name);
-            warnLogger.log("For: " + price);
-            warnLogger.log("From: " + part.getLink());
+            warnLogger.log("Found: " + name + "\nFor: " + price + "\nFrom: " + part.getLink());
             part.setName(name);
             part.setPrice(price);
         } catch (
