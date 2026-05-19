@@ -2,16 +2,21 @@ package com.homeapp.backend.controller;
 
 import com.homeapp.backend.models.DTOJoke;
 import com.homeapp.backend.models.DTOLog;
+import com.homeapp.backend.models.FuelPrice;
 import com.homeapp.backend.models.logger.ErrorLoggerFE;
 import com.homeapp.backend.models.logger.InfoLoggerFE;
 import com.homeapp.backend.models.logger.WarnLoggerFE;
+import com.homeapp.backend.services.FuelPriceService;
 import com.homeapp.backend.services.SaveJokeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Test controller.
@@ -22,6 +27,7 @@ import java.util.ArrayList;
 @CrossOrigin(origins = "http://localhost:3000")
 public class TestController {
     private final SaveJokeService saveJokeService = new SaveJokeService();
+    private final FuelPriceService fuelPriceService = new FuelPriceService();
     private final InfoLoggerFE infoLogger = new InfoLoggerFE();
     private final WarnLoggerFE warnLogger = new WarnLoggerFE();
     private final ErrorLoggerFE errorLogger = new ErrorLoggerFE();
@@ -71,5 +77,11 @@ public class TestController {
     public ResponseEntity<ArrayList<DTOJoke>> getSavedJokes() {
         ArrayList<DTOJoke> allJokes = saveJokeService.readSavedJokesFile();
         return new ResponseEntity<>(allJokes, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("GetFuelPrices")
+    public ResponseEntity<List<FuelPrice>> getFuelPrices() {
+        List<FuelPrice> prices = fuelPriceService.retriveJSONFile();
+        return new ResponseEntity<>(prices, HttpStatus.OK);
     }
 }

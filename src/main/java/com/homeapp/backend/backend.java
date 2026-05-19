@@ -6,6 +6,7 @@ import com.homeapp.backend.models.bike.Part;
 import com.homeapp.backend.models.logger.ErrorLogger;
 import com.homeapp.backend.models.logger.InfoLogger;
 import com.homeapp.backend.models.logger.WarnLogger;
+import com.homeapp.backend.services.FuelPriceService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,9 +28,11 @@ public class backend implements CommandLineRunner {
     private static final ErrorLogger errorLogger = new ErrorLogger();
     private static final String today = LocalDate.now().toString();
     private static String price;
+    private static final FuelPriceService fuelPriceService = new FuelPriceService();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         SpringApplication.run(backend.class, args);
+        fuelPriceService.run();
         checkAllLinks();
     }
 

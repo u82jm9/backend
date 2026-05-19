@@ -6,14 +6,12 @@ import com.homeapp.backend.controller.StickyNoteController;
 import com.homeapp.backend.models.DTOJoke;
 import com.homeapp.backend.models.DTOLog;
 import com.homeapp.backend.models.DTORecipe;
+import com.homeapp.backend.models.FuelPrice;
 import com.homeapp.backend.models.bike.Frame;
 import com.homeapp.backend.models.bike.FullBike;
 import com.homeapp.backend.models.note.DTOnote;
 import com.homeapp.backend.models.note.StickyNote;
-import com.homeapp.backend.services.FullBikeService;
-import com.homeapp.backend.services.RecipeService;
-import com.homeapp.backend.services.SaveJokeService;
-import com.homeapp.backend.services.StickyNoteService;
+import com.homeapp.backend.services.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,6 +35,7 @@ import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SRAM;
 import static com.homeapp.backend.models.bike.Enums.HandleBarType.DROPS;
 import static com.homeapp.backend.models.bike.Enums.ShifterStyle.STI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -75,6 +74,8 @@ public class ControllerTest {
 
     private static boolean isSetupDone = false;
     @Autowired
+    private FuelPriceService fuelPriceService;
+    @Autowired
     private RecipeService recipeService;
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -99,6 +100,7 @@ public class ControllerTest {
     @BeforeEach
     public void setup() {
         if (!isSetupDone) {
+            fuelPriceService.run();
             saveJokeService.deleteAllJokes();
             fullBikeService.deleteAllBikes();
             Frame frame = new Frame(GRAVEL, true, false, true);
@@ -178,6 +180,15 @@ public class ControllerTest {
     public void test_That_Options_is_returned_with_Brands() throws Exception {
         this.mockMvc.perform(get(OPTIONS_URL + "StartNewBike"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_that_fuel_prices_are_returned() throws Exception {
+        MvcResult result = this.mockMvc.perform(get(TEST_API_URL + "GetFuelPrices").session(session))
+                .andExpect(status().isOk()).andReturn();
+        List<FuelPrice> prices = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+        assertTrue(prices.size() > 10);
     }
 
     /**
