@@ -112,6 +112,7 @@ public class BikePartsTest {
      */
     @AfterAll
     public void clearup() {
+        bikePartsService.reloadLinksFromBackup();
         fullBikeService.reloadBikesFromBackup();
     }
 

@@ -21,6 +21,9 @@ import java.util.*;
 
 @SpringBootApplication(scanBasePackages = "com.homeapp.backend")
 public class backend implements CommandLineRunner {
+
+    private static final Set<Part> problemParts = new HashSet<>();
+    private static final Set<Part> writeParts = new HashSet<>();
     private static final String LINKS_FILE = "src/main/resources/links.json";
     private static final ObjectMapper om = new ObjectMapper();
     private static final InfoLogger infoLogger = new InfoLogger();
@@ -47,40 +50,37 @@ public class backend implements CommandLineRunner {
      */
     public static void checkAllLinks() {
         List<Part> allParts = readLinksFile();
-        Set<Part> problemParts = new HashSet<>();
-        LinkedList<Part> partListToWriteToFile = new LinkedList<>();
         for (Part part : allParts) {
             try {
                 int statusCode = Jsoup.connect(part.getLink()).execute().statusCode();
-                partListToWriteToFile.add(part);
+                writeParts.add(part);
                 if (statusCode == 200) {
-                    setPartAttributesFromLink(problemParts, part);
+                    setPartAttributesFromLink(part);
                 } else {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                 }
             } catch (IOException e) {
-                invalidPart(problemParts, part);
+                addFailedPartToWriteList(part);
             }
         }
-        writePartsToFile(partListToWriteToFile);
         errorLogger.log("**** Please check the following links ****");
-        errorLogger.log("You have " + problemParts.size() + " issues with links ref doc");
+        errorLogger.log("\nYou have " + problemParts.size() + " issues with links ref doc!!\n");
         problemParts.forEach(part -> errorLogger.log("Internal ref: " + part.getInternalReference() + "\nLink: " + part.getLink()));
+        writePartsToFile();
         errorLogger.log("**** Checking links complete ****");
         infoLogger.log("Finished checking links!");
     }
 
     /**
      * Writes unique list of Parts back to file, to allow information to be retrieved directly from file later.
-     *
-     * @param updatedParts unique list of Parts to be written back to File.
+     * Uses the class Set writeParts as this list is accumulated through the startup process.
      */
-    private static void writePartsToFile(LinkedList<Part> updatedParts) {
+    private static void writePartsToFile() {
         infoLogger.log("Writing updated Bike Parts to file");
         try {
-            om.writeValue(new File(LINKS_FILE), updatedParts);
+            om.writeValue(new File(LINKS_FILE), writeParts);
         } catch (IOException e) {
-            errorLogger.log("An IOException occurred from method: writePartsBackFile!!See error message: " + e.getMessage() + "!!From: " + backend.class);
+            errorLogger.log("An exception occurred writing ALL parts to file!!\n" + e.getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ public class backend implements CommandLineRunner {
             return om.readValue(new File(LINKS_FILE), new TypeReference<>() {
             });
         } catch (IOException e) {
-            errorLogger.log("An IOException occurred from method: readLinksFile!!See error message: " + e.getMessage() + "!!From: " + backend.class);
+            errorLogger.log("An IOException occurred reading all links file!!\n" + e.getMessage());
         }
         return new ArrayList<>();
     }
@@ -102,7 +102,7 @@ public class backend implements CommandLineRunner {
      *
      * @param part the part that is to updated
      */
-    static void setPartAttributesFromLink(Set<Part> problemParts, Part part) {
+    private static void setPartAttributesFromLink(Part part) {
         price = "";
         try {
             String name = part.getName();
@@ -113,104 +113,104 @@ public class backend implements CommandLineRunner {
             if (part.getLink().contains("dolan-bikes")) {
                 e = Optional.ofNullable(doc.selectFirst("div.productBuy > div.productPanel"));
                 if (e.isEmpty()) {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                     return;
                 }
                 name = Optional.ofNullable(e.get().selectFirst("h1"))
                         .map(Element::text)
                         .orElseGet(() -> {
-                            invalidPart(problemParts, part);
+                            addFailedPartToWriteList(part);
                             return part.getName();
                         });
                 priceElement = Optional.ofNullable(e.get().selectFirst("span.price"));
                 if (priceElement.isPresent()) {
                     setPartPricing(priceElement.get(), part);
                 } else {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                 }
             } else if (part.getLink().contains("evans")) {
                 e = Optional.ofNullable(doc.getElementById("productDetails"));
                 if (e.isEmpty()) {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                     return;
                 }
                 name = Optional.ofNullable(e.get().getElementById("lblProductName"))
                         .map(Element::text)
                         .orElseGet(() -> {
-                            invalidPart(problemParts, part);
+                            addFailedPartToWriteList(part);
                             return part.getName();
                         });
                 priceElement = Optional.ofNullable(e.get().getElementById("lblSellingPrice"));
                 if (priceElement.isPresent()) {
                     setPartPricing(priceElement.get(), part);
                 } else {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                 }
             } else if (part.getLink().contains("wiggle") || part.getLink().contains("chainreactioncycles")) {
 
                 e = Optional.ofNullable(doc.getElementById("productDetails"));
                 if (e.isEmpty()) {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                     return;
                 }
                 name = Optional.ofNullable(e.get().getElementById("lblProductName"))
                         .map(Element::text)
                         .orElseGet(() -> {
-                            invalidPart(problemParts, part);
+                            addFailedPartToWriteList(part);
                             return part.getName();
                         });
                 priceElement = Optional.ofNullable(e.get().getElementById("lblSellingPrice"));
                 if (priceElement.isPresent()) {
                     setPartPricing(priceElement.get(), part);
                 } else {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                 }
             } else if (part.getLink().contains("halfords")) {
                 e = Optional.ofNullable(doc.getElementById("productInfoBlock"));
                 if (e.isEmpty()) {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                     return;
                 }
                 name = Optional.ofNullable(e.get().select("h1").first())
                         .map(Element::text)
                         .orElseGet(() -> {
-                            invalidPart(problemParts, part);
+                            addFailedPartToWriteList(part);
                             return part.getName();
                         });
                 priceElement = Optional.ofNullable(e.get().selectFirst("span.b-price__sale"));
                 if (priceElement.isPresent()) {
                     setPartPricing(priceElement.get(), part);
                 } else {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                 }
             } else if (part.getLink().contains("sjscycles")) {
                 e = Optional.ofNullable(doc);
                 if (e.isEmpty()) {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                     return;
                 }
                 name = Optional.ofNullable(e.get().selectFirst("title"))
                         .map(Element::text)
                         .orElseGet(() -> {
-                            invalidPart(problemParts, part);
+                            addFailedPartToWriteList(part);
                             return part.getName();
                         });
                 priceElement = Optional.ofNullable(e.get().selectFirst("span.f-xxxlarge"));
                 if (priceElement.isPresent()) {
                     setPartPricing(priceElement.get(), part);
                 } else {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                 }
             } else if (part.getLink().contains("halo")) {
                 e = Optional.ofNullable(doc.selectFirst("div.productDetails"));
                 if (e.isEmpty()) {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                     return;
                 }
                 name = Optional.ofNullable(e.get().select("h1").first())
                         .map(Element::text)
                         .orElseGet(() -> {
-                            invalidPart(problemParts, part);
+                            addFailedPartToWriteList(part);
                             return part.getName();
                         });
                 priceElement = Optional.ofNullable(e.get().selectFirst("div.priceSummary"));
@@ -220,22 +220,22 @@ public class backend implements CommandLineRunner {
                         if (priceElement.isPresent()) {
                             setPartPricing(priceElement.get(), part);
                         } else {
-                            invalidPart(problemParts, part);
+                            addFailedPartToWriteList(part);
                         }
                     } else {
                         priceElement = Optional.ofNullable(e.get().selectFirst("div.priceSummary > span"));
                         if (priceElement.isPresent()) {
                             setPartPricing(priceElement.get(), part);
                         } else {
-                            invalidPart(problemParts, part);
+                            addFailedPartToWriteList(part);
                         }
                     }
                 } else {
-                    invalidPart(problemParts, part);
+                    addFailedPartToWriteList(part);
                 }
             } else {
-                errorLogger.log("Trying to use unknown website");
-                invalidPart(problemParts, part);
+                warnLogger.log("Trying to use unknown website " + part.getLink());
+                addFailedPartToWriteList(part);
 
             }
             warnLogger.log("Found: " + name + "\nFor: " + price + "\nFrom: " + part.getLink());
@@ -243,8 +243,8 @@ public class backend implements CommandLineRunner {
             part.setPrice(price);
         } catch (
                 IOException e) {
-            invalidPart(problemParts, part);
-            errorLogger.log("An IOException occurred from: getPartFromLink!!See error message: " + e.getMessage() + "!!For bike Component: " + part.getComponent());
+            addFailedPartToWriteList(part);
+            warnLogger.log("Error adding price for part: " + part.getInternalReference());
         }
     }
 
@@ -271,8 +271,12 @@ public class backend implements CommandLineRunner {
         }
     }
 
-    private static void invalidPart(Set<Part> problemParts, Part part) {
+    /**
+     * Keeps failed links in file output while marking them as out-of-date.
+     */
+    private static void addFailedPartToWriteList(Part part) {
         problemParts.add(part);
         part.setIsUptoDate(false);
+        writeParts.add(part);
     }
 }

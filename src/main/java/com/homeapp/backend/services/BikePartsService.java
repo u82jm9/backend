@@ -1,5 +1,7 @@
 package com.homeapp.backend.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.bike.BikeParts;
 import com.homeapp.backend.models.bike.Error;
 import com.homeapp.backend.models.bike.FullBike;
@@ -11,10 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static com.homeapp.backend.models.bike.Enums.BrakeType.RIM;
@@ -29,11 +35,9 @@ import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SHIMANO;
 @Scope("singleton")
 public class BikePartsService {
 
-    private static final String chainReactionURL = "https://www.chainreactioncycles.com/";
-    private static final String wiggleURL = "https://www.wiggle.com/";
-    private static final String haloURL = "https://www.halowheels.com/shop/wheels/";
-    private static final String dolanURL = "https://www.dolan-bikes.com/";
-    private static final String genesisURL = "https://www.genesisbikes.co.uk/";
+    private final static String LINKS_FILE = "src/main/resources/links.json";
+    private final static String BACKUP_LINKS_FILE = "src/main/resources/links_backup.json";
+    private static final ObjectMapper om = new ObjectMapper();
     private static FullBike bike;
     private BikeParts bikeParts;
     private final InfoLogger infoLogger = new InfoLogger();
@@ -82,30 +86,35 @@ public class BikePartsService {
     }
 
     private void getWheelsLink() {
-        String ref;
         bike = fullBikeService.getBike();
-        infoLogger.log("Method for getting Bike Wheels from Web");
-        if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
-            // Wheels which require Gears are from Wiggle
-            if (!bike.getBrakeType().equals(RIM)) {
-                if (bike.getWheelPreference().equals("Cheap")) {
-                    ref = "WheelRimCheap";
-                } else {
-                    ref = "WheelRimExpensive";
-                }
-            } else {
-                if (bike.getWheelPreference().equals("Cheap")) {
-                    ref = "WheelRimExpensive";
-                } else {
-                    ref = "WheelDiscExpensive";
-                }
-            }
+        String ref = "";
+        if (!Objects.equals(bike.getWheelPreference(), "Expensive") && !Objects.equals(bike.getWheelPreference(), "Cheap")) {
+            bikeParts.getErrorMessages().add(new Error("Wheels", "GetWheelsLink", "Wheel Preference is not set to Cheap or Expensive"));
+            errorLogger.log("An Error occurred from: GetWheelsLink!!\nWheel Preference is not set to Cheap or Expensive!!");
         } else {
-            // Wheels for Single Speed are from Halo
-            if (bike.getWheelPreference().equals("Cheap")) {
-                ref = "WheelFixieCheap";
+            infoLogger.log("Method for getting Bike Wheels from Web");
+            if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
+                // Wheels which require Gears are from Wiggle
+                if (!bike.getBrakeType().equals(RIM)) {
+                    if (bike.getWheelPreference().equals("Cheap")) {
+                        ref = "WheelRimCheap";
+                    } else {
+                        ref = "WheelRimExpensive";
+                    }
+                } else {
+                    if (bike.getWheelPreference().equals("Cheap")) {
+                        ref = "WheelRimExpensive";
+                    } else {
+                        ref = "WheelDiscExpensive";
+                    }
+                }
             } else {
-                ref = "WheelFixieExpensive";
+                // Wheels for Single Speed are from Halo
+                if (bike.getWheelPreference().equals("Cheap")) {
+                    ref = "WheelFixieCheap";
+                } else {
+                    ref = "WheelFixieExpensive";
+                }
             }
         }
         assert shimanoGroupsetService != null;
@@ -181,5 +190,25 @@ public class BikePartsService {
         bikeParts.setTotalBikePrice(total);
         bikeParts.setTotalPriceAsString(NumberFormat.getCurrencyInstance(Locale.UK).format(total));
 
+    }
+
+    public void reloadLinksFromBackup() {
+        infoLogger.log("Re-loading links from backup");
+        try {
+            List<Part> parts = om.readValue(new File(BACKUP_LINKS_FILE), new TypeReference<>() {
+            });
+            writeLinksToFile(parts);
+        } catch (IOException e) {
+            errorLogger.log("Error while reading backup links file");
+        }
+    }
+
+    private void writeLinksToFile(List<Part> parts) {
+        infoLogger.log("Writing backup links to file");
+        try {
+            om.writeValue(new File(LINKS_FILE), parts);
+        } catch (IOException e) {
+            errorLogger.log("Error while writing links to file");
+        }
     }
 }

@@ -33,46 +33,53 @@ public class RecipeService {
         ProcessedRecipe processedRecipe = new ProcessedRecipe();
         try {
             Optional<Element> e;
-            Document doc = Jsoup.connect(recipeLink).get();
-            if (recipeLink.contains("bbc.co.uk")) {
-                infoLogger.log("Processing BBC recipe link: " + recipeLink);
-                e = Optional.ofNullable(doc.getElementById("main-content"));
-                if (e.isPresent()) {
-                    Element mainContent = e.get();
-                    processedRecipe.setRecipeName(mainContent.getElementById("main-heading").select("h1").text());
-                    populateBBCIngredients(mainContent, processedRecipe);
-                    populateBBCInstructions(mainContent, processedRecipe);
-                    populateBBCNotes(mainContent, processedRecipe);
-                } else {
-                    warnLogger.log("No main content found for recipe: " + recipeLink);
+            try {
+                // Try with enhanced headers first
+                Document doc = Jsoup.connect(recipeLink)
+                        .timeout(10000)
+                        .get();
+
+                // Process the document based on the site
+                processDocument(doc, recipeLink, processedRecipe);
+            } catch (org.jsoup.HttpStatusException httpEx) {
+                errorLogger.log("HTTP Error " + httpEx.getStatusCode() + " for recipe: " + recipeLink);
+                if (httpEx.getStatusCode() == 403) {
+                    warnLogger.log("Recipe site blocked the request (403 Forbidden). The site may require JavaScript rendering or have Cloudflare protection. URL: " + recipeLink);
                 }
-            } else if (recipeLink.contains("allrecipes.com")) {
-                infoLogger.log("Processing allrecipes recipe link: " + recipeLink);
-                e = Optional.ofNullable(doc.getElementById("main"));
-                if (e.isPresent()) {
-                    Element mainContent = e.get();
-                    processedRecipe.setRecipeName(mainContent.getElementById("article-header--recipe_1-0").select("h1").text());
-                    populateAllRecipeIngredients(mainContent, processedRecipe);
-                    populateAllRecipeInstructions(mainContent, processedRecipe);
-                } else {
-                    warnLogger.log("No main content found for recipe: " + recipeLink);
-                }
-            } else if (recipeLink.contains("bbcgoodfood.com")) {
-                infoLogger.log("Processing BBC Good Food recipe link: " + recipeLink);
-                e = Optional.ofNullable(doc.select("div.post.recipe").first());
-                if (e.isPresent()) {
-                    Element mainContent = e.get();
-                    processedRecipe.setRecipeName(mainContent.select("div.post-header__title").select("h1").text());
-                    populateBBCGoodFoodIngredients(mainContent, processedRecipe);
-                    populateBBCGoodFoodInstructions(mainContent, processedRecipe);
-                } else {
-                    warnLogger.log("No main content found for recipe: " + recipeLink);
-                }
+                throw httpEx;
             }
         } catch (IOException e) {
             errorLogger.log("An IOException occurred processing recipe: " + recipeLink + "!! See error message: " + e);
         }
         return processedRecipe;
+    }
+
+    private void processDocument(Document doc, String recipeLink, ProcessedRecipe processedRecipe) {
+        Optional<Element> e;
+        if (recipeLink.contains("bbc.co.uk")) {
+            infoLogger.log("Processing BBC recipe link: " + recipeLink);
+            e = Optional.ofNullable(doc.getElementById("main-content"));
+            if (e.isPresent()) {
+                Element mainContent = e.get();
+                processedRecipe.setRecipeName(mainContent.getElementById("main-heading").select("h1").text());
+                populateBBCIngredients(mainContent, processedRecipe);
+                populateBBCInstructions(mainContent, processedRecipe);
+                populateBBCNotes(mainContent, processedRecipe);
+            } else {
+                warnLogger.log("No main content found for recipe: " + recipeLink);
+            }
+        } else if (recipeLink.contains("bbcgoodfood.com")) {
+            infoLogger.log("Processing BBC Good Food recipe link: " + recipeLink);
+            e = Optional.ofNullable(doc.select("div.post.recipe").first());
+            if (e.isPresent()) {
+                Element mainContent = e.get();
+                processedRecipe.setRecipeName(mainContent.select("div.post-header__title").select("h1").text());
+                populateBBCGoodFoodIngredients(mainContent, processedRecipe);
+                populateBBCGoodFoodInstructions(mainContent, processedRecipe);
+            } else {
+                warnLogger.log("No main content found for recipe: " + recipeLink);
+            }
+        }
     }
 
     private void populateBBCGoodFoodInstructions(Element mainContent, ProcessedRecipe processedRecipe) {
@@ -99,18 +106,6 @@ public class RecipeService {
                 ingredientsMap.put(sectionTitle, extractTextFromElements(ingredientElements));
             }
         }
-        processedRecipe.setIngredients(ingredientsMap);
-    }
-
-    private void populateAllRecipeInstructions(Element mainContent, ProcessedRecipe processedRecipe) {
-        List<Element> instructionElements = mainContent.select("div.mm-recipes-steps__content").first().select("li");
-        processedRecipe.setInstructions(extractTextFromElements(instructionElements));
-    }
-
-    private void populateAllRecipeIngredients(Element mainContent, ProcessedRecipe processedRecipe) {
-        HashMap<String, List<String>> ingredientsMap = new HashMap<>();
-        List<Element> ingredientElements = mainContent.select("div.mm-recipes-structured-ingredients").first().select("li");
-        ingredientsMap.put("Main", extractTextFromElements(ingredientElements));
         processedRecipe.setIngredients(ingredientsMap);
     }
 

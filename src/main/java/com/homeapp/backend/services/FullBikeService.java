@@ -38,7 +38,6 @@ public class FullBikeService {
     private final InfoLogger infoLogger = new InfoLogger();
     private final WarnLogger warnLogger = new WarnLogger();
     private final ErrorLogger errorLogger = new ErrorLogger();
-    private final ShimanoGroupsetService shimanoGroupsetService;
 
     /**
      * Instantiates a new Full bike service.
@@ -50,7 +49,6 @@ public class FullBikeService {
      */
     @Autowired
     public FullBikeService(@Lazy ShimanoGroupsetService shimanoGroupsetService) {
-        this.shimanoGroupsetService = shimanoGroupsetService;
         this.bike = new FullBike();
         this.bikeList = readBikesFile();
     }
@@ -74,8 +72,7 @@ public class FullBikeService {
         infoLogger.log("Reloading Bikes From Backup File");
         try {
             deleteAllBikes();
-            File file = new File(JSON_BIKES_FILE_BACKUP);
-            List<FullBike> bikes = om.readValue(file, new TypeReference<>() {
+            List<FullBike> bikes = om.readValue(new File(JSON_BIKES_FILE_BACKUP), new TypeReference<>() {
             });
             writeBikesToFile(bikes);
         } catch (IOException e) {

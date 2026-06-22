@@ -1,18 +1,27 @@
 package com.homeapp.backend;
 
 import com.homeapp.backend.models.ProcessedRecipe;
+import com.homeapp.backend.models.logger.ErrorLogger;
 import com.homeapp.backend.services.RecipeService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class RecipeTests {
+
+    @Autowired
+    RecipeService recipeService;
+
+    @Autowired
+    ErrorLogger errorLogger;
 
     private static HashMap<String, List<String>> getExpectedIngredients() {
         HashMap<String, List<String>> expectedIngredients = new HashMap<>();
@@ -61,7 +70,6 @@ public class RecipeTests {
 
     @Test
     public void test_That_a_BBC_recipe_link_can_be_processed() {
-        RecipeService recipeService = new RecipeService();
         String recipeLink = "https://www.bbc.co.uk/food/recipes/one-pan_pastitsio_74748";
         String expectedRecipeName = "One-pan pastitsio";
         HashMap<String, List<String>> expectedIngredients = getExpectedIngredients();
@@ -75,8 +83,20 @@ public class RecipeTests {
     }
 
     @Test
+    public void test_That_an_allrecipes_recipe_link_fails() {
+        String recipeLink = "https://www.allrecipes.com/one-pot-turmeric-chicken-and-rice-recipe-8716130";
+        ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
+        TreeSet<String> errors = errorLogger.getLogs();
+        assertFalse(errors.isEmpty());
+        assertTrue(errors.stream().anyMatch(log -> log.contains("HTTP Error 403 for recipe")));
+        assertNull(processedRecipe.getRecipeName());
+        assertNull(processedRecipe.getIngredients());
+        assertNull(processedRecipe.getInstructions());
+        assertNull(processedRecipe.getAdditionalNotes());
+    }
+
+    @Test
     public void test_That_a_BBC_recipe_link_chicken_and_chips_can_be_processed() {
-        RecipeService recipeService = new RecipeService();
         String recipeLink = "https://www.bbc.co.uk/food/recipes/barbecue_pulled_chicken_47216";
         String expectedRecipeName = "Barbecue pulled chicken with sweet potato wedges";
         HashMap<String, List<String>> expectedIngredients = new HashMap<>();
@@ -105,50 +125,7 @@ public class RecipeTests {
     }
 
     @Test
-    public void test_That_a_ALL_RECIPES_recipe_link_can_be_processed() {
-        RecipeService recipeService = new RecipeService();
-        String recipeLink = "https://www.allrecipes.com/recipe/11786/hearty-vegetable-lasagna/";
-        String expectedRecipeName = "Hearty Vegetable Lasagna";
-        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
-        List<String> mainIngredients = new ArrayList<>();
-        mainIngredients.add("¾ cup chopped onion");
-        mainIngredients.add("2 eggs");
-        expectedIngredients.put("Main", mainIngredients);
-        List<String> expectedInstructions = new ArrayList<>();
-        expectedInstructions.add("Heat oil in a large saucepan. Add mushrooms, green peppers, onion, and garlic; cook and stir until tender, about 5 minutes. Stir in pasta sauce and basil; bring to a boil. Reduce heat, and simmer for 15 minutes.");
-        expectedInstructions.add("Spread 1 cup cooked tomato and vegetable sauce into the bottom of the prepared baking dish. Lay down 1/2 of the lasagna noodles and layer 1/2 each of the ricotta mix, sauce, and Parmesan cheese on top. Repeat layering again with noodles, ricotta mix, sauce, and Parmesan cheese. Top with remaining 2 cups mozzarella.");
-        ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
-        assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
-        assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
-        assertNull(processedRecipe.getAdditionalNotes());
-        assertTrue(processedRecipe.getIngredients().get("Main").containsAll(expectedIngredients.get("Main")));
-        assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
-    }
-
-    @Test
-    public void test_That_a_ALL_RECIPES_recipe_Shrimp_stirfry() {
-        RecipeService recipeService = new RecipeService();
-        String recipeLink = "https://www.allrecipes.com/recipe/231376/shrimp-stirfry/";
-        String expectedRecipeName = "Shrimp Stirfry";
-        HashMap<String, List<String>> expectedIngredients = new HashMap<>();
-        List<String> mainIngredients = new ArrayList<>();
-        mainIngredients.add("1 ½ cups sliced king mushrooms");
-        mainIngredients.add("2 cups bean sprouts");
-        expectedIngredients.put("Main", mainIngredients);
-        List<String> expectedInstructions = new ArrayList<>();
-        expectedInstructions.add("Pour water and oyster sauce into shrimp mixture; simmer until shrimp are bright pink on the outside and the meat is no longer transparent in the center, 5 minutes. Stir well.");
-        expectedInstructions.add("Mix noodles and bean sprouts into shrimp mixture; toss to combine. Cook until noodles are heated through, 2 minutes. Toss again.");
-        ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
-        assertEquals(expectedRecipeName, processedRecipe.getRecipeName());
-        assertEquals(processedRecipe.getIngredients().keySet(), expectedIngredients.keySet());
-        assertNull(processedRecipe.getAdditionalNotes());
-        assertTrue(processedRecipe.getIngredients().get("Main").containsAll(expectedIngredients.get("Main")));
-        assertTrue(processedRecipe.getInstructions().containsAll(expectedInstructions));
-    }
-
-    @Test
     public void test_That_a_BBC_Good_Food_recipe_link_can_be_processed() {
-        RecipeService recipeService = new RecipeService();
         String recipeLink = "https://www.bbcgoodfood.com/recipes/easy-vegetable-lasagne";
         String expectedRecipeName = "Vegetarian lasagne";
         HashMap<String, List<String>> expectedIngredients = getBBCGoodFoodIngredientsHashMap();
@@ -163,7 +140,6 @@ public class RecipeTests {
 
     @Test
     public void test_That_a_BBC_Good_Food_banana_bread_can_be_processed() {
-        RecipeService recipeService = new RecipeService();
         String recipeLink = "https://www.bbcgoodfood.com/recipes/brilliant-banana-loaf";
         String expectedRecipeName = "Banana bread";
         HashMap<String, List<String>> expectedIngredients = new HashMap<>();
