@@ -71,4 +71,9 @@ public class ErrorLogger extends BaseLogger {
             logToFile();
         }
     }
+
+    @Override
+    public TreeSet<String> getLogs() {
+        return logs;
+    }
 }

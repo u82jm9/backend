@@ -108,6 +108,15 @@ public class ImageTest {
     }
 
     /**
+     * Test that complex bike gets correct number of images.
+     */
+    @Test
+    public void test_Bike4_gets_11_images() {
+        List<Image> images = imageService.getImages(fullBikeService.getBikeUsingName("bike4").get());
+        assertEquals(11, images.size());
+    }
+
+    /**
      * Test that images are not null.
      */
     @Test

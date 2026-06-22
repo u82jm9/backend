@@ -50,4 +50,11 @@ public abstract class BaseLogger {
      * @param message the message
      */
     protected abstract void log(String message);
+
+    /**
+     * Returns all logs currently held by this logger instance (read from file on construction).
+     *
+     * @return the tree set of log entries
+     */
+    public abstract TreeSet<String> getLogs();
 }

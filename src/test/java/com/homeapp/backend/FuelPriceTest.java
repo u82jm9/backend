@@ -3,7 +3,7 @@ package com.homeapp.backend;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.FuelPrice;
-import com.homeapp.backend.services.FuelPriceService;;
+import com.homeapp.backend.services.FuelPriceService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,8 +28,7 @@ public class FuelPriceTest {
 
     @Autowired
     private FuelPriceService fuelPriceService;
-
-    private String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    private final String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
     /**
      * Sets up testing suite.
@@ -37,7 +36,7 @@ public class FuelPriceTest {
      * New specific test Notes are added. This is to make testing more rigid and predictable.
      */
     @BeforeAll
-    public void setup() throws IOException {
+    public void setup() {
         fuelPriceService.run();
     }
 
@@ -51,7 +50,7 @@ public class FuelPriceTest {
 
     @Test
     public void test_json_file_created() {
-        File jsonFile = new File("src/main/resources/fuel-prices/fuel_" + today + ".json");
+        File jsonFile = new File("src/main/resources/fuel-prices/all_prices_" + today + ".json");
         assertTrue(jsonFile.exists());
     }
 
@@ -59,9 +58,15 @@ public class FuelPriceTest {
     public void test_json_file_contains_Fuel_Prices() throws IOException {
         ObjectMapper om = new ObjectMapper();
         List<FuelPrice> filePrices = om.readValue(
-                new File("src/main/resources/fuel-prices/fuel_" + today + ".json"), new TypeReference<List<FuelPrice>>() {
+                new File("src/main/resources/fuel-prices/all_prices_" + today + ".json"), new TypeReference<List<FuelPrice>>() {
                 }
         );
         assertTrue(filePrices.size() > 10);
+    }
+
+    @Test
+    public void test_service_returns_list_of_prices() {
+        List<FuelPrice> filePrices = fuelPriceService.retriveJSONFile();
+        assertTrue(filePrices.size() < 15);
     }
 }

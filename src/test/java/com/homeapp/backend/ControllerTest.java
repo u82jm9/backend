@@ -2,13 +2,14 @@ package com.homeapp.backend;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.homeapp.backend.controller.StickyNoteController;
 import com.homeapp.backend.models.DTOJoke;
 import com.homeapp.backend.models.DTOLog;
 import com.homeapp.backend.models.DTORecipe;
 import com.homeapp.backend.models.FuelPrice;
+import com.homeapp.backend.models.bike.CombinedData;
 import com.homeapp.backend.models.bike.Frame;
 import com.homeapp.backend.models.bike.FullBike;
+import com.homeapp.backend.models.bike.Options;
 import com.homeapp.backend.models.note.DTOnote;
 import com.homeapp.backend.models.note.StickyNote;
 import com.homeapp.backend.services.*;
@@ -16,13 +17,19 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +41,7 @@ import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SRAM;
 import static com.homeapp.backend.models.bike.Enums.HandleBarType.DROPS;
 import static com.homeapp.backend.models.bike.Enums.ShifterStyle.STI;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,7 +78,19 @@ public class ControllerTest {
      */
     final static String OPTIONS_URL = "/Options/";
 
+    /**
+     * The constant PARTS URL.
+     */
+    final static String PARTS_URL = "/Parts/";
+
+    /**
+     * The constant IMAGE URL.
+     */
+    final static String IMAGE_URL = "/Image/";
+
     private static boolean isSetupDone = false;
+    @Autowired
+    private AdventureService adventureService;
     @Autowired
     private FuelPriceService fuelPriceService;
     @Autowired
@@ -82,15 +100,16 @@ public class ControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private StickyNoteController stickyNoteController;
-    @Autowired
     private FullBikeService fullBikeService;
     @Autowired
     private StickyNoteService stickyNoteService;
     @Autowired
+    private BikePartsService bikePartsService;
+    @Autowired
     private SaveJokeService saveJokeService;
     private MockMvc mockMvc;
     private MockHttpSession session;
+    private static final String tile = "test/9-1";
 
     /**
      * Sets up testing suite.
@@ -104,10 +123,11 @@ public class ControllerTest {
             saveJokeService.deleteAllJokes();
             fullBikeService.deleteAllBikes();
             Frame frame = new Frame(GRAVEL, true, false, true);
-            FullBike bike = new FullBike("bike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
+            FullBike bike = new FullBike("bike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI, "Expensive");
+
             fullBikeService.create(bike);
             Frame frame1 = new Frame(ROAD, false, true, true);
-            FullBike bike1 = new FullBike("bike1", frame1, RIM, SHIMANO, DROPS, 2L, 10L, STI);
+            FullBike bike1 = new FullBike("bike1", frame1, RIM, SHIMANO, DROPS, 2L, 10L, STI, "Fancy");
             fullBikeService.create(bike1);
 
             Map<String, Boolean> map3 = new HashMap<>();
@@ -137,11 +157,50 @@ public class ControllerTest {
      */
     @AfterAll
     public void clearup() {
+        bikePartsService.reloadLinksFromBackup();
         fullBikeService.reloadBikesFromBackup();
         stickyNoteService.reloadNotesFromBackup();
         saveJokeService.reloadJokesFromBackup();
     }
 
+    @Test
+    public void test_a_file_can_be_uploaded_via_API() throws Exception {
+        Path path = Path.of("src/main/adventures/test/01/test_image.jpg");
+        MockMultipartFile multipartFile = new MockMultipartFile(
+                "file",
+                "test_image.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                Files.readAllBytes(path)
+        );
+        MockMultipartFile tileNamePart = new MockMultipartFile(
+                "tileName",
+                tile,
+                MediaType.TEXT_PLAIN_VALUE,
+                tile.getBytes(StandardCharsets.UTF_8)
+        );
+        String url = TEST_API_URL + "UploadFile";
+        this.mockMvc.perform(multipart(url)
+                        .file(multipartFile)
+                        .file(tileNamePart)
+                        .session(session))
+                .andExpect(status().isAccepted());
+        assertFalse(adventureService.getFiles(tile).isEmpty());
+    }
+
+    @Test
+    public void test_List_Of_String_Files_Names_Returned() throws Exception {
+        MvcResult result = this.mockMvc.perform(get(TEST_API_URL + "/GetFilesFromDirectory/test/01").session(session))
+                .andExpect(status().isOk()).andReturn();
+        List<String> files = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
+        assertEquals(4, files.size());
+    }
+
+    @Test
+    public void test_Specific_File_Returned() throws Exception {
+        this.mockMvc.perform(get(TEST_API_URL + "/GetSpecificFile/test/01/test_image.jpg").session(session))
+                .andExpect(status().isOk());
+    }
 
     /**
      * Test list of Recipe sites can be returned and get HTTP - status OK
@@ -169,17 +228,6 @@ public class ControllerTest {
         recipe.setRecipeLink("https://www.bbc.co.uk/food/recipes/healthy_meatballs_05528");
         this.mockMvc.perform(post(RECIPE_URL + "ProcessRecipe").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isOk());
-    }
-
-    /**
-     * Test Options start new Bike API return HTTP - status OK
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void test_That_Options_is_returned_with_Brands() throws Exception {
-        this.mockMvc.perform(get(OPTIONS_URL + "StartNewBike"))
-                .andExpect(status().isOk());
     }
 
     @Test
@@ -312,6 +360,59 @@ public class ControllerTest {
     }
 
     /**
+     * Test Options start new Bike API return HTTP - status OK
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_Options_is_returned_with_Brands() throws Exception {
+        this.mockMvc.perform(get(OPTIONS_URL + "StartNewBike"))
+                .andExpect(status().isOk());
+    }
+
+    /**
+     * Test Options for in progress bike
+     * return HTTP - status OK
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_Options_is_returned_for_Combined_Object() throws Exception {
+        CombinedData combinedData = new CombinedData();
+        FullBike bike = fullBikeService.getBikeUsingName("bike").get();
+        combinedData.setBike(bike);
+        Options options = new Options();
+        options.setWheelPreference(Collections.singletonList("Expensive"));
+        combinedData.setOptions(options);
+        this.mockMvc.perform(post(OPTIONS_URL + "GetOptions").session(session).contentType("application/json")
+                .content(objectMapper.writeValueAsString(combinedData))).andExpect(status().isOk());
+    }
+
+    /**
+     * Test Full Bike start new Bike API return HTTP - status Accepted
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_Full_Bike_is_returned() throws Exception {
+        this.mockMvc.perform(get(FULL_BIKE_URL + "StartNewBike"))
+                .andExpect(status().isAccepted());
+    }
+
+    /**
+     * Test Full Bike Images are returned
+     * return HTTP - status OK
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_Bike_Images_are_returned() throws Exception {
+        FullBike bike = fullBikeService.getBikeUsingName("bike").get();
+        this.mockMvc.perform(post(IMAGE_URL + "GetImages").session(session).contentType("application/json")
+                .content(objectMapper.writeValueAsString(bike))).andExpect(status().isOk());
+    }
+
+    /**
      * Test that a list of full bikes can be returned.
      *
      * @throws Exception the exception
@@ -372,5 +473,31 @@ public class ControllerTest {
         FullBike testBike = new FullBike("testBike", frame, MECHANICAL_DISC, SHIMANO, DROPS, 1L, 11L, STI);
         this.mockMvc.perform(post(FULL_BIKE_URL + "AddFullBike").session(session).contentType("application/json")
                 .content(objectMapper.writeValueAsString(testBike))).andExpect(status().isCreated());
+    }
+
+    /**
+     * Test that a list of full bike Parts can be returned.
+     * return HTTP status OK
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_a_list_of_Parts_can_be_returned() throws Exception {
+        FullBike bike = fullBikeService.getBikeUsingName("bike1").get();
+        this.mockMvc.perform(post(PARTS_URL + "GetAllParts").session(session).contentType("application/json")
+                .content(objectMapper.writeValueAsString(bike))).andExpect(status().isOk());
+    }
+
+    /**
+     * Test that a list of full bike Parts can be returned.
+     * return HTTP status Accepted
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void test_That_a_list_of_Parts_can_be_returned_different_bike() throws Exception {
+        FullBike bike = fullBikeService.getBikeUsingName("bike").get();
+        this.mockMvc.perform(post(PARTS_URL + "GetAllParts").session(session).contentType("application/json")
+                .content(objectMapper.writeValueAsString(bike))).andExpect(status().isAccepted());
     }
 }

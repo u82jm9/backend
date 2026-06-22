@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * The parts have the prices summed into a total for display on FE.
  */
 @RestController
-@RequestMapping("FullBike/")
+@RequestMapping("Parts/")
 @CrossOrigin(origins = "http://localhost:3000")
 public class BikePartsController {
 

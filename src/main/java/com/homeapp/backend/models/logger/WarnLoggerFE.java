@@ -68,4 +68,9 @@ public class WarnLoggerFE extends BaseLogger {
             logToFile();
         }
     }
+
+    @Override
+    public TreeSet<String> getLogs() {
+        return logs;
+    }
 }

@@ -6,17 +6,21 @@ import com.homeapp.backend.models.FuelPrice;
 import com.homeapp.backend.models.logger.ErrorLoggerFE;
 import com.homeapp.backend.models.logger.InfoLoggerFE;
 import com.homeapp.backend.models.logger.WarnLoggerFE;
+import com.homeapp.backend.services.AdventureService;
 import com.homeapp.backend.services.FuelPriceService;
 import com.homeapp.backend.services.SaveJokeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 /**
  * The Test controller.
@@ -26,6 +30,7 @@ import java.util.List;
 @RequestMapping("Test/")
 @CrossOrigin(origins = "http://localhost:3000")
 public class TestController {
+    private final AdventureService adventureService = new AdventureService();
     private final SaveJokeService saveJokeService = new SaveJokeService();
     private final FuelPriceService fuelPriceService = new FuelPriceService();
     private final InfoLoggerFE infoLogger = new InfoLoggerFE();
@@ -83,5 +88,26 @@ public class TestController {
     public ResponseEntity<List<FuelPrice>> getFuelPrices() {
         List<FuelPrice> prices = fuelPriceService.retriveJSONFile();
         return new ResponseEntity<>(prices, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "UploadFile", consumes = MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<HttpStatus> uploadFile(@RequestPart("file") MultipartFile file, @RequestPart("tileName") String tileName) {
+        adventureService.uploadFile(file, tileName);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("GetFilesFromDirectory/{directory}/{tile}")
+    public ResponseEntity<List<String>> getFilesFromDirectory(@PathVariable String directory, @PathVariable String tile) {
+        String directoryTile = directory + "/" + tile;
+        ArrayList<String> resources = new ArrayList<>();
+        adventureService.getFiles(directoryTile).forEach(r -> resources.add(r.getFilename()));
+        return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+
+    @GetMapping("GetSpecificFile/{directory}/{tile}/{fileName}")
+    public Resource getSpecificFile(@PathVariable String directory, @PathVariable String tile, @PathVariable String fileName) {
+        String filePath = directory + "/" + tile + "/" + fileName;
+        Resource resource = adventureService.getSpecificFile(filePath);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource).getBody();
     }
 }
