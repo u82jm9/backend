@@ -64,7 +64,7 @@ public class backend implements CommandLineRunner {
             }
         }
         errorLogger.log("**** Please check the following links ****");
-        errorLogger.log("\nYou have " + problemParts.size() + " issues with links ref doc!!\n");
+        errorLogger.log("You have " + problemParts.size() + " issues with links ref doc!!");
         problemParts.forEach(part -> errorLogger.log("Internal ref: " + part.getInternalReference() + "\nLink: " + part.getLink()));
         writePartsToFile();
         errorLogger.log("**** Checking links complete ****");
