@@ -1,6 +1,6 @@
 package com.homeapp.backend.models.bike;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * The Error object. Used by the Logger system to record issues throughout the project.

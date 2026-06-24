@@ -2,8 +2,8 @@ package com.homeapp.backend.models.bike;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 /**
  * The Part object, for a single complete Bike part.

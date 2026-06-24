@@ -1,6 +1,6 @@
 package com.homeapp.backend.models.note;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 

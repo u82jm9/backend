@@ -1,6 +1,6 @@
 package com.homeapp.backend.models.bike;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

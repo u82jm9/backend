@@ -7,7 +7,7 @@ import com.homeapp.backend.models.bike.Enums.ShifterStyle;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * The Full bike object, this pulls in all relevant information for a single bike.
