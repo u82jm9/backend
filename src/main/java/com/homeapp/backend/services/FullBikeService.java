@@ -1,7 +1,5 @@
 package com.homeapp.backend.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.bike.Frame;
 import com.homeapp.backend.models.bike.FullBike;
 import com.homeapp.backend.models.logger.ErrorLogger;
@@ -10,9 +8,10 @@ import com.homeapp.backend.models.logger.WarnLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +58,7 @@ public class FullBikeService {
             File file = new File(JSON_BIKES_FILE);
             return om.readValue(file, new TypeReference<>() {
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("An IOException occurred from method: readBikesFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
         return new ArrayList<>();
@@ -75,7 +74,7 @@ public class FullBikeService {
             List<FullBike> bikes = om.readValue(new File(JSON_BIKES_FILE_BACKUP), new TypeReference<>() {
             });
             writeBikesToFile(bikes);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("An IOException occurred from method: readBikesFromBackup!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
     }
@@ -91,7 +90,7 @@ public class FullBikeService {
         try {
             om.writeValue(new File(JSON_BIKES_FILE), list);
             bikeList = list;
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("An IOException occurred from method: writeBikesToFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
     }

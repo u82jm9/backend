@@ -1,12 +1,12 @@
 package com.homeapp.backend.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.FuelPrice;
 import com.homeapp.backend.models.logger.ErrorLogger;
 import com.homeapp.backend.models.logger.InfoLogger;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -91,7 +91,7 @@ public class FuelPriceService {
                     }
             );
             totalPriceList.addAll(generatePriceList(filePrices, fuelPrices, "Diesel"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Exception while reading diesel prices file: " + e.getMessage());
         }
     }
@@ -104,7 +104,7 @@ public class FuelPriceService {
                     }
             );
             totalPriceList.addAll(generatePriceList(filePrices, fuelPrices, "Petrol"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Exception while reading petrol prices file: " + e.getMessage());
         }
     }
@@ -148,7 +148,7 @@ public class FuelPriceService {
                     }
             );
             fuelPrices.addAll(fromJson);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Exception while retrieving fuel price JSON file: " + e.getMessage());
         }
         return filterBrands(fuelPrices);

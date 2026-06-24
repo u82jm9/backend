@@ -1,11 +1,11 @@
 package com.homeapp.backend.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.DTOJoke;
 import com.homeapp.backend.models.logger.ErrorLogger;
 import com.homeapp.backend.models.logger.InfoLogger;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class SaveJokeService {
     private void saveToFile(String fileName, ArrayList<DTOJoke> jokes) {
         try {
             om.writeValue(new File(fileName), jokes);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Error Logging joke!\n" + e);
         }
     }
@@ -60,7 +60,7 @@ public class SaveJokeService {
         backupJokes();
         try {
             om.writeValue(new File(JOKES_FILE), new ArrayList<>());
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Error Deleting Jokes.\n" + e);
         }
     }
@@ -73,7 +73,7 @@ public class SaveJokeService {
                 file.createNewFile();
             }
             om.writeValue(file, currentJokes);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Error Deleting Jokes.\n" + e);
         }
     }
@@ -85,7 +85,7 @@ public class SaveJokeService {
             backupJokes = om.readValue(file, new TypeReference<>() {
             });
             saveToFile(JOKES_FILE, backupJokes);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Error Backing up files.\n" + e);
         }
     }

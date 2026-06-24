@@ -1,16 +1,10 @@
 package com.homeapp.backend.models.bike;
 
-import jakarta.persistence.*;
-
 /**
  * The Error object. Used by the Logger system to record issues throughout the project.
  */
-@Entity
 public class Error {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "partGen")
-    @SequenceGenerator(name = "partGen", sequenceName = "PART_SEQ", allocationSize = 1)
     private long partId;
 
     private String component;

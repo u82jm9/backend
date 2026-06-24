@@ -1,12 +1,11 @@
 package expired;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,7 +41,7 @@ public class CustomLogger {
             }
             return om.readValue(file, new TypeReference<>() {
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
         return new TreeSet<>();
@@ -59,7 +58,7 @@ public class CustomLogger {
             }
             return om.readValue(file, new TypeReference<>() {
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
         return new TreeSet<>();
@@ -76,7 +75,7 @@ public class CustomLogger {
             }
             return om.readValue(file, new TypeReference<>() {
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
         return new TreeSet<>();
@@ -93,7 +92,7 @@ public class CustomLogger {
             }
             return om.readValue(file, new TypeReference<>() {
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
         return new TreeSet<>();
@@ -147,7 +146,7 @@ public class CustomLogger {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
             logs.add(message);
             om.writeValue(new File(getFileName()), logs);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
     }
@@ -157,7 +156,7 @@ public class CustomLogger {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
             logs.add(message);
             om.writeValue(new File(getInfoFileName()), infoLogs);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
     }
@@ -168,7 +167,7 @@ public class CustomLogger {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
             logs.add(message);
             om.writeValue(new File(getErrorFileName()), errorLogs);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
     }
@@ -178,7 +177,7 @@ public class CustomLogger {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
             logs.add(message);
             om.writeValue(new File(getWarnFileName()), warnLogs);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
     }

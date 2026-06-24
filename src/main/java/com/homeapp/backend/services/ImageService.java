@@ -8,6 +8,7 @@ import com.homeapp.backend.models.logger.WarnLogger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,7 +33,7 @@ public class ImageService {
      * @return the list of images
      */
     public List<Image> getImages(FullBike b) {
-        List<Image> imageList = new ArrayList<>();
+        List<Image> imageList = Collections.synchronizedList(new ArrayList<>());
         infoLogger.log("Getting Images for Bike!");
         CompletableFuture<Void> frameImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseFrameImage(b)));
         CompletableFuture<Void> barImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseBarImage(b)));
