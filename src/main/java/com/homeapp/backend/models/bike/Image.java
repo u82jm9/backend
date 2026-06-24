@@ -1,6 +1,6 @@
 package com.homeapp.backend.models.bike;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * The Image object. Contains all the information the FE needs to display correct image.

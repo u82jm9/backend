@@ -1,7 +1,5 @@
 package com.homeapp.backend.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.bike.BikeParts;
 import com.homeapp.backend.models.bike.Error;
 import com.homeapp.backend.models.bike.FullBike;
@@ -12,9 +10,10 @@ import com.homeapp.backend.models.logger.WarnLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -198,7 +197,7 @@ public class BikePartsService {
             List<Part> parts = om.readValue(new File(BACKUP_LINKS_FILE), new TypeReference<>() {
             });
             writeLinksToFile(parts);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Error while reading backup links file");
         }
     }
@@ -207,7 +206,7 @@ public class BikePartsService {
         infoLogger.log("Writing backup links to file");
         try {
             om.writeValue(new File(LINKS_FILE), parts);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("Error while writing links to file");
         }
     }

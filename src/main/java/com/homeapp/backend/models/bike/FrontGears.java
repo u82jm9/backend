@@ -1,6 +1,6 @@
 package com.homeapp.backend.models.bike;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * The Front Gears object. Simplified due to only single type of components, currently not supporting SRAM or Campagnolo

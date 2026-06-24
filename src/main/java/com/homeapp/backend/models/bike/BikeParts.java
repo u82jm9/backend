@@ -1,6 +1,5 @@
 package com.homeapp.backend.models.bike;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,22 +8,16 @@ import java.util.List;
  * The Bike Parts object, a collection of parts used to create a total bike price.
  * Used as a transfer object with FE to take relevant information about bike build, like price and error messages.
  */
-@Entity
 public class BikeParts {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bikePartsGen")
-    @SequenceGenerator(name = "bikePartsGen", sequenceName = "BIKE_PARTS_SEQ", allocationSize = 1)
     private long bikePartsId;
 
-    @OneToMany
     private List<Part> listOfParts;
 
     private BigDecimal totalBikePrice;
 
     private String totalPriceAsString = "";
 
-    @OneToMany
     private List<Error> errorMessages = new ArrayList<>();
 
     /**

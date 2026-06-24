@@ -2,7 +2,7 @@ package com.homeapp.backend.models.bike;
 
 import com.homeapp.backend.models.bike.Enums.FrameStyle;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Objects;
 
 /**

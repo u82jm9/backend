@@ -1,7 +1,5 @@
 package com.homeapp.backend;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.bike.Part;
 import com.homeapp.backend.models.logger.ErrorLogger;
 import com.homeapp.backend.models.logger.InfoLogger;
@@ -13,6 +11,8 @@ import org.jsoup.nodes.Element;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +79,7 @@ public class backend implements CommandLineRunner {
         infoLogger.log("Writing updated Bike Parts to file");
         try {
             om.writeValue(new File(LINKS_FILE), writeParts);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("An exception occurred writing ALL parts to file!!\n" + e.getMessage());
         }
     }
@@ -89,7 +89,7 @@ public class backend implements CommandLineRunner {
         try {
             return om.readValue(new File(LINKS_FILE), new TypeReference<>() {
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("An IOException occurred reading all links file!!\n" + e.getMessage());
         }
         return new ArrayList<>();

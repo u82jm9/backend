@@ -1,16 +1,15 @@
 package com.homeapp.backend.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.logger.ErrorLogger;
 import com.homeapp.backend.models.logger.InfoLogger;
 import com.homeapp.backend.models.logger.WarnLogger;
 import com.homeapp.backend.models.note.StickyNote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,7 +44,7 @@ public class StickyNoteService {
             });
             warnLogger.log("Returning Populated list of Sticky Notes from file, number of notes: " + notes.size());
             return notes;
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("An IOException occurred from: readNotesFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
         warnLogger.log("Returning Empty list of Sticky Notes from file");
@@ -63,7 +62,7 @@ public class StickyNoteService {
             List<StickyNote> notes = om.readValue(file, new TypeReference<>() {
             });
             writeNotesToFile(notes);
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("An IOException occurred from: reloadNotesFromBackup!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
     }
@@ -78,7 +77,7 @@ public class StickyNoteService {
         try {
             om.writeValue(new File(JSON_NOTES_FILE), list);
             notesList = list;
-        } catch (IOException e) {
+        } catch (Exception e) {
             errorLogger.log("An IOException occurred from: writeNotesToFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
     }

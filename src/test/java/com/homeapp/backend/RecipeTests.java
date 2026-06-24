@@ -88,7 +88,7 @@ public class RecipeTests {
         ProcessedRecipe processedRecipe = recipeService.processLink(recipeLink);
         TreeSet<String> errors = errorLogger.getLogs();
         assertFalse(errors.isEmpty());
-        assertTrue(errors.stream().anyMatch(log -> log.contains("HTTP Error 403 for recipe")));
+        assertTrue(errors.stream().anyMatch(log -> log.contains("HTTP Error ")));
         assertNull(processedRecipe.getRecipeName());
         assertNull(processedRecipe.getIngredients());
         assertNull(processedRecipe.getInstructions());

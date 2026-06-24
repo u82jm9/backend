@@ -2,16 +2,11 @@ package com.homeapp.backend.models.bike;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
 /**
  * The Part object, for a single complete Bike part.
  */
-@Entity
 public class Part {
 
-    @Id
     @JsonProperty("internalReference")
     private String internalReference;
 
