@@ -1,8 +1,5 @@
 package com.homeapp.backend.services;
 
-import com.homeapp.backend.models.logger.ErrorLogger;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -17,19 +14,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
+
+import static java.util.logging.Level.*;
 
 @Service
 public class AdventureService {
+    Logger logger = Logger.getLogger(AdventureService.class.getName());
     private static final String BASE_DIR = "src/main/adventures/";
     private final String GENERATED_FILE_NAME = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now()) + "-generated_file_name";
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final WarnLogger warnLogger = new WarnLogger();
-    private final ErrorLogger errorLogger = new ErrorLogger();
 
     public void clearDirectory(String tileName) {
         Path directory = Path.of(BASE_DIR, tileName);
-        infoLogger.log("Clearing files from directory: " + directory);
+        logger.log(INFO, "Clearing files from directory: " + directory);
         checkDirectoryExists(directory);
         try (Stream<Path> paths = Files.walk(directory)) {
             paths
@@ -38,22 +36,22 @@ public class AdventureService {
                         try {
                             Files.deleteIfExists(path);
                         } catch (IOException e) {
-                            errorLogger.log("Failed to delete path: " + path + "\nError: " + e.getMessage());
+                            logger.log(SEVERE, "Failed to delete path: " + path + "\nError: " + e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            errorLogger.log("Failed to clear directory: " + directory + "\nError: " + e.getMessage());
+            logger.log(SEVERE, "Failed to clear directory: " + directory + "\nError: " + e.getMessage());
         }
     }
 
     public void uploadFile(MultipartFile file, String tileName) {
-        infoLogger.log("Uploading file: " + file.getOriginalFilename() + "\nTo: " + tileName);
+        logger.log(INFO, "Uploading file: " + file.getOriginalFilename() + "\nTo: " + tileName);
         Path directory = Path.of(BASE_DIR, tileName);
         checkDirectoryExists(directory);
 
         String originalName = file.getOriginalFilename();
         if (originalName == null || originalName.isBlank()) {
-            errorLogger.log("Uploaded file has no name");
+            logger.log(SEVERE, "Uploaded file has no name");
             originalName = GENERATED_FILE_NAME;
         }
 
@@ -62,20 +60,20 @@ public class AdventureService {
         Path destination = directory.resolve(safeFileName);
         try {
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-            infoLogger.log("Saved uploaded file to: " + destination.toAbsolutePath());
+            logger.log(INFO, "Saved uploaded file to: " + destination.toAbsolutePath());
         } catch (IOException e) {
-            errorLogger.log("Error while uploading file\n" + e.getMessage());
+            logger.log(SEVERE, "Error while uploading file\n" + e.getMessage());
         }
     }
 
     private void checkDirectoryExists(Path path) {
         if (Files.isDirectory(path)) {
-            infoLogger.log("Directory already exists: " + path);
+            logger.log(INFO, "Directory already exists: " + path);
         } else {
             try {
                 Files.createDirectories(path);
             } catch (IOException e) {
-                errorLogger.log("Failed to create directory: " + path + "\nError: " + e.getMessage());
+                logger.log(SEVERE, "Failed to create directory: " + path + "\nError: " + e.getMessage());
             }
         }
     }
@@ -83,11 +81,11 @@ public class AdventureService {
     public ArrayList<Resource> getFiles(String directory) {
         ArrayList<Resource> files = new ArrayList<>();
         Path directoryPath = Path.of(BASE_DIR + directory);
-        infoLogger.log("Getting files from directory: " + directory);
+        logger.log(INFO, "Getting files from directory: " + directory);
         checkDirectoryExists(directoryPath);
         try {
             Files.list(directoryPath).forEach(file -> {
-                Resource resource = null;
+                Resource resource;
                 try {
                     resource = new UrlResource(file.toUri());
                 } catch (MalformedURLException e) {
@@ -98,13 +96,13 @@ public class AdventureService {
                 }
             });
         } catch (IOException e) {
-            errorLogger.log(e.getMessage());
+            logger.log(SEVERE, e.getMessage());
         }
         return files;
     }
 
     public Resource getSpecificFile(String filePath) {
-        infoLogger.log("Getting file: " + filePath);
+        logger.log(INFO, "Getting file: " + filePath);
         Path basePath = Path.of(BASE_DIR).toAbsolutePath().normalize();
         Path requestedPath = basePath.resolve(filePath).normalize();
         Resource resource;
@@ -113,12 +111,12 @@ public class AdventureService {
             if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
-                warnLogger.log("Requested file does not exist or is unreadable: " + requestedPath);
+                logger.log(WARNING, "Requested file does not exist or is unreadable: " + requestedPath);
                 resource = createDummyFile();
                 return resource;
             }
         } catch (MalformedURLException e) {
-            errorLogger.log("Invalid file path requested: " + filePath + "\nError: " + e.getMessage());
+            logger.log(SEVERE, "Invalid file path requested: " + filePath + "\nError: " + e.getMessage());
             resource = createDummyFile();
             return resource;
         }
@@ -131,7 +129,7 @@ public class AdventureService {
         try {
             resource = new UrlResource(requestedPath.toUri());
         } catch (IOException e) {
-            errorLogger.log("Failed to create or access dummy file: " + requestedPath.toString() + "\nError: " + e.getMessage());
+            logger.log(SEVERE, "Failed to create or access dummy file: " + requestedPath + "\nError: " + e.getMessage());
         }
         return resource;
     }
