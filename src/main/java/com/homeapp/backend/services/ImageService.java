@@ -3,26 +3,26 @@ package com.homeapp.backend.services;
 import com.homeapp.backend.models.bike.FullBike;
 import com.homeapp.backend.models.bike.Image;
 import com.homeapp.backend.models.bike.ImageComparator;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 import static com.homeapp.backend.models.bike.Enums.BrakeType.RIM;
 import static com.homeapp.backend.models.bike.Enums.FrameStyle.SINGLE_SPEED;
 import static com.homeapp.backend.models.bike.Enums.HandleBarType.FLAT;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 
 /**
  * The Image Service Class.
  */
 @Service
 public class ImageService {
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final WarnLogger warnLogger = new WarnLogger();
+    private final Logger logger = Logger.getLogger(ImageService.class.getName());
 
     /**
      * Gets images for passed-in bike.
@@ -34,7 +34,7 @@ public class ImageService {
      */
     public List<Image> getImages(FullBike b) {
         List<Image> imageList = Collections.synchronizedList(new ArrayList<>());
-        infoLogger.log("Getting Images for Bike!");
+        logger.log(INFO, "Getting Images for Bike!");
         CompletableFuture<Void> frameImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseFrameImage(b)));
         CompletableFuture<Void> barImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseBarImage(b)));
         CompletableFuture<Void> brakeImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseBrakeImage(b)));
@@ -58,8 +58,8 @@ public class ImageService {
         CompletableFuture<Void> wheelImageFuture = CompletableFuture.runAsync(() -> imageList.add(chooseWheelImage(b)));
         CompletableFuture.allOf(frameImageFuture, barImageFuture, brakeImageFuture, chainImageFuture, cassetteImageFuture, wheelImageFuture).join();
         imageList.sort(new ImageComparator());
-        warnLogger.log("Bike: " + b);
-        warnLogger.log("Returning List: " + imageList);
+        logger.log(WARNING, "Bike: " + b);
+        logger.log(WARNING, "Returning List: " + imageList);
         return imageList;
     }
 

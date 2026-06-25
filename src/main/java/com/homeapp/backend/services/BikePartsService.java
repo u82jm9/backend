@@ -4,9 +4,6 @@ import com.homeapp.backend.models.bike.BikeParts;
 import com.homeapp.backend.models.bike.Error;
 import com.homeapp.backend.models.bike.FullBike;
 import com.homeapp.backend.models.bike.Part;
-import com.homeapp.backend.models.logger.ErrorLogger;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -21,10 +18,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 import static com.homeapp.backend.models.bike.Enums.BrakeType.RIM;
 import static com.homeapp.backend.models.bike.Enums.FrameStyle.SINGLE_SPEED;
 import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SHIMANO;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
 
 /**
  * The Bike Parts Service.
@@ -39,9 +39,7 @@ public class BikePartsService {
     private static final ObjectMapper om = new ObjectMapper();
     private static FullBike bike;
     private BikeParts bikeParts;
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final WarnLogger warnLogger = new WarnLogger();
-    private final ErrorLogger errorLogger = new ErrorLogger();
+    private final Logger logger = Logger.getLogger(BikePartsService.class.getName());
     private final FullBikeService fullBikeService;
     private final ShimanoGroupsetService shimanoGroupsetService;
 
@@ -89,9 +87,9 @@ public class BikePartsService {
         String ref = "";
         if (!Objects.equals(bike.getWheelPreference(), "Expensive") && !Objects.equals(bike.getWheelPreference(), "Cheap")) {
             bikeParts.getErrorMessages().add(new Error("Wheels", "GetWheelsLink", "Wheel Preference is not set to Cheap or Expensive"));
-            errorLogger.log("An Error occurred from: GetWheelsLink!!\nWheel Preference is not set to Cheap or Expensive!!");
+            logger.log(SEVERE, "An Error occurred from: GetWheelsLink!!\nWheel Preference is not set to Cheap or Expensive!!");
         } else {
-            infoLogger.log("Method for getting Bike Wheels from Web");
+            logger.log(INFO, "Method for getting Bike Wheels from Web");
             if (!bike.getFrame().getFrameStyle().equals(SINGLE_SPEED)) {
                 // Wheels which require Gears are from Wiggle
                 if (!bike.getBrakeType().equals(RIM)) {
@@ -133,7 +131,7 @@ public class BikePartsService {
         try {
             assert fullBikeService != null;
             bike = fullBikeService.getBike();
-            infoLogger.log("Method for Getting Handlebar Parts from web");
+            logger.log(INFO, "Method for Getting Handlebar Parts from web");
             switch (bike.getHandleBarType()) {
                 case DROPS -> ref = "BarsDrop";
                 case FLAT -> ref = "BarsFlat";
@@ -143,14 +141,14 @@ public class BikePartsService {
             shimanoGroupsetService.findPartFromInternalRef(ref);
         } catch (Exception e) {
             bikeParts.getErrorMessages().add(new Error(component, method, e.getMessage()));
-            errorLogger.log("An Exception occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
+            logger.log(SEVERE, "An Exception occurred from: " + method + "!!See error message: " + e.getMessage() + "!!For bike Component: " + component);
         }
     }
 
     private void getFramePartsLink() {
         String ref = "";
         bike = fullBikeService.getBike();
-        infoLogger.log("Method for Getting Frame Parts Link");
+        logger.log(INFO, "Method for Getting Frame Parts Link");
         switch (bike.getFrame().getFrameStyle()) {
             case ROAD -> {
                 if (bike.getFrame().isDiscBrakeCompatible()) {
@@ -192,22 +190,22 @@ public class BikePartsService {
     }
 
     public void reloadLinksFromBackup() {
-        infoLogger.log("Re-loading links from backup");
+        logger.log(INFO, "Re-loading links from backup");
         try {
             List<Part> parts = om.readValue(new File(BACKUP_LINKS_FILE), new TypeReference<>() {
             });
             writeLinksToFile(parts);
         } catch (Exception e) {
-            errorLogger.log("Error while reading backup links file");
+            logger.log(SEVERE, "Error while reading backup links file");
         }
     }
 
     private void writeLinksToFile(List<Part> parts) {
-        infoLogger.log("Writing backup links to file");
+        logger.log(INFO, "Writing backup links to file");
         try {
             om.writeValue(new File(LINKS_FILE), parts);
         } catch (Exception e) {
-            errorLogger.log("Error while writing links to file");
+            logger.log(SEVERE, "Error while writing links to file");
         }
     }
 }

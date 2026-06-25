@@ -2,8 +2,6 @@ package com.homeapp.backend.controller;
 
 import com.homeapp.backend.models.bike.FullBike;
 import com.homeapp.backend.models.bike.Image;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import com.homeapp.backend.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 
 /**
  * The Image controller.
@@ -21,8 +23,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class ImageController {
 
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final WarnLogger warnLogger = new WarnLogger();
+    private final Logger logger = Logger.getLogger(ImageController.class.getName());
     private final ImageService imageService;
 
     /**
@@ -45,9 +46,9 @@ public class ImageController {
      */
     @PostMapping("GetImages")
     public ResponseEntity<List<Image>> getImages(@RequestBody FullBike bike) {
-        infoLogger.log("Getting Images for Bike: " + bike);
+        logger.log(INFO, "Getting Images for Bike: " + bike);
         List<Image> imageList = imageService.getImages(bike);
-        warnLogger.log("Returning Images to FE: " + imageList);
+        logger.log(WARNING, "Returning Images to FE: " + imageList);
         return new ResponseEntity<>(imageList, HttpStatus.OK);
     }
 }

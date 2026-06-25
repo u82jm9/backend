@@ -1,8 +1,8 @@
 package com.homeapp.backend;
 
 import com.homeapp.backend.models.ProcessedRecipe;
-import com.homeapp.backend.models.logger.ErrorLogger;
 import com.homeapp.backend.services.RecipeService;
+import expired.logger.ErrorLogger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -2,13 +2,16 @@ package com.homeapp.backend.controller;
 
 import com.homeapp.backend.models.bike.CombinedData;
 import com.homeapp.backend.models.bike.Options;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import com.homeapp.backend.services.OptionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 
 /**
  * The type Options controller.
@@ -19,8 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:3000")
 public class OptionsController {
 
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final WarnLogger warnLogger = new WarnLogger();
+    private final Logger logger = Logger.getLogger(OptionsController.class.getName());
     private final OptionsService optionsService;
 
     /**
@@ -42,9 +44,9 @@ public class OptionsController {
      */
     @GetMapping("StartNewBike")
     public ResponseEntity<Options> startingNewBike() {
-        infoLogger.log("Get Options for new bike.");
+        logger.log(INFO, "Get Options for new bike.");
         Options o = optionsService.startNewBike();
-        warnLogger.log("Returning Options to FE: " + o);
+        logger.log(WARNING, "Returning Options to FE: " + o);
         return new ResponseEntity<>(o, HttpStatus.OK);
     }
 
@@ -57,9 +59,9 @@ public class OptionsController {
      */
     @PostMapping("GetOptions")
     public ResponseEntity<Options> getOptions(@RequestBody CombinedData combinedData) {
-        infoLogger.log("Updating Options for Bike!");
+        logger.log(INFO, "Updating Options for Bike!");
         Options o = optionsService.updateOptions(combinedData);
-        warnLogger.log("Returning Options to FE: " + o);
+        logger.log(WARNING, "Returning Options to FE: " + o);
         return new ResponseEntity<>(o, HttpStatus.OK);
     }
 }

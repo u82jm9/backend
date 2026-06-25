@@ -1,7 +1,4 @@
-package expired;
-
-import com.homeapp.backend.models.logger.ErrorLogger;
-import com.homeapp.backend.models.logger.InfoLogger;
+package expired.logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +17,6 @@ public class LoggerOrganiser {
     static final String today = LocalDate.now().format(FILE_NAME_FORMATTER);
     private final String LOGS_DIRECTORY_PATH = "src/main/logs/";
     private final String EXPIRED_DIRECTORY_PATH = "src/main/logs/expired";
-    private final ErrorLogger errorLogger = new ErrorLogger();
-    private final InfoLogger infoLogger = new InfoLogger();
 
     /**
      * Instantiates a new Logger organiser.

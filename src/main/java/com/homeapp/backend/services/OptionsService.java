@@ -3,18 +3,19 @@ package com.homeapp.backend.services;
 import com.homeapp.backend.models.bike.CombinedData;
 import com.homeapp.backend.models.bike.FullBike;
 import com.homeapp.backend.models.bike.Options;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static com.homeapp.backend.models.bike.Enums.BrakeType.*;
 import static com.homeapp.backend.models.bike.Enums.FrameStyle.*;
 import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.backend.models.bike.Enums.HandleBarType.*;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 
 /**
  * The Options Service class.
@@ -26,8 +27,7 @@ public class OptionsService {
 
     private static OptionsService instance;
     private Options options;
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final WarnLogger warnLogger = new WarnLogger();
+    private final Logger logger = Logger.getLogger(OptionsService.class.getName());
 
     /**
      * Instantiates a new Options Service.
@@ -63,7 +63,7 @@ public class OptionsService {
      * @return the options
      */
     public Options startNewBike() {
-        infoLogger.log("Getting Options for a new Bike!");
+        logger.log(INFO, "Getting Options for a new Bike!");
         Options o = new Options();
         o.getGroupsetBrand().add(SHIMANO.getName());
         o.setShowGroupSetBrand(true);
@@ -78,7 +78,7 @@ public class OptionsService {
         o.getFrameStyles().add(TOUR.getName());
         o.getFrameStyles().add(ROAD.getName());
         o.setShowFrameStyles(true);
-        warnLogger.log("Returning options: " + o);
+        logger.log(WARNING, "Returning options: " + o);
         return o;
     }
 
@@ -91,7 +91,7 @@ public class OptionsService {
      * @return the options
      */
     public Options updateOptions(CombinedData combinedData) {
-        infoLogger.log("Updating Options available for Bike");
+        logger.log(INFO, "Updating Options available for Bike");
         Options o = combinedData.getOptions();
         setOptions(o);
         if (!o.isShowFrameStyles()) {
@@ -100,12 +100,12 @@ public class OptionsService {
             getBrakeOptions(combinedData.getBike());
             getWheelOptions(combinedData.getBike());
         }
-        warnLogger.log("Returning options: " + o);
+        logger.log(WARNING, "Returning options: " + o);
         return o;
     }
 
     private void getWheelOptions(FullBike b) {
-        infoLogger.log("Getting Wheel Options");
+        logger.log(INFO, "Getting Wheel Options");
         List<String> wheelPreference = new ArrayList<>();
         Options o = getOptions();
         wheelPreference.add("Cheap");
@@ -117,7 +117,7 @@ public class OptionsService {
     }
 
     private void getGearOptions(FullBike b) {
-        infoLogger.log("Getting Gear Options");
+        logger.log(INFO, "Getting Gear Options");
         List<Long> rearGears = new ArrayList<>();
         List<Long> frontGears = new ArrayList<>();
         Options o = getOptions();
@@ -170,7 +170,7 @@ public class OptionsService {
     }
 
     private void getBarOptions(FullBike b) {
-        infoLogger.log("Getting Bar Options");
+        logger.log(INFO, "Getting Bar Options");
         List<String> bars = new ArrayList<>();
         Options o = getOptions();
         if (b.getHandleBarType().equals(NOT_SELECTED)) {
@@ -196,7 +196,7 @@ public class OptionsService {
     }
 
     private void getBrakeOptions(FullBike b) {
-        infoLogger.log("Getting Brake Options");
+        logger.log(INFO, "Getting Brake Options");
         List<String> brakes = new ArrayList<>();
         Options o = getOptions();
         if (b.getBrakeType().equals(NO_SELECTION)) {

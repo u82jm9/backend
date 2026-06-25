@@ -1,6 +1,5 @@
-package com.homeapp.backend.models.logger;
+package expired.logger;
 
-import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
@@ -13,17 +12,16 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * The Error logger for FE logs.
+ * The Info logger. Used primarily to record the actions being taken through the project.
  */
-@Service
-public class ErrorLoggerFE extends BaseLogger {
+public class InfoLogger extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
     /**
-     * Instantiates a new FE Error Logger.
+     * Instantiates a new Info logger.
      */
-    public ErrorLoggerFE() {
+    public InfoLogger() {
         this.logs = readLogsFile();
     }
 
@@ -47,7 +45,7 @@ public class ErrorLoggerFE extends BaseLogger {
 
     @Override
     protected String getFileName() {
-        return "src/main/logs/" + LocalDate.now().format(FILE_NAME_FORMATTER) + "_ERROR-FE.json";
+        return "src/main/logs/" + LocalDate.now().format(FILE_NAME_FORMATTER) + "_INFO.json";
     }
 
     @Override
@@ -65,7 +63,6 @@ public class ErrorLoggerFE extends BaseLogger {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
             List<String> m = Arrays.stream(message.split("!!")).toList();
             logs.addAll(m);
-            System.err.println(message);
             logToFile();
         }
     }

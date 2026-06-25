@@ -1,9 +1,6 @@
 package com.homeapp.backend;
 
 import com.homeapp.backend.models.bike.Part;
-import com.homeapp.backend.models.logger.ErrorLogger;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import com.homeapp.backend.services.FuelPriceService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,9 +31,6 @@ public class backend implements CommandLineRunner {
     private static final Set<Part> writeParts = new HashSet<>();
     private static final String LINKS_FILE = "src/main/resources/links.json";
     private static final ObjectMapper om = new ObjectMapper();
-    private static final InfoLogger infoLogger = new InfoLogger();
-    private static final WarnLogger warnLogger = new WarnLogger();
-    private static final ErrorLogger errorLogger = new ErrorLogger();
     private static final String today = LocalDate.now().toString();
     private static String price;
     private static final FuelPriceService fuelPriceService = new FuelPriceService();
@@ -192,17 +186,17 @@ public class backend implements CommandLineRunner {
                     addFailedPartToWriteList(part);
                 }
             } else {
-                warnLogger.log("Trying to use unknown website " + part.getLink());
+                logger.log(WARNING, "Trying to use unknown website " + part.getLink());
                 addFailedPartToWriteList(part);
 
             }
-            warnLogger.log("Found: " + name + "\nFor: " + price + "\nFrom: " + part.getLink());
+            logger.log(WARNING, "Found: " + name + "\nFor: " + price + "\nFrom: " + part.getLink());
             part.setName(name);
             part.setPrice(price);
         } catch (
                 IOException e) {
             addFailedPartToWriteList(part);
-            warnLogger.log("Error adding price for part: " + part.getInternalReference());
+            logger.log(WARNING, "Error adding price for part: " + part.getInternalReference());
         }
     }
 
@@ -225,12 +219,12 @@ public class backend implements CommandLineRunner {
                 addFailedPartToWriteList(part);
             }
         }
-        errorLogger.log("**** Please check the following links ****");
-        errorLogger.log("You have " + problemParts.size() + " issues with links ref doc!!");
-        problemParts.forEach(part -> errorLogger.log("Internal ref: " + part.getInternalReference() + "\nLink: " + part.getLink()));
+        logger.log(SEVERE, "**** Please check the following links ****");
+        logger.log(SEVERE, "You have " + problemParts.size() + " issues with links ref doc!!");
+        problemParts.forEach(part -> logger.log(SEVERE, "Internal ref: " + part.getInternalReference() + "\nLink: " + part.getLink()));
         writePartsToFile();
-        errorLogger.log("**** Checking links complete ****");
-        infoLogger.log("Finished checking links!");
+        logger.log(SEVERE, "**** Checking links complete ****");
+        logger.log(INFO, "Finished checking links!");
     }
 
     /**
@@ -238,21 +232,21 @@ public class backend implements CommandLineRunner {
      * Uses the class Set writeParts as this list is accumulated through the startup process.
      */
     private static void writePartsToFile() {
-        infoLogger.log("Writing updated Bike Parts to file");
+        logger.log(INFO, "Writing updated Bike Parts to file");
         try {
             om.writeValue(new File(LINKS_FILE), writeParts);
         } catch (Exception e) {
-            errorLogger.log("An exception occurred writing ALL parts to file!!\n" + e.getMessage());
+            logger.log(SEVERE, "An exception occurred writing ALL parts to file!!\n" + e.getMessage());
         }
     }
 
     private static List<Part> readLinksFile() {
-        infoLogger.log("Reading all Links from File");
+        logger.log(INFO, "Reading all Links from File");
         try {
             return om.readValue(new File(LINKS_FILE), new TypeReference<>() {
             });
         } catch (Exception e) {
-            errorLogger.log("An IOException occurred reading all links file!!\n" + e.getMessage());
+            logger.log(SEVERE, "An IOException occurred reading all links file!!\n" + e.getMessage());
         }
         return new ArrayList<>();
     }

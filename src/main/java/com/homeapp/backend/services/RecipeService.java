@@ -1,9 +1,6 @@
 package com.homeapp.backend.services;
 
 import com.homeapp.backend.models.ProcessedRecipe;
-import com.homeapp.backend.models.logger.ErrorLogger;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,14 +11,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static java.util.logging.Level.*;
 
 @Service
 public class RecipeService {
 
-    private static final InfoLogger infoLogger = new InfoLogger();
-    private static final WarnLogger warnLogger = new WarnLogger();
-    private static final ErrorLogger errorLogger = new ErrorLogger();
+    private static final Logger logger = Logger.getLogger(RecipeService.class.getName());
 
     /**
      * Process a recipe link and return a ProcessedRecipe object.
@@ -42,14 +40,14 @@ public class RecipeService {
                 // Process the document based on the site
                 processDocument(doc, recipeLink, processedRecipe);
             } catch (org.jsoup.HttpStatusException httpEx) {
-                errorLogger.log("HTTP Error " + httpEx.getStatusCode() + " for recipe: " + recipeLink);
+                logger.log(SEVERE, "HTTP Error " + httpEx.getStatusCode() + " for recipe: " + recipeLink);
                 if (httpEx.getStatusCode() == 403) {
-                    warnLogger.log("Recipe site blocked the request (403 Forbidden). The site may require JavaScript rendering or have Cloudflare protection. URL: " + recipeLink);
+                    logger.log(WARNING, "Recipe site blocked the request (403 Forbidden). The site may require JavaScript rendering or have Cloudflare protection. URL: " + recipeLink);
                 }
                 throw httpEx;
             }
         } catch (IOException e) {
-            errorLogger.log("An IOException occurred processing recipe: " + recipeLink + "!! See error message: " + e);
+            logger.log(SEVERE, "An IOException occurred processing recipe: " + recipeLink + "!! See error message: " + e);
         }
         return processedRecipe;
     }
@@ -57,7 +55,7 @@ public class RecipeService {
     private void processDocument(Document doc, String recipeLink, ProcessedRecipe processedRecipe) {
         Optional<Element> e;
         if (recipeLink.contains("bbc.co.uk")) {
-            infoLogger.log("Processing BBC recipe link: " + recipeLink);
+            logger.log(INFO, "Processing BBC recipe link: " + recipeLink);
             e = Optional.ofNullable(doc.getElementById("main-content"));
             if (e.isPresent()) {
                 Element mainContent = e.get();
@@ -66,10 +64,10 @@ public class RecipeService {
                 populateBBCInstructions(mainContent, processedRecipe);
                 populateBBCNotes(mainContent, processedRecipe);
             } else {
-                warnLogger.log("No main content found for recipe: " + recipeLink);
+                logger.log(WARNING, "No main content found for recipe: " + recipeLink);
             }
         } else if (recipeLink.contains("bbcgoodfood.com")) {
-            infoLogger.log("Processing BBC Good Food recipe link: " + recipeLink);
+            logger.log(INFO, "Processing BBC Good Food recipe link: " + recipeLink);
             e = Optional.ofNullable(doc.select("div.post.recipe").first());
             if (e.isPresent()) {
                 Element mainContent = e.get();
@@ -77,7 +75,7 @@ public class RecipeService {
                 populateBBCGoodFoodIngredients(mainContent, processedRecipe);
                 populateBBCGoodFoodInstructions(mainContent, processedRecipe);
             } else {
-                warnLogger.log("No main content found for recipe: " + recipeLink);
+                logger.log(WARNING, "No main content found for recipe: " + recipeLink);
             }
         }
     }
@@ -115,7 +113,7 @@ public class RecipeService {
             String additionalNotes = notesElement.select("div.eap7u6q0").text();
             processedRecipe.setAdditionalNotes(additionalNotes);
         } else {
-            warnLogger.log("No additional notes found for recipe: " + processedRecipe.getRecipeName());
+            logger.log(WARNING, "No additional notes found for recipe: " + processedRecipe.getRecipeName());
         }
     }
 
@@ -153,7 +151,7 @@ public class RecipeService {
     }
 
     public List<String> getValidSites() {
-        infoLogger.log("Returning valid sites that can be processed.");
+        logger.log(INFO, "Returning valid sites that can be processed.");
         List<String> validSites = new ArrayList<>();
         validSites.add("bbc.co.uk/food/recipes");
         validSites.add("allrecipes.com");

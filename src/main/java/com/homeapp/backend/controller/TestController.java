@@ -3,9 +3,6 @@ package com.homeapp.backend.controller;
 import com.homeapp.backend.models.DTOJoke;
 import com.homeapp.backend.models.DTOLog;
 import com.homeapp.backend.models.FuelPrice;
-import com.homeapp.backend.models.logger.ErrorLoggerFE;
-import com.homeapp.backend.models.logger.InfoLoggerFE;
-import com.homeapp.backend.models.logger.WarnLoggerFE;
 import com.homeapp.backend.services.AdventureService;
 import com.homeapp.backend.services.FuelPriceService;
 import com.homeapp.backend.services.SaveJokeService;
@@ -19,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import static java.util.logging.Level.*;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 /**
@@ -33,9 +32,7 @@ public class TestController {
     private final AdventureService adventureService = new AdventureService();
     private final SaveJokeService saveJokeService = new SaveJokeService();
     private final FuelPriceService fuelPriceService = new FuelPriceService();
-    private final InfoLoggerFE infoLogger = new InfoLoggerFE();
-    private final WarnLoggerFE warnLogger = new WarnLoggerFE();
-    private final ErrorLoggerFE errorLogger = new ErrorLoggerFE();
+    private final Logger logger = Logger.getLogger(TestController.class.getName());
 
     /**
      * Instantiates a new Test controller.
@@ -65,9 +62,9 @@ public class TestController {
     @PostMapping("LogThis")
     public ResponseEntity<HttpStatus> logThis(@RequestBody DTOLog dtoLog) {
         switch (dtoLog.getLevel()) {
-            case "WARN" -> warnLogger.log(dtoLog.getMessage());
-            case "INFO" -> infoLogger.log(dtoLog.getMessage());
-            default -> errorLogger.log(dtoLog.getMessage());
+            case "WARN" -> logger.log(WARNING, dtoLog.getMessage());
+            case "INFO" -> logger.log(INFO, dtoLog.getMessage());
+            default -> logger.log(SEVERE, dtoLog.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

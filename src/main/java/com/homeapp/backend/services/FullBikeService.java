@@ -2,9 +2,6 @@ package com.homeapp.backend.services;
 
 import com.homeapp.backend.models.bike.Frame;
 import com.homeapp.backend.models.bike.FullBike;
-import com.homeapp.backend.models.logger.ErrorLogger;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -15,12 +12,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import static com.homeapp.backend.models.bike.Enums.BrakeType.*;
 import static com.homeapp.backend.models.bike.Enums.FrameStyle.*;
 import static com.homeapp.backend.models.bike.Enums.GroupsetBrand.SHIMANO;
 import static com.homeapp.backend.models.bike.Enums.HandleBarType.*;
 import static com.homeapp.backend.models.bike.Enums.ShifterStyle.*;
+import static java.util.logging.Level.*;
 
 /**
  * The Full Bike Service class.
@@ -34,9 +33,7 @@ public class FullBikeService {
     private static final String JSON_BIKES_FILE = "src/main/resources/bikes.json";
     private static final String JSON_BIKES_FILE_BACKUP = "src/main/resources/bikes_backup.json";
     private List<FullBike> bikeList;
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final WarnLogger warnLogger = new WarnLogger();
-    private final ErrorLogger errorLogger = new ErrorLogger();
+    private final Logger logger = Logger.getLogger(FullBikeService.class.getName());
 
     /**
      * Instantiates a new Full bike service.
@@ -53,13 +50,13 @@ public class FullBikeService {
     }
 
     private List<FullBike> readBikesFile() {
-        infoLogger.log("Reading Bikes From File");
+        logger.log(INFO, "Reading Bikes From File");
         try {
             File file = new File(JSON_BIKES_FILE);
             return om.readValue(file, new TypeReference<>() {
             });
         } catch (Exception e) {
-            errorLogger.log("An IOException occurred from method: readBikesFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
+            logger.log(SEVERE, "An IOException occurred from method: readBikesFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
         return new ArrayList<>();
     }
@@ -68,14 +65,14 @@ public class FullBikeService {
      * Reload bikes from backup file, writes the back-up bikes onto the normal bike file.
      */
     public void reloadBikesFromBackup() {
-        infoLogger.log("Reloading Bikes From Backup File");
+        logger.log(INFO, "Reloading Bikes From Backup File");
         try {
             deleteAllBikes();
             List<FullBike> bikes = om.readValue(new File(JSON_BIKES_FILE_BACKUP), new TypeReference<>() {
             });
             writeBikesToFile(bikes);
         } catch (Exception e) {
-            errorLogger.log("An IOException occurred from method: readBikesFromBackup!!See error message: " + e.getMessage() + "!!From: " + getClass());
+            logger.log(SEVERE, "An IOException occurred from method: readBikesFromBackup!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
     }
 
@@ -86,12 +83,12 @@ public class FullBikeService {
      * @param list the list
      */
     public void writeBikesToFile(List<FullBike> list) {
-        infoLogger.log("Writing Bikes Back to File");
+        logger.log(INFO, "Writing Bikes Back to File");
         try {
             om.writeValue(new File(JSON_BIKES_FILE), list);
             bikeList = list;
         } catch (Exception e) {
-            errorLogger.log("An IOException occurred from method: writeBikesToFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
+            logger.log(SEVERE, "An IOException occurred from method: writeBikesToFile!!See error message: " + e.getMessage() + "!!From: " + getClass());
         }
     }
 
@@ -125,7 +122,7 @@ public class FullBikeService {
      */
     public List<FullBike> getAllFullBikes() {
         List<FullBike> bikeList = getBikeList();
-        warnLogger.log("Getting list of all bikes, number returned: " + bikeList.size());
+        logger.log(WARNING, "Getting list of all bikes, number returned: " + bikeList.size());
         return bikeList;
     }
 
@@ -137,7 +134,7 @@ public class FullBikeService {
      * @param bike the bike
      */
     public void create(FullBike bike) {
-        infoLogger.log("Adding new bike!");
+        logger.log(INFO, "Adding new bike!");
         long newId = bikeList.size() + 1;
         bike.setFullBikeId(newId);
         bikeList.add(bike);
@@ -153,7 +150,7 @@ public class FullBikeService {
      * @return the full bike
      */
     public FullBike updateBike(FullBike bike) {
-        infoLogger.log("Updating bike on File!");
+        logger.log(INFO, "Updating bike on File!");
         setBike(bike);
         checkBikeShifters(bike);
         checkFrameStyle(bike);
@@ -224,10 +221,10 @@ public class FullBikeService {
      * @return the full bike
      */
     public FullBike startNewBike() {
-        infoLogger.log("Starting new bike, service method.");
+        logger.log(INFO, "Starting new bike, service method.");
         Optional<FullBike> b = getBikeUsingName("Your Custom Bike");
         if (b.isPresent()) {
-            warnLogger.log("Bike with that name already exists on DB.");
+            logger.log(WARNING, "Bike with that name already exists on DB.");
             return b.get();
         } else {
             Frame frame = new Frame();
@@ -254,7 +251,7 @@ public class FullBikeService {
      * @return the bike
      */
     public Optional<FullBike> getBikeUsingName(String bikeName) {
-        warnLogger.log("Getting single bike with bike name: " + bikeName);
+        logger.log(WARNING, "Getting single bike with bike name: " + bikeName);
         return bikeList.stream()
                 .filter(item -> item.getBikeName().equals(bikeName))
                 .findFirst();
@@ -266,7 +263,7 @@ public class FullBikeService {
      * @param bikeId the bike id
      */
     public void deleteBike(long bikeId) {
-        warnLogger.log("Deleting Bike with ID: " + bikeId);
+        logger.log(WARNING, "Deleting Bike with ID: " + bikeId);
         bikeList.removeIf(i -> i.getFullBikeId() == (bikeId));
         writeBikesToFile(bikeList);
     }
@@ -275,8 +272,8 @@ public class FullBikeService {
      * Delete all bikes, by writing an empty list back to normal bike file.
      */
     public void deleteAllBikes() {
-        infoLogger.log("Deleting ALL BIKES on File");
-        warnLogger.log("Deleting ALL BIKES on File");
+        logger.log(INFO, "Deleting ALL BIKES on File");
+        logger.log(WARNING, "Deleting ALL BIKES on File");
         writeBikesToFile(new ArrayList<>());
     }
 }

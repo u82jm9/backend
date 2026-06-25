@@ -1,6 +1,5 @@
-package com.homeapp.backend.models.logger;
+package expired.logger;
 
-import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
@@ -13,17 +12,16 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * The type Warn Logger for FE. Used primarily to record the objects being updated throughout the project.
+ * The Warn logger. Used primarily to record the objects being updated throughout the project.
  */
-@Service
-public class WarnLoggerFE extends BaseLogger {
+public class WarnLogger extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
     /**
-     * Instantiates a new FE Warn Logger.
+     * Instantiates a new Warn logger.
      */
-    public WarnLoggerFE() {
+    public WarnLogger() {
         this.logs = readLogsFile();
     }
 
@@ -47,7 +45,7 @@ public class WarnLoggerFE extends BaseLogger {
 
     @Override
     protected String getFileName() {
-        return "src/main/logs/" + LocalDate.now().format(FILE_NAME_FORMATTER) + "_WARN-FE.json";
+        return "src/main/logs/" + LocalDate.now().format(FILE_NAME_FORMATTER) + "_WARN.json";
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.homeapp.backend.controller;
 
 import com.homeapp.backend.models.bike.FullBike;
-import com.homeapp.backend.models.logger.InfoLogger;
-import com.homeapp.backend.models.logger.WarnLogger;
 import com.homeapp.backend.services.FullBikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 
 /**
  * The Full Bike Controller.
@@ -20,8 +22,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class FullBikeController {
 
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final WarnLogger warnLogger = new WarnLogger();
+    private final Logger logger = Logger.getLogger(FullBikeController.class.getName());
     private final FullBikeService fullBikeService;
 
     /**
@@ -43,9 +44,9 @@ public class FullBikeController {
      */
     @GetMapping("GetAll")
     public ResponseEntity<List<FullBike>> getallBikes() {
-        infoLogger.log("Get all Bikes, API");
+        logger.log(INFO, "Get all Bikes, API");
         List<FullBike> bikeList = fullBikeService.getAllFullBikes();
-        warnLogger.log("Returning " + bikeList.size() + " bikes to FE");
+        logger.log(WARNING, "Returning " + bikeList.size() + " bikes to FE");
         return new ResponseEntity<>(bikeList, HttpStatus.ACCEPTED);
     }
 
@@ -57,9 +58,9 @@ public class FullBikeController {
      */
     @GetMapping("StartNewBike")
     public ResponseEntity<FullBike> startNewBike() {
-        infoLogger.log("Starting new Bike, API");
+        logger.log(INFO, "Starting new Bike, API");
         FullBike bike = fullBikeService.startNewBike();
-        warnLogger.log("Returning new Bike to FE: " + bike);
+        logger.log(WARNING, "Returning new Bike to FE: " + bike);
         return new ResponseEntity<>(bike, HttpStatus.ACCEPTED);
     }
 
@@ -72,9 +73,9 @@ public class FullBikeController {
      */
     @PostMapping("AddFullBike")
     public ResponseEntity<HttpStatus> addFullBike(@RequestBody FullBike bike) {
-        infoLogger.log("Adding new full bike, API");
+        logger.log(INFO, "Adding new full bike, API");
         fullBikeService.create(bike);
-        warnLogger.log("Adding new full bike, API.Bike: " + bike);
+        logger.log(WARNING, "Adding new full bike, API.Bike: " + bike);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -87,9 +88,9 @@ public class FullBikeController {
      */
     @PostMapping("UpdateBike")
     public ResponseEntity<FullBike> updateBike(@RequestBody FullBike bike) {
-        infoLogger.log("Updating Bike, API");
+        logger.log(INFO, "Updating Bike, API");
         FullBike updatedBike = fullBikeService.updateBike(bike);
-        warnLogger.log("Updating Bike: " + bike);
+        logger.log(WARNING, "Updating Bike: " + bike);
         return new ResponseEntity<>(updatedBike, HttpStatus.ACCEPTED);
     }
 
@@ -102,7 +103,7 @@ public class FullBikeController {
      */
     @PostMapping("DeleteBike")
     ResponseEntity<HttpStatus> deleteBike(@RequestBody FullBike bike) {
-        infoLogger.log("Deleting Bike from DB with id " + bike.getFullBikeId());
+        logger.log(INFO, "Deleting Bike from DB with id " + bike.getFullBikeId());
         fullBikeService.deleteBike(bike.getFullBikeId());
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }

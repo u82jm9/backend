@@ -1,8 +1,6 @@
 package com.homeapp.backend.services;
 
 import com.homeapp.backend.models.FuelPrice;
-import com.homeapp.backend.models.logger.ErrorLogger;
-import com.homeapp.backend.models.logger.InfoLogger;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
@@ -13,6 +11,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
 
 @Service
 public class FuelPriceService {
@@ -29,8 +31,7 @@ public class FuelPriceService {
     private final String fileLocation = "src/main/resources/fuel-prices/";
     private final String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     private final ObjectMapper om = new ObjectMapper();
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final ErrorLogger errorLogger = new ErrorLogger();
+    private final Logger logger = Logger.getLogger(FuelPriceService.class.getName());
 
 
     public FuelPriceService() {
@@ -46,7 +47,7 @@ public class FuelPriceService {
     }
 
     private void createDieselPriceFile() {
-        infoLogger.log("Creating diesel price file...");
+        logger.log(INFO, "Creating diesel price file...");
         try {
             Optional<String> e = Optional.of(Jsoup.connect(DIESEL_URL).ignoreContentType(true).execute().body());
             File file = new File("src/main/resources/fuel-prices/diesel_" + today + ".csv");
@@ -60,12 +61,12 @@ public class FuelPriceService {
                 om.writeValue(fw, "No diesel prices were found!\n");
             }
         } catch (IOException e) {
-            errorLogger.log("Exception while creating Diesel csv file: " + e.getMessage());
+            logger.log(SEVERE, "Exception while creating Diesel csv file: " + e.getMessage());
         }
     }
 
     private void createPetrolPriceFile() {
-        infoLogger.log("Creating petrol price file...");
+        logger.log(INFO, "Creating petrol price file...");
         try {
             Optional<String> e = Optional.of(Jsoup.connect(PETROL_URL).ignoreContentType(true).execute().body());
             File file = new File("src/main/resources/fuel-prices/petrol_" + today + ".csv");
@@ -79,7 +80,7 @@ public class FuelPriceService {
                 om.writeValue(fw, "No petrol prices were found!\n");
             }
         } catch (IOException e) {
-            errorLogger.log("Exception while creating Petrol csv file: " + e.getMessage());
+            logger.log(SEVERE, "Exception while creating Petrol csv file: " + e.getMessage());
         }
     }
 
@@ -92,7 +93,7 @@ public class FuelPriceService {
             );
             totalPriceList.addAll(generatePriceList(filePrices, fuelPrices, "Diesel"));
         } catch (Exception e) {
-            errorLogger.log("Exception while reading diesel prices file: " + e.getMessage());
+            logger.log(SEVERE, "Exception while reading diesel prices file: " + e.getMessage());
         }
     }
 
@@ -105,7 +106,7 @@ public class FuelPriceService {
             );
             totalPriceList.addAll(generatePriceList(filePrices, fuelPrices, "Petrol"));
         } catch (Exception e) {
-            errorLogger.log("Exception while reading petrol prices file: " + e.getMessage());
+            logger.log(SEVERE, "Exception while reading petrol prices file: " + e.getMessage());
         }
     }
 
@@ -116,9 +117,9 @@ public class FuelPriceService {
                 jsonFile.createNewFile();
             }
             om.writeValue(jsonFile, totalPriceList);
-            infoLogger.log("Written " + totalPriceList.size() + " fuel price entries to JSON file.");
+            logger.log(INFO, "Written " + totalPriceList.size() + " fuel price entries to JSON file.");
         } catch (IOException e) {
-            errorLogger.log("Exception when writing price to JSON File: " + e.getMessage());
+            logger.log(SEVERE, "Exception when writing price to JSON File: " + e.getMessage());
         }
     }
 
@@ -134,12 +135,12 @@ public class FuelPriceService {
                 fuelPrices.add(fp);
             }
         }
-        infoLogger.log("Generated " + fuelType + " price list with " + fuelPrices.size() + " entries.");
+        logger.log(INFO, "Generated " + fuelType + " price list with " + fuelPrices.size() + " entries.");
         return fuelPrices;
     }
 
     public List<FuelPrice> retriveJSONFile() {
-        infoLogger.log("Retrieving fuel price JSON file...");
+        logger.log(INFO, "Retrieving fuel price JSON file...");
         SortedSet<FuelPrice> fuelPrices = new TreeSet<>(BRAND_SORT_COMPARATOR);
         try {
             List<FuelPrice> fromJson = om.readValue(
@@ -149,7 +150,7 @@ public class FuelPriceService {
             );
             fuelPrices.addAll(fromJson);
         } catch (Exception e) {
-            errorLogger.log("Exception while retrieving fuel price JSON file: " + e.getMessage());
+            logger.log(SEVERE, "Exception while retrieving fuel price JSON file: " + e.getMessage());
         }
         return filterBrands(fuelPrices);
     }

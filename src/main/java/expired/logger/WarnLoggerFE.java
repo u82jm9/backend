@@ -1,6 +1,5 @@
-package com.homeapp.backend.models.logger;
+package expired.logger;
 
-import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
@@ -13,17 +12,16 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * The Error logger.
+ * The type Warn Logger for FE. Used primarily to record the objects being updated throughout the project.
  */
-@Service
-public class ErrorLogger extends BaseLogger {
+public class WarnLoggerFE extends BaseLogger {
     private final ObjectMapper om = new ObjectMapper();
     private final TreeSet<String> logs;
 
     /**
-     * Instantiates a new Error logger. Error logger puts message to log file and also prints it to the console.
+     * Instantiates a new FE Warn Logger.
      */
-    public ErrorLogger() {
+    public WarnLoggerFE() {
         this.logs = readLogsFile();
     }
 
@@ -47,7 +45,7 @@ public class ErrorLogger extends BaseLogger {
 
     @Override
     protected String getFileName() {
-        return "src/main/logs/" + LocalDate.now().format(FILE_NAME_FORMATTER) + "_ERROR.json";
+        return "src/main/logs/" + LocalDate.now().format(FILE_NAME_FORMATTER) + "_WARN-FE.json";
     }
 
     @Override
@@ -61,13 +59,10 @@ public class ErrorLogger extends BaseLogger {
 
     @Override
     public void log(String message) {
-        StringBuilder sb = new StringBuilder();
         synchronized (this) {
             message = "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + message;
-            List<String> m = Arrays.stream(message.split("!!")).toList().stream()
-                    .map(s -> "[" + LocalDateTime.now().format(LOGS_STAMP_FORMATTER) + "] - " + s.trim()).toList();
+            List<String> m = Arrays.stream(message.split("!!")).toList();
             logs.addAll(m);
-            System.err.println(m);
             logToFile();
         }
     }

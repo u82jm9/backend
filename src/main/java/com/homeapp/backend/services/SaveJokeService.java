@@ -1,8 +1,6 @@
 package com.homeapp.backend.services;
 
 import com.homeapp.backend.models.DTOJoke;
-import com.homeapp.backend.models.logger.ErrorLogger;
-import com.homeapp.backend.models.logger.InfoLogger;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -10,6 +8,10 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
 
 @Service
 public class SaveJokeService {
@@ -17,8 +19,7 @@ public class SaveJokeService {
     private static final String JOKES_FILE_BACKUP = "src/main/resources/jokes_backup.json";
     private final ObjectMapper om = new ObjectMapper();
     private final ArrayList<DTOJoke> jokes;
-    private final InfoLogger infoLogger = new InfoLogger();
-    private final ErrorLogger errorLogger = new ErrorLogger();
+    private final Logger logger = Logger.getLogger(SaveJokeService.class.getName());
 
 
     public SaveJokeService() {
@@ -37,13 +38,13 @@ public class SaveJokeService {
             return om.readValue(file, new TypeReference<>() {
             });
         } catch (IOException e) {
-            errorLogger.log("Error Reading joke file.\n" + e);
+            logger.log(SEVERE, "Error Reading joke file.\n" + e);
             throw new RuntimeException(e);
         }
     }
 
     public void save(DTOJoke joke) {
-        infoLogger.log("Saving Joke: " + joke);
+        logger.log(INFO, "Saving Joke: " + joke);
         jokes.add(joke);
         saveToFile(JOKES_FILE, jokes);
     }
@@ -52,7 +53,7 @@ public class SaveJokeService {
         try {
             om.writeValue(new File(fileName), jokes);
         } catch (Exception e) {
-            errorLogger.log("Error Logging joke!\n" + e);
+            logger.log(SEVERE, "Error Logging joke!\n" + e);
         }
     }
 
@@ -61,7 +62,7 @@ public class SaveJokeService {
         try {
             om.writeValue(new File(JOKES_FILE), new ArrayList<>());
         } catch (Exception e) {
-            errorLogger.log("Error Deleting Jokes.\n" + e);
+            logger.log(SEVERE, "Error Deleting Jokes.\n" + e);
         }
     }
 
@@ -74,7 +75,7 @@ public class SaveJokeService {
             }
             om.writeValue(file, currentJokes);
         } catch (Exception e) {
-            errorLogger.log("Error Deleting Jokes.\n" + e);
+            logger.log(SEVERE, "Error Deleting Jokes.\n" + e);
         }
     }
 
@@ -86,7 +87,7 @@ public class SaveJokeService {
             });
             saveToFile(JOKES_FILE, backupJokes);
         } catch (Exception e) {
-            errorLogger.log("Error Backing up files.\n" + e);
+            logger.log(SEVERE, "Error Backing up files.\n" + e);
         }
     }
 }
