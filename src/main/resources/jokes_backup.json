@@ -82,5 +82,12 @@
     "joke": "Test Joke",
     "setup": null,
     "type": "single"
+  },
+  {
+    "category": null,
+    "delivery": null,
+    "joke": "Test Joke",
+    "setup": null,
+    "type": "single"
   }
 ]

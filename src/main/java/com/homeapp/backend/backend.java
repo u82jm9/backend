@@ -8,6 +8,7 @@ import com.homeapp.backend.services.FuelPriceService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,13 +16,20 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.*;
+
 
 @SpringBootApplication(scanBasePackages = "com.homeapp.backend")
 public class backend implements CommandLineRunner {
 
+    static Logger logger = Logger.getLogger(backend.class.getName());
     private static final Set<Part> problemParts = new HashSet<>();
     private static final Set<Part> writeParts = new HashSet<>();
     private static final String LINKS_FILE = "src/main/resources/links.json";
@@ -34,65 +42,15 @@ public class backend implements CommandLineRunner {
     private static final FuelPriceService fuelPriceService = new FuelPriceService();
 
     public static void main(String[] args) throws IOException {
+        LogManager logManager = LogManager.getLogManager();
+        logManager.reset();
+        logManager.readConfiguration(new FileInputStream("src/conf/logging.properties"));
+        logger.log(INFO, "Starting UP!!");
+        logger.log(WARNING, "Starting UP!!");
+        logger.log(SEVERE, "Starting UP!!");
         SpringApplication.run(backend.class, args);
         fuelPriceService.run();
         checkAllLinks();
-    }
-
-    @Override
-    public void run(String... args) {
-
-    }
-
-    /**
-     * A method that runs through the manually updated list of links in the links.json file.
-     * Collects all problem links and sends these to reporter
-     */
-    public static void checkAllLinks() {
-        List<Part> allParts = readLinksFile();
-        for (Part part : allParts) {
-            try {
-                int statusCode = Jsoup.connect(part.getLink()).execute().statusCode();
-                writeParts.add(part);
-                if (statusCode == 200) {
-                    setPartAttributesFromLink(part);
-                } else {
-                    addFailedPartToWriteList(part);
-                }
-            } catch (IOException e) {
-                addFailedPartToWriteList(part);
-            }
-        }
-        errorLogger.log("**** Please check the following links ****");
-        errorLogger.log("You have " + problemParts.size() + " issues with links ref doc!!");
-        problemParts.forEach(part -> errorLogger.log("Internal ref: " + part.getInternalReference() + "\nLink: " + part.getLink()));
-        writePartsToFile();
-        errorLogger.log("**** Checking links complete ****");
-        infoLogger.log("Finished checking links!");
-    }
-
-    /**
-     * Writes unique list of Parts back to file, to allow information to be retrieved directly from file later.
-     * Uses the class Set writeParts as this list is accumulated through the startup process.
-     */
-    private static void writePartsToFile() {
-        infoLogger.log("Writing updated Bike Parts to file");
-        try {
-            om.writeValue(new File(LINKS_FILE), writeParts);
-        } catch (Exception e) {
-            errorLogger.log("An exception occurred writing ALL parts to file!!\n" + e.getMessage());
-        }
-    }
-
-    private static List<Part> readLinksFile() {
-        infoLogger.log("Reading all Links from File");
-        try {
-            return om.readValue(new File(LINKS_FILE), new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            errorLogger.log("An IOException occurred reading all links file!!\n" + e.getMessage());
-        }
-        return new ArrayList<>();
     }
 
     /**
@@ -108,8 +66,8 @@ public class backend implements CommandLineRunner {
             String name = part.getName();
             price = part.getPrice();
             Document doc = Jsoup.connect(part.getLink()).timeout(5000).get();
-            Optional<Element> e = null;
-            Optional<Element> priceElement = null;
+            Optional<Element> e;
+            Optional<Element> priceElement;
             if (part.getLink().contains("dolan-bikes")) {
                 e = Optional.ofNullable(doc.selectFirst("div.productBuy > div.productPanel"));
                 if (e.isEmpty()) {
@@ -184,8 +142,8 @@ public class backend implements CommandLineRunner {
                     addFailedPartToWriteList(part);
                 }
             } else if (part.getLink().contains("sjscycles")) {
-                e = Optional.ofNullable(doc);
-                if (e.isEmpty()) {
+                e = Optional.of(doc);
+                if (!e.isPresent() || e.isEmpty()) {
                     addFailedPartToWriteList(part);
                     return;
                 }
@@ -246,6 +204,62 @@ public class backend implements CommandLineRunner {
             addFailedPartToWriteList(part);
             warnLogger.log("Error adding price for part: " + part.getInternalReference());
         }
+    }
+
+    /**
+     * A method that runs through the manually updated list of links in the links.json file.
+     * Collects all problem links and sends these to reporter
+     */
+    public static void checkAllLinks() {
+        List<Part> allParts = readLinksFile();
+        for (Part part : allParts) {
+            try {
+                int statusCode = Jsoup.connect(part.getLink()).execute().statusCode();
+                writeParts.add(part);
+                if (statusCode == 200) {
+                    setPartAttributesFromLink(part);
+                } else {
+                    addFailedPartToWriteList(part);
+                }
+            } catch (IOException e) {
+                addFailedPartToWriteList(part);
+            }
+        }
+        errorLogger.log("**** Please check the following links ****");
+        errorLogger.log("You have " + problemParts.size() + " issues with links ref doc!!");
+        problemParts.forEach(part -> errorLogger.log("Internal ref: " + part.getInternalReference() + "\nLink: " + part.getLink()));
+        writePartsToFile();
+        errorLogger.log("**** Checking links complete ****");
+        infoLogger.log("Finished checking links!");
+    }
+
+    /**
+     * Writes unique list of Parts back to file, to allow information to be retrieved directly from file later.
+     * Uses the class Set writeParts as this list is accumulated through the startup process.
+     */
+    private static void writePartsToFile() {
+        infoLogger.log("Writing updated Bike Parts to file");
+        try {
+            om.writeValue(new File(LINKS_FILE), writeParts);
+        } catch (Exception e) {
+            errorLogger.log("An exception occurred writing ALL parts to file!!\n" + e.getMessage());
+        }
+    }
+
+    private static List<Part> readLinksFile() {
+        infoLogger.log("Reading all Links from File");
+        try {
+            return om.readValue(new File(LINKS_FILE), new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            errorLogger.log("An IOException occurred reading all links file!!\n" + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void run(String @NonNull ... args) {
+
     }
 
     private static void setPartPricing(Element element, Part part) {
