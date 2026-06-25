@@ -1,0 +1,662 @@
+[
+  {
+    "brand": "BP",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "171.7"
+  },
+  {
+    "brand": "shell",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "171.1"
+  },
+  {
+    "brand": "esso",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "169.9"
+  },
+  {
+    "brand": "asda",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "167.2"
+  },
+  {
+    "brand": "tesco",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "165.3"
+  },
+  {
+    "brand": "jet",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "168"
+  },
+  {
+    "brand": "texaco",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "168"
+  },
+  {
+    "brand": "eg on the move",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "168.9"
+  },
+  {
+    "brand": "valero",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "168.4"
+  },
+  {
+    "brand": "morrisons",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "164.2"
+  },
+  {
+    "brand": "harvest energy",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "169.4"
+  },
+  {
+    "brand": "sainsburys",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "165.3"
+  },
+  {
+    "brand": "applegreen",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "171.9"
+  },
+  {
+    "brand": "gulf",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "170.2"
+  },
+  {
+    "brand": "pace",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "170.4"
+  },
+  {
+    "brand": "murco",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "171"
+  },
+  {
+    "brand": "asda express",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "172.6"
+  },
+  {
+    "brand": "unbranded",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "168"
+  },
+  {
+    "brand": "low prices always",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "170.2"
+  },
+  {
+    "brand": "totalenergies",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "167.3"
+  },
+  {
+    "brand": "Welcome Break",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "189.5"
+  },
+  {
+    "brand": "gleaner",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "177.2"
+  },
+  {
+    "brand": "maxol",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "159.9"
+  },
+  {
+    "brand": "solo",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "157.7"
+  },
+  {
+    "brand": "circle k",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "157.9"
+  },
+  {
+    "brand": "highland",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "176.2"
+  },
+  {
+    "brand": "essar",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "168.3"
+  },
+  {
+    "brand": "co-op",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "168.9"
+  },
+  {
+    "brand": "nisa",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "161.3"
+  },
+  {
+    "brand": "manx",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "180.9"
+  },
+  {
+    "brand": "carlisles",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "154.9"
+  },
+  {
+    "brand": "go",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "156.6"
+  },
+  {
+    "brand": "nicholl fuel oils",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "158.2"
+  },
+  {
+    "brand": "maple leaf",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "154.6"
+  },
+  {
+    "brand": "scottish fuels",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "171.4"
+  },
+  {
+    "brand": "emo",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "158"
+  },
+  {
+    "brand": "spar",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Diesel",
+    "price": "170.9"
+  },
+  {
+    "brand": "rix",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "168.4"
+  },
+  {
+    "brand": "breeze",
+    "dateUpdated": "22 June 2026",
+    "fuelType": "Diesel",
+    "price": "169.9"
+  },
+  {
+    "brand": "power",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "179.9"
+  },
+  {
+    "brand": "mace",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "153.9"
+  },
+  {
+    "brand": "star",
+    "dateUpdated": "23 June 2026",
+    "fuelType": "Diesel",
+    "price": "154.9"
+  },
+  {
+    "brand": "evf",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "177.9"
+  },
+  {
+    "brand": "costco",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "161.2"
+  },
+  {
+    "brand": "oilfast",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Diesel",
+    "price": "166.9"
+  },
+  {
+    "brand": "intermarche",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "auchan",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "avia",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "netto",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "super u",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "cora",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "station u",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "eni",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "hyper u",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "casino",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "dyneff",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "vito",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Diesel",
+    "price": "0.2"
+  },
+  {
+    "brand": "BP",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "154.3"
+  },
+  {
+    "brand": "shell",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "153.8"
+  },
+  {
+    "brand": "esso",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "152.4"
+  },
+  {
+    "brand": "asda",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "149.9"
+  },
+  {
+    "brand": "tesco",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "149.5"
+  },
+  {
+    "brand": "jet",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "150.9"
+  },
+  {
+    "brand": "texaco",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "151.1"
+  },
+  {
+    "brand": "eg on the move",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "150.8"
+  },
+  {
+    "brand": "valero",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "151.4"
+  },
+  {
+    "brand": "morrisons",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "148.8"
+  },
+  {
+    "brand": "harvest energy",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "151.2"
+  },
+  {
+    "brand": "sainsburys",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "149.1"
+  },
+  {
+    "brand": "applegreen",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "151.4"
+  },
+  {
+    "brand": "gulf",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "153.2"
+  },
+  {
+    "brand": "pace",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "153.8"
+  },
+  {
+    "brand": "murco",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "152.6"
+  },
+  {
+    "brand": "asda express",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "153.5"
+  },
+  {
+    "brand": "low prices always",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "151.2"
+  },
+  {
+    "brand": "totalenergies",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "149.6"
+  },
+  {
+    "brand": "unbranded",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "153.5"
+  },
+  {
+    "brand": "Welcome Break",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "171.1"
+  },
+  {
+    "brand": "gleaner",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "159.9"
+  },
+  {
+    "brand": "maxol",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "147.3"
+  },
+  {
+    "brand": "solo",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "147.3"
+  },
+  {
+    "brand": "circle k",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "146"
+  },
+  {
+    "brand": "highland",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "160.7"
+  },
+  {
+    "brand": "essar",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "150.8"
+  },
+  {
+    "brand": "co-op",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "150.9"
+  },
+  {
+    "brand": "nisa",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "149"
+  },
+  {
+    "brand": "manx",
+    "dateUpdated": "23 June 2026",
+    "fuelType": "Petrol",
+    "price": "154.9"
+  },
+  {
+    "brand": "carlisles",
+    "dateUpdated": "23 June 2026",
+    "fuelType": "Petrol",
+    "price": "144.9"
+  },
+  {
+    "brand": "nicholl fuel oils",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "145.8"
+  },
+  {
+    "brand": "maple leaf",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "141.6"
+  },
+  {
+    "brand": "scottish fuels",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "162.1"
+  },
+  {
+    "brand": "emo",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "145.5"
+  },
+  {
+    "brand": "go",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "147"
+  },
+  {
+    "brand": "spar",
+    "dateUpdated": "25 June 2026",
+    "fuelType": "Petrol",
+    "price": "152.9"
+  },
+  {
+    "brand": "evf",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "154.9"
+  },
+  {
+    "brand": "rix",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "149.5"
+  },
+  {
+    "brand": "breeze",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "149.9"
+  },
+  {
+    "brand": "costco",
+    "dateUpdated": "24 June 2026",
+    "fuelType": "Petrol",
+    "price": "144.9"
+  },
+  {
+    "brand": "oilfast",
+    "dateUpdated": "23 June 2026",
+    "fuelType": "Petrol",
+    "price": "150.9"
+  },
+  {
+    "brand": "auchan",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "netto",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "super u",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "sarl",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "cora",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "avia",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "eni",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "hyper u",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "casino",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "dyneff",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  },
+  {
+    "brand": "station u",
+    "dateUpdated": "16 May 2025",
+    "fuelType": "Petrol",
+    "price": "0.2"
+  }
+]
