@@ -90,7 +90,7 @@ public class StickyNoteService {
      */
     public void create(String title, String message, Boolean complete) {
         logger.log(INFO, "Creating new Sticky Note");
-        String newMessage = message.replace(".\s", "\n");
+        String newMessage = message.replace(". ", "\n");
         Map<String, Boolean> map = new HashMap<>();
         String[] array = newMessage.split("\n");
         for (String s : array) {
@@ -159,7 +159,7 @@ public class StickyNoteService {
      */
     public StickyNote retrieveByTitle(String title) {
         logger.log(INFO, "Retrieving by Title, Sticky Note with Title: " + title);
-        StickyNote noteFromFile = notesList.stream().filter(note -> note.getTitle().equals(title)).toList().get(0);
+        StickyNote noteFromFile = notesList.stream().filter(note -> note.getTitle().equals(title)).toList().getFirst();
         if (checkNoteTitle(title)) {
             logger.log(WARNING, "Retrieving by Title, Sticky Note: " + noteFromFile);
             return noteFromFile;
@@ -177,7 +177,7 @@ public class StickyNoteService {
      */
     public StickyNote retrieveById(Long id) {
         logger.log(INFO, "Retrieving by ID, Sticky Note with ID: " + id);
-        StickyNote noteFromFile = notesList.stream().filter(note -> note.getStickyNoteId() == id).toList().get(0);
+        StickyNote noteFromFile = notesList.stream().filter(note -> note.getStickyNoteId() == id).toList().getFirst();
         if (checkNoteId(id)) {
             logger.log(WARNING, "Retrieving by ID, Sticky Note: " + noteFromFile);
             return noteFromFile;
