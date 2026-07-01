@@ -1,10 +1,10 @@
 package com.homeapp.backend.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.FuelPrice;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -85,6 +85,7 @@ public class FuelPriceService {
     }
 
     private void readDieselPricesFromCSV() {
+        logger.log(INFO, "Attempting to read diesel prices from CSV file...");
         List<FuelPrice> fuelPrices = new ArrayList<>();
         try {
             String filePrices = om.readValue(
@@ -98,6 +99,7 @@ public class FuelPriceService {
     }
 
     private void readPetrolPricesFromCSV() {
+        logger.log(INFO, "Attempting to read petrol prices from CSV file...");
         List<FuelPrice> fuelPrices = new ArrayList<>();
         try {
             String filePrices = om.readValue(
@@ -111,6 +113,7 @@ public class FuelPriceService {
     }
 
     private void writePricesToJsonFile() {
+        logger.log(INFO, "Attempting to write Prices out to JSON file...");
         try {
             File jsonFile = new File(fileLocation + "all_prices_" + today + ".json");
             if (!jsonFile.exists()) {

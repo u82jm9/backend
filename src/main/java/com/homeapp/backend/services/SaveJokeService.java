@@ -1,9 +1,9 @@
 package com.homeapp.backend.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.DTOJoke;
 import org.springframework.stereotype.Service;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;

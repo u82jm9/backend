@@ -1,5 +1,7 @@
 package com.homeapp.backend.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.bike.BikeParts;
 import com.homeapp.backend.models.bike.Error;
 import com.homeapp.backend.models.bike.FullBike;
@@ -7,8 +9,6 @@ import com.homeapp.backend.models.bike.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;

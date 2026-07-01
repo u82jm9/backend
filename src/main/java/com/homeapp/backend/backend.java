@@ -1,5 +1,7 @@
 package com.homeapp.backend;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.bike.Part;
 import com.homeapp.backend.services.FuelPriceService;
 import org.jsoup.Jsoup;
@@ -9,8 +11,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,12 +39,37 @@ public class backend implements CommandLineRunner {
         LogManager logManager = LogManager.getLogManager();
         logManager.reset();
         logManager.readConfiguration(new FileInputStream("src/conf/logging.properties"));
-        logger.log(INFO, "Starting UP!!");
-        logger.log(WARNING, "Starting UP!!");
-        logger.log(SEVERE, "Starting UP!!");
         SpringApplication.run(backend.class, args);
         fuelPriceService.run();
         checkAllLinks();
+    }
+
+    /**
+     * A method that runs through the manually updated list of links in the links.json file.
+     * Collects all problem links and sends these to reporter
+     */
+    public static void checkAllLinks() {
+        logger.log(INFO, "Started checking all links!");
+        List<Part> allParts = readLinksFile();
+        for (Part part : allParts) {
+            try {
+                int statusCode = Jsoup.connect(part.getLink()).execute().statusCode();
+                writeParts.add(part);
+                if (statusCode == 200) {
+                    setPartAttributesFromLink(part);
+                } else {
+                    addFailedPartToWriteList(part);
+                }
+            } catch (IOException e) {
+                addFailedPartToWriteList(part);
+            }
+        }
+        logger.log(WARNING, "**** Please check the following links ****");
+        logger.log(WARNING, "You have " + problemParts.size() + " issues with links ref doc!!\nSee each problem part listed below.");
+        problemParts.forEach(part -> logger.log(SEVERE, "Internal ref: " + part.getInternalReference() + "\nLink: " + part.getLink()));
+        writePartsToFile();
+        logger.log(WARNING, "**** Checking links complete ****");
+        logger.log(INFO, "Finished checking links!");
     }
 
     /**
@@ -190,41 +215,13 @@ public class backend implements CommandLineRunner {
                 addFailedPartToWriteList(part);
 
             }
-            logger.log(WARNING, "Found: " + name + "\nFor: " + price + "\nFrom: " + part.getLink());
+            logger.log(INFO, "Found: " + name + "\nFor: " + price + "\nFrom: " + part.getLink());
             part.setName(name);
             part.setPrice(price);
         } catch (
                 IOException e) {
             addFailedPartToWriteList(part);
-            logger.log(WARNING, "Error adding price for part: " + part.getInternalReference());
         }
-    }
-
-    /**
-     * A method that runs through the manually updated list of links in the links.json file.
-     * Collects all problem links and sends these to reporter
-     */
-    public static void checkAllLinks() {
-        List<Part> allParts = readLinksFile();
-        for (Part part : allParts) {
-            try {
-                int statusCode = Jsoup.connect(part.getLink()).execute().statusCode();
-                writeParts.add(part);
-                if (statusCode == 200) {
-                    setPartAttributesFromLink(part);
-                } else {
-                    addFailedPartToWriteList(part);
-                }
-            } catch (IOException e) {
-                addFailedPartToWriteList(part);
-            }
-        }
-        logger.log(SEVERE, "**** Please check the following links ****");
-        logger.log(SEVERE, "You have " + problemParts.size() + " issues with links ref doc!!");
-        problemParts.forEach(part -> logger.log(SEVERE, "Internal ref: " + part.getInternalReference() + "\nLink: " + part.getLink()));
-        writePartsToFile();
-        logger.log(SEVERE, "**** Checking links complete ****");
-        logger.log(INFO, "Finished checking links!");
     }
 
     /**
@@ -275,6 +272,7 @@ public class backend implements CommandLineRunner {
             part.setIsUptoDate(true);
             part.setDateLastUpdated(today);
         } else {
+            logger.log(WARNING, "Bike part: " + part.getInternalReference() + " is not up to date");
             part.setIsUptoDate(false);
         }
     }
@@ -283,8 +281,8 @@ public class backend implements CommandLineRunner {
      * Keeps failed links in file output while marking them as out-of-date.
      */
     private static void addFailedPartToWriteList(Part part) {
-        problemParts.add(part);
         part.setIsUptoDate(false);
+        problemParts.add(part);
         writeParts.add(part);
     }
 }

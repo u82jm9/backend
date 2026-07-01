@@ -1,5 +1,7 @@
 package com.homeapp.backend;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homeapp.backend.models.FuelPrice;
 import com.homeapp.backend.services.FuelPriceService;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
